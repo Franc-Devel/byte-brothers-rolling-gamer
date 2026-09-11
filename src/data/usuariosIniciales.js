@@ -8,7 +8,8 @@ export const usuariosIniciales = [
     contrasenia: "admin123",
     rol: "admin",
     fechaRegistro: "2024-01-10",
-    fecha: "2024-01-10"
+    fecha: "2024-01-10",
+    wishlist: ["1", "2"]
   },
   {
     id: "u-user-2",
@@ -19,7 +20,8 @@ export const usuariosIniciales = [
     contrasenia: "user123",
     rol: "usuario",
     fechaRegistro: "2024-02-15",
-    fecha: "2024-02-15"
+    fecha: "2024-02-15",
+    wishlist: ["3", "5"]
   }
 ];
 
