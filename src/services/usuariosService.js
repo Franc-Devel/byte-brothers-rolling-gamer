@@ -109,6 +109,24 @@ export const registrarUsuario = (datosOEmail, pass = "", nom = "") => {
   }
 };
 
+export const eliminarUsuario = (idAEliminar, idSesionActiva) => {
+  try {
+    if (!idAEliminar) return { success: false, exito: false, mensaje: "ID no especificado." };
+    if (idSesionActiva && String(idAEliminar) === String(idSesionActiva)) {
+      return { success: false, exito: false, mensaje: "No es posible eliminar la cuenta actualmente en uso." };
+    }
+    const list = obtenerUsuarios();
+    const actualizados = list.filter(u => String(u.id) !== String(idAEliminar));
+    if (actualizados.length === list.length) {
+      return { success: false, exito: false, mensaje: "Usuario no encontrado." };
+    }
+    guardarUsuarios(actualizados);
+    return { success: true, exito: true, usuarios: actualizados, mensaje: "Usuario eliminado correctamente." };
+  } catch (e) {
+    return { success: false, exito: false, mensaje: e.message };
+  }
+};
+
 export const obtenerWishlists = () => {
   try {
     const d = localStorage.getItem(WISHLISTS_KEY);
