@@ -1,4 +1,5 @@
 import usuariosIniciales from "../data/usuariosIniciales.js";
+import { obtenerProductos } from "./catalogoService.js";
 
 export const USUARIOS_KEY = "rollingGamer_usuariosRegistrados";
 export const SESION_KEY = "rollingGamer_usuario";
@@ -106,4 +107,49 @@ export const registrarUsuario = (datosOEmail, pass = "", nom = "") => {
   } catch (e) {
     return { success: false, exito: false, mensaje: e.message };
   }
+};
+
+export const obtenerWishlists = () => {
+  try {
+    const d = localStorage.getItem(WISHLISTS_KEY);
+    return d ? JSON.parse(d) : {};
+  } catch { return {}; }
+};
+
+export const guardarWishlists = (w) => {
+  try { localStorage.setItem(WISHLISTS_KEY, JSON.stringify(w)); } catch (e) { console.error(e); }
+};
+
+export const obtenerWishlistDeCuenta = (usuarioId) => {
+  if (!usuarioId) return [];
+  const map = obtenerWishlists();
+  if (map[usuarioId] && Array.isArray(map[usuarioId])) return map[usuarioId];
+  const u = obtenerUsuarios().find(x => String(x.id) === String(usuarioId));
+  return (u && Array.isArray(u.wishlist)) ? u.wishlist.map(String) : [];
+};
+
+export const alternarDeseo = (usuarioId, juegoId) => {
+  try {
+    if (!usuarioId) {
+      return { success: false, exito: false, requireAuth: true, isWishlisted: false, wishlistIds: [], mensaje: "Debes iniciar sesión para gestionar tu lista de deseos." };
+    }
+    const idStr = String(juegoId);
+    const map = obtenerWishlists();
+    const actual = obtenerWishlistDeCuenta(usuarioId);
+    const existe = actual.includes(idStr);
+    const nueva = existe ? actual.filter(x => x !== idStr) : [...new Set([...actual, idStr])];
+    map[usuarioId] = nueva;
+    guardarWishlists(map);
+    return { success: true, exito: true, requireAuth: false, isWishlisted: !existe, wishlistIds: nueva, mensaje: !existe ? "Agregado a la lista de deseos." : "Removido de la lista de deseos." };
+  } catch (e) {
+    return { success: false, exito: false, mensaje: e.message };
+  }
+};
+
+export const obtenerJuegosDeseados = (usuarioId, catalogoOpcional) => {
+  try {
+    const ids = obtenerWishlistDeCuenta(usuarioId);
+    const cat = Array.isArray(catalogoOpcional) ? catalogoOpcional : obtenerProductos();
+    return cat.filter(j => ids.includes(String(j.id)));
+  } catch { return []; }
 };
