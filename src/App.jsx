@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext.jsx";
 import juegosIniciales from "./data/juegosIniciales.js";
 
 const KEY = "productosKey";
@@ -23,21 +24,23 @@ function App() {
 
   return (
     <BrowserRouter>
-      <main className="container py-4 flex-grow-1 text-light">
-        <Routes>
-          <Route path="/" element={<div>Inicio ({productos.length})</div>} />
-          <Route path="/detalle/:id" element={<div>Detalle (buscar: {typeof buscar}, resena: {typeof resena})</div>} />
-          <Route path="/login" element={<div>Iniciar Sesión / Registro</div>} />
-          <Route path="/wishlist" element={<div>Lista de Deseos ({productos.length})</div>} />
-          <Route path="/about" element={<div>Equipo Rolling Gamer</div>} />
-          <Route path="/administrador" element={<Navigate to="/admin" replace />} />
-          <Route path="/admin" element={<div>Panel Admin ({productos.length}) <button type="button" className="btn btn-sm btn-outline-secondary ms-2" onClick={() => setProductos(juegosIniciales)}>Restablecer</button></div>} />
-          <Route path="/crear" element={<div>Crear (crear: {typeof crear})</div>} />
-          <Route path="/editar/:id" element={<div>Editar (modificar: {typeof modificar})</div>} />
-          <Route path="/404" element={<div>Error 404 (borrar: {typeof borrar})</div>} />
-          <Route path="*" element={<Navigate to="/404" replace />} />
-        </Routes>
-      </main>
+      <AuthProvider>
+        <main className="container py-4 flex-grow-1 text-light">
+          <Routes>
+            <Route path="/" element={<div>Inicio ({productos.length})</div>} />
+            <Route path="/detalle/:id" element={<div>Detalle (buscar: {typeof buscar}, resena: {typeof resena})</div>} />
+            <Route path="/login" element={<div>Iniciar Sesión / Registro</div>} />
+            <Route path="/wishlist" element={<div>Lista de Deseos ({productos.length})</div>} />
+            <Route path="/about" element={<div>Equipo Rolling Gamer</div>} />
+            <Route path="/administrador" element={<Navigate to="/admin" replace />} />
+            <Route path="/admin" element={<div>Panel Admin ({productos.length}) <button type="button" className="btn btn-sm btn-outline-secondary ms-2" onClick={() => setProductos(juegosIniciales)}>Restablecer</button></div>} />
+            <Route path="/crear" element={<div>Crear (crear: {typeof crear})</div>} />
+            <Route path="/editar/:id" element={<div>Editar (modificar: {typeof modificar})</div>} />
+            <Route path="/404" element={<div>Error 404 (borrar: {typeof borrar})</div>} />
+            <Route path="*" element={<Navigate to="/404" replace />} />
+          </Routes>
+        </main>
+      </AuthProvider>
     </BrowserRouter>
   );
 }
