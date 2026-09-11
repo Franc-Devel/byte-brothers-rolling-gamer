@@ -1,0 +1,468 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --epic-bg-dark: #121212;
+  --epic-bg-secondary: #18181c;
+  --epic-bg-surface: #202020;
+  --epic-bg-surface-hover: #2a2a2a;
+  --epic-bg-input: #202024;
+  --epic-blue: #0078f2;
+  --epic-blue-hover: #0063c8;
+  --epic-blue-glow: rgba(0, 120, 242, 0.35);
+  --epic-border: rgba(255, 255, 255, 0.08);
+  --epic-border-hover: rgba(255, 255, 255, 0.2);
+  --epic-text-primary: #f5f5f5;
+  --epic-text-secondary: #c4c4c4;
+  --epic-text-muted: #727272;
+  --epic-green: #00df9a;
+  --epic-radius: 6px;
+  --epic-radius-sm: 4px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--epic-bg-dark);
+  color: var(--epic-text-primary);
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--epic-bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2c2c30;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3e3e46;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex-grow: 1;
+}
+
+.epic-heading {
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #ffffff;
+}
+
+.epic-subheading {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--epic-text-muted);
+}
+
+/* Barra Superior y Navbar con Glassmorphism */
+.epic-topbar {
+  background: #101014;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0.35rem 0;
+  font-size: 0.8rem;
+}
+
+.epic-topbar-link {
+  color: var(--epic-text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+  padding: 0.25rem 0.6rem;
+}
+
+.epic-topbar-link:hover,
+.epic-topbar-link.active {
+  color: #ffffff;
+}
+
+.epic-navbar {
+  background: rgba(18, 18, 18, 0.96) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--epic-border);
+  transition: all 0.25s ease;
+  z-index: 1030;
+}
+
+.epic-nav-link {
+  color: var(--epic-text-secondary) !important;
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding: 0.6rem 1rem !important;
+  border-radius: var(--epic-radius-sm);
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.epic-nav-link:hover {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.epic-nav-link.active {
+  color: #ffffff !important;
+  border-bottom: 2px solid var(--epic-blue);
+  border-radius: 0;
+}
+
+.epic-logo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: #ffffff;
+  color: #000000;
+  border-radius: 6px;
+  font-weight: 900;
+  font-size: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  clip-path: polygon(50% 0%, 100% 15%, 100% 85%, 50% 100%, 0% 85%, 0% 15%);
+}
+
+/* Vitrina Hero Interactiva y Thumbnails */
+.epic-hero-container {
+  border-radius: var(--epic-radius);
+  overflow: hidden;
+  background: var(--epic-bg-secondary);
+}
+
+.epic-hero-main {
+  position: relative;
+  border-radius: var(--epic-radius);
+  overflow: hidden;
+  height: 480px;
+  background: #000000;
+}
+
+.epic-hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  filter: brightness(0.8);
+  transition: transform 0.6s ease;
+}
+
+.epic-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(18, 18, 18, 0.95) 0%, rgba(18, 18, 18, 0.4) 50%, transparent 100%),
+    linear-gradient(90deg, rgba(18, 18, 18, 0.85) 0%, transparent 65%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 2.5rem;
+}
+
+.epic-hero-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--epic-radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+  border: 1px solid transparent;
+  margin-bottom: 6px;
+}
+
+.epic-hero-sidebar-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.epic-hero-sidebar-item.active {
+  background: var(--epic-bg-surface);
+  border-left: 3px solid var(--epic-blue);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.epic-hero-sidebar-item.active .epic-thumb {
+  border-color: var(--epic-blue);
+}
+
+.epic-thumb {
+  width: 50px;
+  height: 65px;
+  object-fit: cover;
+  border-radius: var(--epic-radius-sm);
+  border: 1px solid var(--epic-border);
+}
+
+/* Tarjetas de Videojuegos (Cards) */
+.epic-card {
+  background: transparent;
+  border: none;
+  border-radius: var(--epic-radius);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.epic-card:hover {
+  transform: translateY(-4px);
+}
+
+.epic-card-media {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: var(--epic-radius);
+  overflow: hidden;
+  background: #1e1e1e;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.epic-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: filter 0.2s ease, transform 0.3s ease;
+}
+
+.epic-card:hover .epic-card-media img {
+  filter: brightness(1.08);
+  transform: scale(1.02);
+}
+
+.epic-badge-discount {
+  background: var(--epic-blue);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  border-radius: var(--epic-radius-sm);
+  letter-spacing: 0.2px;
+}
+
+.epic-tag-category {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--epic-text-muted);
+}
+
+/* Botón Flotante de Wishlist */
+.epic-wishlist-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+.epic-wishlist-btn:hover {
+  background: rgba(0, 120, 242, 0.85);
+  border-color: var(--epic-blue);
+  transform: scale(1.1);
+}
+
+.epic-wishlist-btn.active {
+  background: var(--epic-blue);
+  border-color: var(--epic-blue);
+  color: #ffffff;
+}
+
+/* Botones con Resplandor (Glow) */
+.btn-epic-primary,
+.btn-epic-secondary {
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 0.85rem 1.6rem;
+  border-radius: var(--epic-radius-sm);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.btn-epic-primary {
+  background: var(--epic-blue);
+  color: #ffffff;
+  border: none;
+}
+
+.btn-epic-primary:hover {
+  background: var(--epic-blue-hover);
+  color: #ffffff;
+  box-shadow: 0 4px 15px var(--epic-blue-glow);
+}
+
+.btn-epic-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: 1px solid var(--epic-border);
+}
+
+.btn-epic-secondary:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: var(--epic-border-hover);
+  color: #ffffff;
+}
+
+/* Controles de Formulario e Inputs */
+.epic-input {
+  background: var(--epic-bg-input) !important;
+  border: 1px solid var(--epic-border) !important;
+  color: #ffffff !important;
+  border-radius: var(--epic-radius-sm) !important;
+  padding: 0.65rem 1rem !important;
+  font-size: 0.9rem !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.epic-input:focus {
+  border-color: var(--epic-blue) !important;
+  box-shadow: 0 0 0 2px var(--epic-blue-glow) !important;
+  outline: none !important;
+}
+
+.epic-input::placeholder {
+  color: var(--epic-text-muted) !important;
+}
+
+/* Pastillas de Filtro y Contenedores */
+.epic-filter-pill {
+  background: transparent;
+  border: none;
+  color: var(--epic-text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.epic-filter-pill:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.epic-filter-pill.active {
+  color: #ffffff;
+  background: var(--epic-bg-surface);
+  border: 1px solid var(--epic-border);
+}
+
+.epic-box {
+  background: var(--epic-bg-secondary);
+  border: 1px solid var(--epic-border);
+  border-radius: var(--epic-radius);
+}
+
+/* Fichas Técnicas */
+.epic-specs-col {
+  background: var(--epic-bg-surface);
+  border-radius: var(--epic-radius-sm);
+  padding: 1.25rem;
+  border: 1px solid var(--epic-border);
+}
+
+.epic-specs-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--epic-text-muted);
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--epic-border);
+  padding-bottom: 0.5rem;
+}
+
+/* Tablas de Gestión */
+.epic-table {
+  color: var(--epic-text-primary) !important;
+  background: transparent !important;
+  border-color: var(--epic-border) !important;
+}
+
+.epic-table th {
+  background: #18181c !important;
+  color: var(--epic-text-muted);
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  padding: 0.85rem !important;
+  border-bottom: 1px solid var(--epic-border) !important;
+}
+
+.epic-table td {
+  background: var(--epic-bg-dark) !important;
+  vertical-align: middle;
+  padding: 0.85rem !important;
+  border-bottom: 1px solid var(--epic-border) !important;
+}
+
+.epic-table tr:hover td {
+  background: var(--epic-bg-surface) !important;
+}
+
+/* Pie de Página */
+.epic-footer {
+  background: #121212;
+  border-top: 1px solid var(--epic-border);
+  color: var(--epic-text-muted);
+}
+
+/* Adaptación Responsive */
+@media (max-width: 991px) {
+  .epic-hero-main {
+    height: 360px;
+  }
+
+  .epic-hero-overlay {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .epic-hero-main {
+    height: 260px;
+  }
+
+  .btn-epic-primary,
+  .btn-epic-secondary {
+    width: 100%;
+  }
+}
