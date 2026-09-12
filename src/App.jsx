@@ -49,33 +49,27 @@ function App() {
     <BrowserRouter>
       <main className="container py-4 flex-grow-1">
         <Routes>
-          <Route path="/" element={<div>Inicio ({productos.length} juegos)</div>} />
-          <Route
-            path="/detalle/:id"
-            element={<div>Detalle (buscar: {typeof buscarProducto}, resenas: {typeof agregarResena})</div>}
-          />
+          <Route path="/" element={<div className="text-light">Inicio ({productos.length} juegos)</div>} />
+          <Route path="/detalle/:id" element={<div className="text-light">Detalle (buscar: {typeof buscarProducto}, resenas: {typeof agregarResena})</div>} />
+          <Route path="/login" element={<div className="text-light">Iniciar Sesión / Registro</div>} />
+          <Route path="/wishlist" element={<div className="text-light">Lista de Deseos ({productos.length} catálogo)</div>} />
+          <Route path="/about" element={<div className="text-light">Acerca del Equipo Rolling Gamer</div>} />
           <Route path="/administrador" element={<Navigate to="/admin" replace />} />
           <Route
             path="/admin"
             element={
-              <div>
-                Administrador ({productos.length})
+              <div className="text-light">
+                Panel de Administración ({productos.length} juegos)
                 <button type="button" className="btn btn-sm btn-outline-secondary ms-2" onClick={() => setProductos(juegosIniciales)}>
-                  Restablecer
+                  Restablecer Catálogo
                 </button>
               </div>
             }
           />
-          <Route
-            path="/crear"
-            element={<div>Crear (crear: {typeof crearProducto})</div>}
-          />
-          <Route
-            path="/editar/:id"
-            element={<div>Editar (modificar: {typeof modificarProducto})</div>}
-          />
+          <Route path="/crear" element={<div className="text-light">Crear Videojuego (crear: {typeof crearProducto})</div>} />
+          <Route path="/editar/:id" element={<div className="text-light">Editar Videojuego (modificar: {typeof modificarProducto})</div>} />
+          <Route path="/404" element={<div className="text-light">Error 404 — Página no encontrada (borrar: {typeof borrarProducto})</div>} />
           <Route path="*" element={<Navigate to="/404" replace />} />
-          <Route path="/404" element={<div>Página no encontrada (borrar: {typeof borrarProducto})</div>} />
         </Routes>
       </main>
     </BrowserRouter>
