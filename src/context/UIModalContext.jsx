@@ -23,6 +23,45 @@ const CONTENIDOS = {
         <p><strong>¿Necesitás asistencia técnica?</strong><br />Contactanos vía correo electrónico a: <span className="text-info">soporte@rollinggames.com</span></p>
       </div>
     )
+  },
+  terminos: {
+    titulo: "Términos y Condiciones de Uso",
+    cuerpo: (
+      <div>
+        <h6>1. Alcance del Servicio</h6>
+        <p>Rolling Gamer es un prototipo académico de catálogo de videojuegos. Las compras y transacciones son puramente simuladas.</p>
+        <h6>2. Cuentas de Usuario</h6>
+        <p>El registro de usuarios almacena credenciales en el almacenamiento local del navegador (LocalStorage) para fines demostrativos.</p>
+      </div>
+    )
+  },
+  privacidad: {
+    titulo: "Política de Privacidad",
+    cuerpo: (
+      <div>
+        <p>Los datos ingresados durante el registro y las listas de deseos se conservan exclusivamente en tu navegador.</p>
+        <p>No recopilamos datos bancarios reales ni transferimos información a servidores externos de terceros.</p>
+      </div>
+    )
+  },
+  reembolsos: {
+    titulo: "Política de Reembolsos y Devoluciones",
+    cuerpo: (
+      <div>
+        <p>Al tratarse de una tienda de demostración interactiva sin pasarela de cobro real, no se efectúan cargos monetarios.</p>
+        <p>Podés agregar o eliminar cualquier título de tu lista de deseos de forma inmediata desde el catálogo.</p>
+      </div>
+    )
+  },
+  seguridad: {
+    titulo: "Consejos de Seguridad para tu Cuenta",
+    cuerpo: (
+      <div>
+        <p>• Utilizá contraseñas distintas a las de tus servicios bancarios o correos personales.</p>
+        <p>• Cerrá sesión tras utilizar computadoras de uso compartido mediante el botón Cerrar Sesión del menú.</p>
+        <p>• Las cuentas predeterminadas de evaluación (admin y user) están diseñadas para probar los roles del sistema.</p>
+      </div>
+    )
   }
 };
 
