@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Modal, Button } from "react-bootstrap";
 import { useAuth } from "./AuthContext.jsx";
 
 const CONTENIDOS = {
@@ -9,9 +10,9 @@ const CONTENIDOS = {
     cuerpo: (
       <div>
         <h6 className="text-info">🔥 Lanzamientos de Temporada</h6>
-        <p>Se incorporaron títulos AAA al catálogo digital con especificaciones técnicas detalladas y galería de capturas.</p>
+        <p>Se incorporaron títulos AAA al catálogo digital con especificaciones técnicas y galería de capturas.</p>
         <h6 className="text-info">🛠️ Parche y Optimización v1.2</h6>
-        <p>Mejoras de rendimiento en el filtrado por categorías y sincronización fluida de la lista de deseos en LocalStorage.</p>
+        <p>Mejoras de rendimiento en el filtrado por categorías y sincronización fluida de deseos en LocalStorage.</p>
         <p className="text-muted small">Nota: Plataforma académica demostrativa desarrollada con fines educativos.</p>
       </div>
     )
@@ -20,9 +21,9 @@ const CONTENIDOS = {
     titulo: "Centro de Ayuda y Preguntas Frecuentes",
     cuerpo: (
       <div>
-        <p><strong>¿Cómo guardo un juego en mi lista de deseos?</strong><br />Iniciá sesión y presioná el botón de marcador en cualquier tarjeta de juego.</p>
-        <p><strong>¿Cómo publicar una reseña?</strong><br />Accedé a la ficha de detalle de cualquier título con tu cuenta abierta y dejá tu voto positivo o negativo.</p>
-        <p><strong>¿Necesitás asistencia técnica?</strong><br />Contactanos vía correo electrónico a: <span className="text-info">soporte@rollinggames.com</span></p>
+        <p><strong>¿Cómo guardar un juego en mi lista de deseos?</strong><br />Iniciá sesión y presioná el botón de marcador en cualquier tarjeta de juego.</p>
+        <p><strong>¿Cómo publicar una reseña?</strong><br />Accedé a la ficha de detalle de cualquier título con tu cuenta abierta y dejá tu voto.</p>
+        <p><strong>¿Necesitás asistencia técnica?</strong><br />Escribinos a: <span className="text-info">soporte@rollinggames.com</span></p>
       </div>
     )
   },
@@ -31,8 +32,8 @@ const CONTENIDOS = {
     esDistribucion: true,
     cuerpo: (
       <div>
-        <p>Unite al ecosistema de Rolling Gamer para publicar tus títulos indie o producciones AAA ante miles de jugadores.</p>
-        <p className="text-muted small">Los administradores acceden al formulario de creación directa de catálogo. Los usuarios invitados deben identificarse previamente.</p>
+        <p>Publicá tus producciones independientes o títulos destacados en el catálogo de Rolling Gamer.</p>
+        <p className="text-muted small">Los administradores acceden al formulario de carga directa (/crear). Los usuarios estándar deben identificarse.</p>
       </div>
     )
   },
@@ -41,9 +42,9 @@ const CONTENIDOS = {
     cuerpo: (
       <div>
         <h6>1. Alcance del Servicio</h6>
-        <p>Rolling Gamer es un prototipo académico de catálogo de videojuegos. Las compras y transacciones son puramente simuladas.</p>
+        <p>Rolling Gamer es un prototipo académico de catálogo de videojuegos. Las transacciones son simuladas.</p>
         <h6>2. Cuentas de Usuario</h6>
-        <p>El registro de usuarios almacena credenciales en el almacenamiento local del navegador (LocalStorage) para fines demostrativos.</p>
+        <p>El registro almacena credenciales en el almacenamiento local (LocalStorage) con fines de evaluación.</p>
       </div>
     )
   },
@@ -60,7 +61,7 @@ const CONTENIDOS = {
     titulo: "Política de Reembolsos y Devoluciones",
     cuerpo: (
       <div>
-        <p>Al tratarse de una tienda de demostración interactiva sin pasarela de cobro real, no se efectúan cargos monetarios.</p>
+        <p>Al tratarse de una tienda interactiva sin pasarela de cobro real, no se efectúan cargos monetarios.</p>
         <p>Podés agregar o eliminar cualquier título de tu lista de deseos de forma inmediata desde el catálogo.</p>
       </div>
     )
@@ -98,9 +99,29 @@ export const UIModalProvider = ({ children }) => {
     return () => window.removeEventListener("keydown", alPresionarTecla);
   }, [modalActivo, cerrarModal]);
 
+  const actual = modalActivo ? CONTENIDOS[modalActivo] : null;
+
   return (
     <UIModalContext.Provider value={{ modalActivo, abrirModal, cerrarModal, manejarDistribucion, CONTENIDOS }}>
       {children}
+      {actual && (
+        <Modal show={Boolean(modalActivo)} onHide={cerrarModal} centered scrollable contentClassName="bg-dark text-light border-secondary">
+          <Modal.Header closeButton closeVariant="white" className="border-secondary">
+            <Modal.Title className="fs-5">{actual.titulo}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body className="py-3" style={{ maxHeight: "65vh" }}>
+            {actual.cuerpo}
+          </Modal.Body>
+          <Modal.Footer className="border-secondary">
+            {actual.esDistribucion && (
+              <Button variant="primary" className="btn-epic-primary" onClick={manejarDistribucion}>
+                {esAdmin ? "Crear Videojuego" : "Iniciar Sesión"}
+              </Button>
+            )}
+            <Button variant="secondary" className="btn-epic-secondary" onClick={cerrarModal}>Cerrar</Button>
+          </Modal.Footer>
+        </Modal>
+      )}
     </UIModalContext.Provider>
   );
 };
