@@ -1,5 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useState, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext.jsx";
 
 const CONTENIDOS = {
   noticias: {
@@ -21,6 +23,16 @@ const CONTENIDOS = {
         <p><strong>¿Cómo guardo un juego en mi lista de deseos?</strong><br />Iniciá sesión y presioná el botón de marcador en cualquier tarjeta de juego.</p>
         <p><strong>¿Cómo publicar una reseña?</strong><br />Accedé a la ficha de detalle de cualquier título con tu cuenta abierta y dejá tu voto positivo o negativo.</p>
         <p><strong>¿Necesitás asistencia técnica?</strong><br />Contactanos vía correo electrónico a: <span className="text-info">soporte@rollinggames.com</span></p>
+      </div>
+    )
+  },
+  distribucion: {
+    titulo: "Distribución y Publicación de Videojuegos",
+    esDistribucion: true,
+    cuerpo: (
+      <div>
+        <p>Unite al ecosistema de Rolling Gamer para publicar tus títulos indie o producciones AAA ante miles de jugadores.</p>
+        <p className="text-muted small">Los administradores acceden al formulario de creación directa de catálogo. Los usuarios invitados deben identificarse previamente.</p>
       </div>
     )
   },
@@ -69,12 +81,25 @@ const UIModalContext = createContext();
 
 export const UIModalProvider = ({ children }) => {
   const [modalActivo, setModalActivo] = useState(null);
+  const navigate = useNavigate();
+  const { esAdmin } = useAuth();
 
   const abrirModal = useCallback((tipo) => setModalActivo(tipo), []);
   const cerrarModal = useCallback(() => setModalActivo(null), []);
 
+  const manejarDistribucion = useCallback(() => {
+    cerrarModal();
+    navigate(esAdmin ? "/crear" : "/login");
+  }, [cerrarModal, navigate, esAdmin]);
+
+  useEffect(() => {
+    const alPresionarTecla = (e) => { if (e.key === "Escape" && modalActivo) cerrarModal(); };
+    window.addEventListener("keydown", alPresionarTecla);
+    return () => window.removeEventListener("keydown", alPresionarTecla);
+  }, [modalActivo, cerrarModal]);
+
   return (
-    <UIModalContext.Provider value={{ modalActivo, abrirModal, cerrarModal, CONTENIDOS }}>
+    <UIModalContext.Provider value={{ modalActivo, abrirModal, cerrarModal, manejarDistribucion, CONTENIDOS }}>
       {children}
     </UIModalContext.Provider>
   );
