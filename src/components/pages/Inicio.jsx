@@ -5,12 +5,17 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
 
 const precio = (n) => `$${Number(n || 0).toLocaleString("es-AR")} ARS`;
+const precioFinal = (p) => p.descuento ? Math.round(p.precio * (1 - p.descuento / 100)) : p.precio;
+const ratioResenas = (p) => {
+  if (!p.resenas?.length) return 0;
+  return p.resenas.filter((r) => r.voto === "positivo" || r.voto === "positiva").length / p.resenas.length;
+};
 
 const Inicio = () => {
   const { productos } = useProductos();
   const { isWishlisted, toggleWishlist } = useAuth();
   const navigate = useNavigate();
-  const [q, setQ] = useState(""), [cat, setCat] = useState("Todas");
+  const [q, setQ] = useState(""), [cat, setCat] = useState("Todas"), [orden, setOrden] = useState("destacados");
   const [destacadoId, setDestacadoId] = useState(null);
 
   const destacados5 = useMemo(() => productos.slice(0, 5), [productos]);
@@ -19,12 +24,20 @@ const Inicio = () => {
   const categorias = useMemo(() => ["Todas", ...new Set(productos.map((p) => p.categoria || p.genero).filter(Boolean))], [productos]);
   const lista = useMemo(() => {
     const query = q.trim().toLowerCase();
-    return productos.filter((p) => {
+    const filtrados = productos.filter((p) => {
       const matchCat = cat === "Todas" || p.categoria === cat || p.genero === cat;
       const texto = `${p.nombre} ${p.titulo || ""} ${p.desarrollador || ""} ${p.categoria || ""} ${p.genero || ""}`.toLowerCase();
       return matchCat && (!query || texto.includes(query));
     });
-  }, [productos, q, cat]);
+
+    const ordenados = [...filtrados];
+    if (orden === "precio-asc") ordenados.sort((a, b) => precioFinal(a) - precioFinal(b));
+    else if (orden === "precio-desc") ordenados.sort((a, b) => precioFinal(b) - precioFinal(a));
+    else if (orden === "nombre") ordenados.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    else if (orden === "resenas") ordenados.sort((a, b) => ratioResenas(b) - ratioResenas(a));
+    else if (orden === "destacados") ordenados.sort((a, b) => (b.destacado ? 1 : 0) - (a.destacado ? 1 : 0));
+    return ordenados;
+  }, [productos, q, cat, orden]);
 
   const deseo = (id) => {
     const r = toggleWishlist(id);
@@ -63,19 +76,25 @@ const Inicio = () => {
         </section>
       )}
 
-      <div className="d-flex flex-column flex-lg-row gap-3 justify-content-between mb-4">
+      <div className="d-flex flex-column flex-lg-row gap-3 justify-content-between mb-3">
         <Form.Control className="epic-input" placeholder="Buscar por titulo, estudio o genero" value={q} onChange={(e) => setQ(e.target.value)} />
         <div className="d-flex gap-2 flex-wrap">
           {categorias.map((c) => <button key={c} className={`epic-filter-pill ${cat === c ? "active" : ""}`} onClick={() => setCat(c)}>{c}</button>)}
         </div>
       </div>
 
-      <div className="d-flex justify-content-between align-items-end mb-3">
-        <div>
-          <span className="epic-subheading">Tienda</span>
-          <h2 className="epic-heading h4 mb-0">Catalogo disponible</h2>
+      <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-4">
+        <div className="d-flex align-items-center gap-2">
+          <span className="text-secondary small">Ordenar por:</span>
+          <Form.Select className="epic-input py-1 px-2 w-auto small" value={orden} onChange={(e) => setOrden(e.target.value)}>
+            <option value="destacados">Destacados</option>
+            <option value="precio-asc">Menor precio</option>
+            <option value="precio-desc">Mayor precio</option>
+            <option value="nombre">Nombre (A-Z)</option>
+            <option value="resenas">Mejor valorados</option>
+          </Form.Select>
         </div>
-        <span className="text-secondary small">{lista.length} juegos</span>
+        <span className="text-secondary small">{lista.length} juegos disponibles</span>
       </div>
 
       <Row xs={1} sm={2} lg={4} className="g-4">
