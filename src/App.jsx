@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Footer from "./components/common/Footer.jsx";
 import Menu from "./components/common/Menu.jsx";
 import About from "./components/pages/About.jsx";
+import DetalleDeProducto from "./components/pages/DetalleDeProducto.jsx";
 import Error404 from "./components/pages/Error404.jsx";
 import Inicio from "./components/pages/Inicio.jsx";
 import Login from "./components/pages/Login.jsx";
@@ -20,7 +21,7 @@ function App() {
             <main className="container py-4 flex-grow-1 text-light">
               <Routes>
                 <Route path="/" element={<Inicio />} />
-                <Route path="/detalle/:id" element={<div>Detalle</div>} />
+                <Route path="/detalle/:id" element={<DetalleDeProducto />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/wishlist" element={<Wishlist />} />
                 <Route path="/about" element={<About />} />
