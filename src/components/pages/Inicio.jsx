@@ -17,10 +17,14 @@ const Inicio = () => {
   const destacado = useMemo(() => productos.find((p) => String(p.id) === String(destacadoId)) || destacados5[0], [productos, destacadoId, destacados5]);
 
   const categorias = useMemo(() => ["Todas", ...new Set(productos.map((p) => p.categoria || p.genero).filter(Boolean))], [productos]);
-  const lista = useMemo(() => productos.filter((p) => {
-    const texto = `${p.nombre} ${p.titulo || ""} ${p.desarrollador || ""} ${p.categoria || ""}`.toLowerCase();
-    return (cat === "Todas" || p.categoria === cat) && texto.includes(q.toLowerCase());
-  }), [productos, q, cat]);
+  const lista = useMemo(() => {
+    const query = q.trim().toLowerCase();
+    return productos.filter((p) => {
+      const matchCat = cat === "Todas" || p.categoria === cat || p.genero === cat;
+      const texto = `${p.nombre} ${p.titulo || ""} ${p.desarrollador || ""} ${p.categoria || ""} ${p.genero || ""}`.toLowerCase();
+      return matchCat && (!query || texto.includes(query));
+    });
+  }, [productos, q, cat]);
 
   const deseo = (id) => {
     const r = toggleWishlist(id);
