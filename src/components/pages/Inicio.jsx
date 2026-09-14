@@ -11,12 +11,16 @@ const Inicio = () => {
   const { isWishlisted, toggleWishlist } = useAuth();
   const navigate = useNavigate();
   const [q, setQ] = useState(""), [cat, setCat] = useState("Todas");
-  const categorias = useMemo(() => ["Todas", ...new Set(productos.map((p) => p.categoria).filter(Boolean))], [productos]);
+  const [destacadoId, setDestacadoId] = useState(null);
+
+  const destacados5 = useMemo(() => productos.slice(0, 5), [productos]);
+  const destacado = useMemo(() => productos.find((p) => String(p.id) === String(destacadoId)) || destacados5[0], [productos, destacadoId, destacados5]);
+
+  const categorias = useMemo(() => ["Todas", ...new Set(productos.map((p) => p.categoria || p.genero).filter(Boolean))], [productos]);
   const lista = useMemo(() => productos.filter((p) => {
-    const texto = `${p.nombre} ${p.titulo} ${p.desarrollador} ${p.categoria}`.toLowerCase();
+    const texto = `${p.nombre} ${p.titulo || ""} ${p.desarrollador || ""} ${p.categoria || ""}`.toLowerCase();
     return (cat === "Todas" || p.categoria === cat) && texto.includes(q.toLowerCase());
   }), [productos, q, cat]);
-  const destacado = productos.find((p) => p.destacado) || productos[0];
 
   const deseo = (id) => {
     const r = toggleWishlist(id);
@@ -27,18 +31,31 @@ const Inicio = () => {
     <>
       {destacado && (
         <section className="epic-hero-container mb-4">
-          <div className="epic-hero-main">
-            <img className="epic-hero-image" src={destacado.imagen} alt={destacado.nombre} />
-            <div className="epic-hero-overlay">
-              <Badge bg="primary" className="align-self-start mb-2">DESTACADO</Badge>
-              <h1 className="epic-heading display-5 mb-2">{destacado.nombre}</h1>
-              <p className="text-secondary col-lg-7">{destacado.resumen || destacado.descripcion}</p>
-              <div className="d-flex flex-wrap gap-2 align-items-center">
-                <strong className="fs-4">{precio(destacado.precio)}</strong>
-                <Button as={Link} to={`/detalle/${destacado.id}`} className="btn-epic-primary">Ver detalle</Button>
+          <Row className="g-0">
+            <Col lg={8} className="epic-hero-main">
+              <img className="epic-hero-image" src={destacado.imagen} alt={destacado.nombre} />
+              <div className="epic-hero-overlay">
+                <Badge bg="primary" className="align-self-start mb-2">DESTACADO</Badge>
+                <h1 className="epic-heading display-5 mb-2">{destacado.nombre}</h1>
+                <p className="text-secondary col-lg-9">{destacado.resumen || destacado.descripcion}</p>
+                <div className="d-flex flex-wrap gap-2 align-items-center">
+                  <strong className="fs-4">{precio(destacado.precio)}</strong>
+                  <Button as={Link} to={`/detalle/${destacado.id}`} className="btn-epic-primary">Ver detalle</Button>
+                </div>
               </div>
-            </div>
-          </div>
+            </Col>
+            <Col lg={4} className="p-2 d-none d-lg-flex flex-column justify-content-between">
+              {destacados5.map((j) => (
+                <div key={j.id} className={`epic-hero-sidebar-item ${destacado.id === j.id ? "active" : ""}`} onClick={() => setDestacadoId(j.id)}>
+                  <img src={j.imagen} alt={j.nombre} className="epic-thumb" />
+                  <div className="text-truncate">
+                    <div className="text-light fw-bold small text-truncate">{j.nombre}</div>
+                    <span className="text-muted small">{precio(j.precio)}</span>
+                  </div>
+                </div>
+              ))}
+            </Col>
+          </Row>
         </section>
       )}
 
