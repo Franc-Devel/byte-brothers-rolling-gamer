@@ -22,6 +22,9 @@ const Inicio = () => {
   const destacado = useMemo(() => productos.find((p) => String(p.id) === String(destacadoId)) || destacados5[0], [productos, destacadoId, destacados5]);
 
   const categorias = useMemo(() => ["Todas", ...new Set(productos.map((p) => p.categoria || p.genero).filter(Boolean))], [productos]);
+  const hayFiltrosActivos = q.trim() !== "" || cat !== "Todas" || orden !== "destacados";
+  const limpiarTodo = () => { setQ(""); setCat("Todas"); setOrden("destacados"); };
+
   const lista = useMemo(() => {
     const query = q.trim().toLowerCase();
     const filtrados = productos.filter((p) => {
@@ -77,14 +80,21 @@ const Inicio = () => {
       )}
 
       <div className="d-flex flex-column flex-lg-row gap-3 justify-content-between mb-3">
-        <Form.Control className="epic-input" placeholder="Buscar por titulo, estudio o genero" value={q} onChange={(e) => setQ(e.target.value)} />
-        <div className="d-flex gap-2 flex-wrap">
+        <div className="position-relative flex-grow-1">
+          <Form.Control className="epic-input pe-5" placeholder="Buscar por titulo, estudio o genero" value={q} onChange={(e) => setQ(e.target.value)} />
+          {q && (
+            <button type="button" className="btn btn-sm btn-link text-secondary position-absolute end-0 top-50 translate-middle-y me-2 text-decoration-none" onClick={() => setQ("")} aria-label="Limpiar busqueda">
+              ✕
+            </button>
+          )}
+        </div>
+        <div className="d-flex gap-2 flex-wrap align-items-center">
           {categorias.map((c) => <button key={c} className={`epic-filter-pill ${cat === c ? "active" : ""}`} onClick={() => setCat(c)}>{c}</button>)}
         </div>
       </div>
 
       <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-4">
-        <div className="d-flex align-items-center gap-2">
+        <div className="d-flex align-items-center gap-2 flex-wrap">
           <span className="text-secondary small">Ordenar por:</span>
           <Form.Select className="epic-input py-1 px-2 w-auto small" value={orden} onChange={(e) => setOrden(e.target.value)}>
             <option value="destacados">Destacados</option>
@@ -93,6 +103,11 @@ const Inicio = () => {
             <option value="nombre">Nombre (A-Z)</option>
             <option value="resenas">Mejor valorados</option>
           </Form.Select>
+          {hayFiltrosActivos && (
+            <Button variant="link" size="sm" className="text-info p-0 ms-2 text-decoration-none small" onClick={limpiarTodo}>
+              Limpiar filtros
+            </Button>
+          )}
         </div>
         <span className="text-secondary small">{lista.length} juegos disponibles</span>
       </div>
