@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useProductos } from "../../../context/ProductosContext.jsx";
@@ -8,8 +8,7 @@ const base = { nombre: "", categoria: "Accion", precio: 0, descuento: 0, desarro
 const FormularioProducto = () => {
   const { id } = useParams(), navigate = useNavigate();
   const { buscarProducto, crearProducto, modificarProducto } = useProductos();
-  const [form, setForm] = useState(base), editando = Boolean(id);
-  useEffect(() => { if (id) setForm({ ...base, ...buscarProducto(id) }); }, [id, buscarProducto]);
+  const [form, setForm] = useState(() => id ? { ...base, ...buscarProducto(id) } : base), editando = Boolean(id);
   const set = (e) => setForm({ ...form, [e.target.name]: e.target.value });
   const enviar = (e) => {
     e.preventDefault();

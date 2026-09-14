@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Form, Table } from "react-bootstrap";
+import { Badge, Button, Card, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
