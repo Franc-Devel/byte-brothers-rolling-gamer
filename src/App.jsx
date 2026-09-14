@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Footer from "./components/common/Footer.jsx";
 import Menu from "./components/common/Menu.jsx";
+import Inicio from "./components/pages/Inicio.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { ProductosProvider } from "./context/ProductosContext.jsx";
 import { UIModalProvider } from "./context/UIModalContext.jsx";
@@ -14,7 +15,7 @@ function App() {
             <Menu />
             <main className="container py-4 flex-grow-1 text-light">
               <Routes>
-                <Route path="/" element={<div>Inicio</div>} />
+                <Route path="/" element={<Inicio />} />
                 <Route path="/detalle/:id" element={<div>Detalle</div>} />
                 <Route path="/login" element={<div>Iniciar Sesión / Registro</div>} />
                 <Route path="/wishlist" element={<div>Lista de Deseos</div>} />
