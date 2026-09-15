@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { Badge, Button, Col, Row } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
+
+const FALLBACK_IMG = "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80";
 
 const formatoMoneda = (val) => `$${Number(val || 0).toLocaleString("es-AR")} ARS`;
 
@@ -40,6 +43,13 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
   const lanzamiento = juego.lanzamiento || "Próximamente";
   const plataforma = juego.plataforma || "PC / Windows";
 
+  // Lógica de Galería interactiva sin duplicados
+  const portada = juego.imagen || juego.portada || FALLBACK_IMG;
+  const imagenesGaleria = Array.from(
+    new Set([portada, ...(Array.isArray(juego.galeria) ? juego.galeria : [])].filter(Boolean))
+  );
+  const [imgActiva, setImgActiva] = useState(portada);
+
   // Lógica de Precios coherente con CardJuego e Inicio
   const precioOriginal = Number(juego.precio) || 0;
   const descuento = Number(juego.descuento) || 0;
@@ -55,16 +65,46 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
       </Link>
 
       <Row className="g-4">
-        {/* Columna Multimedia Principal */}
+        {/* Columna Multimedia Principal con Galería */}
         <Col lg={7} xl={8}>
-          <div className="epic-box p-2 text-center">
+          <div className="epic-box p-2 text-center shadow">
             <img
-              src={juego.imagen || juego.portada}
+              src={imgActiva}
               alt={titulo}
               className="w-100 rounded object-fit-cover shadow"
-              style={{ maxHeight: 440 }}
+              style={{ maxHeight: 440, minHeight: 280 }}
+              onError={(e) => {
+                e.currentTarget.src = FALLBACK_IMG;
+              }}
             />
           </div>
+
+          {/* Miniaturas de la Galería */}
+          {imagenesGaleria.length > 1 && (
+            <div className="d-flex gap-2 mt-3 overflow-x-auto pb-2">
+              {imagenesGaleria.map((img, idx) => (
+                <button
+                  key={`${img}-${idx}`}
+                  type="button"
+                  onClick={() => setImgActiva(img)}
+                  className={`btn p-0 border rounded overflow-hidden flex-shrink-0 transition-all ${
+                    imgActiva === img ? "border-primary shadow" : "border-secondary border-opacity-50 opacity-75"
+                  }`}
+                  style={{ width: 100, height: 60 }}
+                  title={`Ver imagen ${idx + 1}`}
+                >
+                  <img
+                    src={img}
+                    alt={`Miniatura ${idx + 1}`}
+                    className="w-100 h-100 object-fit-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = FALLBACK_IMG;
+                    }}
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </Col>
 
         {/* Columna Información Lateral */}
