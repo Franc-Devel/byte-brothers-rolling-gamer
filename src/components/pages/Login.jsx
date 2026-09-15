@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Alert, Button, Card, Form, Nav } from "react-bootstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
@@ -7,10 +7,18 @@ const Login = () => {
   const { login, register, loginRapido } = useAuth();
   const navigate = useNavigate(), location = useLocation();
   const destino = location.state?.from?.pathname || "/";
-  const [modo, setModo] = useState("login"), [msg, setMsg] = useState("");
+  const [modo, setModo] = useState(() => (location.state?.tab === "registro" ? "registro" : "login"));
+  const [msg, setMsg] = useState("");
   const [form, setForm] = useState({ nombre: "", email: "", password: "", repetir: "" });
+
+  useEffect(() => {
+    if (location.state?.tab === "registro") setModo("registro");
+  }, [location.state?.tab]);
+
   const set = (e) => setForm({ ...form, [e.target.name]: e.target.value });
   const entrar = (u) => navigate(u?.rol === "admin" && destino === "/" ? "/admin" : destino, { replace: true });
+
+  const cambiarModo = (m) => { setModo(m); setMsg(""); };
 
   const enviar = (e) => {
     e.preventDefault(); setMsg("");
@@ -24,23 +32,29 @@ const Login = () => {
     <div className="row justify-content-center py-5">
       <div className="col-md-8 col-lg-5">
         <Card className="epic-box p-4 text-light">
-          <h1 className="epic-heading h3 text-center mb-3">{modo === "login" ? "Iniciar sesion" : "Crear cuenta"}</h1>
+          <h1 className="epic-heading h3 text-center mb-3">{modo === "login" ? "Iniciar sesión" : "Crear cuenta"}</h1>
           <Nav variant="pills" fill className="bg-black rounded p-1 mb-3">
-            {["login", "registro"].map((m) => <Nav.Item key={m}><Nav.Link active={modo === m} onClick={() => { setModo(m); setMsg(""); }}>{m}</Nav.Link></Nav.Item>)}
+            {["login", "registro"].map((m) => (
+              <Nav.Item key={m}>
+                <Nav.Link active={modo === m} onClick={() => cambiarModo(m)} className="text-capitalize">
+                  {m === "login" ? "Ingresar" : "Registro"}
+                </Nav.Link>
+              </Nav.Item>
+            ))}
           </Nav>
           {msg && <Alert variant="danger" className="py-2">{msg}</Alert>}
           <Form onSubmit={enviar}>
             {modo === "registro" && <Form.Control name="nombre" className="epic-input mb-3" placeholder="Nombre o alias" value={form.nombre} onChange={set} required />}
             <Form.Control name="email" type="email" className="epic-input mb-3" placeholder="Email" value={form.email} onChange={set} required />
-            <Form.Control name="password" type="password" className="epic-input mb-3" placeholder="Contrasena" value={form.password} onChange={set} required minLength={6} />
-            {modo === "registro" && <Form.Control name="repetir" type="password" className="epic-input mb-3" placeholder="Repetir contrasena" value={form.repetir} onChange={set} required />}
+            <Form.Control name="password" type="password" className="epic-input mb-3" placeholder="Contraseña" value={form.password} onChange={set} required minLength={6} />
+            {modo === "registro" && <Form.Control name="repetir" type="password" className="epic-input mb-3" placeholder="Repetir contraseña" value={form.repetir} onChange={set} required />}
             <Button type="submit" className="btn-epic-primary w-100">{modo === "login" ? "Entrar" : "Registrarme"}</Button>
           </Form>
           <div className="d-grid gap-2 mt-3">
             <Button variant="outline-warning" onClick={() => entrar(loginRapido("admin"))}>Demo admin</Button>
             <Button variant="outline-info" onClick={() => entrar(loginRapido("usuario"))}>Demo usuario</Button>
           </div>
-          <Link to="/" className="text-secondary small text-center mt-3">Volver al catalogo</Link>
+          <Link to="/" className="text-secondary small text-center mt-3">Volver al catálogo</Link>
         </Card>
       </div>
     </div>
