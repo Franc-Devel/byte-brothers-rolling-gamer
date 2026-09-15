@@ -8,6 +8,14 @@ const FALLBACK_IMG = "https://images.unsplash.com/photo-1542751371-adc38448a05e?
 
 const formatoMoneda = (val) => `$${Number(val || 0).toLocaleString("es-AR")} ARS`;
 
+const specs = (r = {}) => [
+  ["SO", r.so || "Windows 10 64-bit"],
+  ["CPU", r.cpu || r.procesador || "Intel Core i5 / AMD Ryzen 3"],
+  ["RAM", r.ram || r.memoria || "8 GB RAM"],
+  ["GPU", r.gpu || r.graficos || "GeForce GTX 960 / Radeon RX 470"],
+  ["Almacenamiento", r.almacenamiento || r.disco || "50 GB de espacio disponible"],
+];
+
 const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -175,6 +183,26 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
             </p>
           </Card>
         </Col>
+      </Row>
+
+      {/* Sección Requisitos de Sistema */}
+      <Row className="g-3 my-4">
+        {["minimos", "recomendados"].map((tipo) => (
+          <Col md={6} key={tipo}>
+            <Card className="epic-specs-col h-100 text-light p-3 shadow-sm">
+              <h3 className="epic-specs-title text-capitalize h6 mb-3 text-primary">
+                Requisitos {tipo}
+              </h3>
+              <ul className="list-unstyled small text-secondary mb-0 d-flex flex-column gap-2">
+                {specs(juego.requisitos?.[tipo]).map(([k, v]) => (
+                  <li key={k} className="border-bottom border-secondary border-opacity-25 pb-1">
+                    <strong className="text-light">{k}:</strong> {v}
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          </Col>
+        ))}
       </Row>
     </div>
   );
