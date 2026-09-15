@@ -8,6 +8,8 @@ const CREDENCIALES_DEMO = {
   usuario: { email: "user@rollinggames.com", password: "user123", label: "Usuario Gamer" },
 };
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const Login = () => {
   const { login, register } = useAuth();
   const navigate = useNavigate(), location = useLocation();
@@ -34,12 +36,25 @@ const Login = () => {
     setMsg(`Credenciales de ${cred.label} cargadas. Presiona "Entrar" para continuar.`);
   };
 
+  const validarRegistro = () => {
+    if (form.nombre.trim().length < 3) return "El nombre debe contener al menos 3 caracteres.";
+    if (!EMAIL_REGEX.test(form.email.trim())) return "Ingresa un correo electrónico con formato válido.";
+    if (form.password.length < 6) return "La contraseña debe tener un mínimo de 6 caracteres.";
+    if (form.password !== form.repetir) return "Las contraseñas no coinciden.";
+    return null;
+  };
+
   const enviar = (e) => {
     e.preventDefault(); setMsg("");
-    const r = modo === "login" ? login(form.email, form.password) : form.password !== form.repetir
-      ? { success: false, mensaje: "Las contrasenas no coinciden." }
-      : register({ nombre: form.nombre, email: form.email, password: form.password });
-    r.success ? entrar(r.usuario) : setMsg(r.mensaje);
+    if (modo === "login") {
+      const r = login(form.email.trim(), form.password);
+      r.success ? entrar(r.usuario) : setMsg(r.mensaje || "Error al iniciar sesión.");
+      return;
+    }
+    const err = validarRegistro();
+    if (err) { setMsg(err); return; }
+    const r = register({ nombre: form.nombre.trim(), email: form.email.trim(), password: form.password });
+    r.success ? entrar(r.usuario) : setMsg(r.mensaje || "Error al registrar la cuenta.");
   };
 
   return (
@@ -56,18 +71,18 @@ const Login = () => {
               </Nav.Item>
             ))}
           </Nav>
-          {msg && <Alert variant="info" className="py-2">{msg}</Alert>}
+          {msg && <Alert variant="warning" className="py-2">{msg}</Alert>}
           <Form onSubmit={enviar}>
             {modo === "registro" && (
-              <Form.Control name="nombre" className="epic-input mb-3" placeholder="Nombre o alias" value={form.nombre} onChange={set} required />
+              <Form.Control name="nombre" className="epic-input mb-3" placeholder="Nombre o alias (mínimo 3 caracteres)" value={form.nombre} onChange={set} required minLength={3} />
             )}
-            <Form.Control name="email" type="email" className="epic-input mb-3" placeholder="Email" value={form.email} onChange={set} required />
+            <Form.Control name="email" type="email" className="epic-input mb-3" placeholder="Email (ej. usuario@correo.com)" value={form.email} onChange={set} required />
             <InputGroup className="mb-3">
               <Form.Control
                 name="password"
                 type={verPass ? "text" : "password"}
                 className="epic-input border-end-0"
-                placeholder="Contraseña"
+                placeholder="Contraseña (mínimo 6 caracteres)"
                 value={form.password}
                 onChange={set}
                 required
