@@ -68,6 +68,16 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
     ? Math.round(precioOriginal * (1 - descuento / 100))
     : precioOriginal;
 
+  // Control de Lista de Deseos
+  const deseado = isWishlisted ? isWishlisted(juego.id) : false;
+  const handleDeseos = () => {
+    if (!usuarioActual) {
+      navigate("/login");
+      return;
+    }
+    toggleWishlist?.(juego.id);
+  };
+
   return (
     <div className="detalle-producto-container py-3">
       <Link to="/" className="text-secondary text-decoration-none small d-inline-flex align-items-center mb-3">
@@ -165,6 +175,21 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
               </div>
               <div className="fs-3 fw-bold text-light mb-3">
                 {formatoMoneda(precioCalculado)}
+              </div>
+
+              {/* Acciones principales */}
+              <div className="d-grid gap-2">
+                <Button className="btn-epic-primary py-2 fw-semibold">
+                  <i className="bi bi-bag-check me-2" />Comprar ahora
+                </Button>
+                <Button
+                  variant={deseado ? "outline-danger" : "outline-light"}
+                  className="py-2 d-flex align-items-center justify-content-center gap-2"
+                  onClick={handleDeseos}
+                >
+                  <i className={`bi ${deseado ? "bi-heart-fill text-danger" : "bi-heart"}`} />
+                  <span>{deseado ? "En tu lista de deseos" : "Añadir a lista de deseos"}</span>
+                </Button>
               </div>
             </div>
           </div>
