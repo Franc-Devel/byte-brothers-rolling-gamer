@@ -1,4 +1,4 @@
-import { Button } from "react-bootstrap";
+import { Badge, Button, Col, Row } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
@@ -31,12 +31,65 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
     );
   }
 
+  const titulo = juego.nombre || juego.titulo || "Videojuego sin título";
+  const genero = juego.genero || juego.categoria || "General";
+  const estudio = juego.estudio || juego.desarrollador || "Estudio no especificado";
+  const editor = juego.editor || juego.desarrollador || "Rolling Gamer Distribution";
+  const lanzamiento = juego.lanzamiento || "Próximamente";
+  const plataforma = juego.plataforma || "PC / Windows";
+
   return (
     <div className="detalle-producto-container py-3">
       <Link to="/" className="text-secondary text-decoration-none small d-inline-flex align-items-center mb-3">
         <i className="bi bi-arrow-left me-1" />Volver al catálogo
       </Link>
-      <h1 className="epic-heading h2 text-light">{juego.nombre || juego.titulo}</h1>
+
+      <Row className="g-4">
+        {/* Columna Multimedia Principal */}
+        <Col lg={7} xl={8}>
+          <div className="epic-box p-2 text-center">
+            <img
+              src={juego.imagen || juego.portada}
+              alt={titulo}
+              className="w-100 rounded object-fit-cover shadow"
+              style={{ maxHeight: 440 }}
+            />
+          </div>
+        </Col>
+
+        {/* Columna Información Lateral */}
+        <Col lg={5} xl={4}>
+          <div className="epic-box p-4 h-100 d-flex flex-column justify-content-between">
+            <div>
+              <div className="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                <Badge bg="primary" className="text-uppercase px-2 py-1">
+                  {genero}
+                </Badge>
+                <Badge bg="dark" className="border border-secondary text-secondary">
+                  <i className="bi bi-display me-1" />{plataforma}
+                </Badge>
+              </div>
+
+              <h1 className="epic-heading h3 text-light mb-3">{titulo}</h1>
+
+              <div className="small text-secondary border-top border-secondary border-opacity-25 pt-3 mb-3">
+                <div className="d-flex justify-content-between py-1">
+                  <span>Desarrollador:</span>
+                  <span className="text-light fw-semibold">{estudio}</span>
+                </div>
+                <div className="d-flex justify-content-between py-1">
+                  <span>Editor:</span>
+                  <span className="text-light fw-semibold">{editor}</span>
+                </div>
+                <div className="d-flex justify-content-between py-1">
+                  <span>Lanzamiento:</span>
+                  <span className="text-light fw-semibold">{lanzamiento}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Col>
+      </Row>
     </div>
   );
 };
