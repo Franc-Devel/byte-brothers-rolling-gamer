@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Badge, Button, Card, Col, Row } from "react-bootstrap";
+import { Badge, Button, Card, Col, Modal, Row } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
@@ -21,6 +21,7 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
   const navigate = useNavigate();
   const productosCtx = useProductos();
   const { usuarioActual, isWishlisted, toggleWishlist } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const buscar = buscarProducto || productosCtx?.buscarProducto;
   const agregar = agregarResena || productosCtx?.agregarResena;
@@ -72,7 +73,7 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
   const deseado = isWishlisted ? isWishlisted(juego.id) : false;
   const handleDeseos = () => {
     if (!usuarioActual) {
-      navigate("/login");
+      setShowAuthModal(true);
       return;
     }
     toggleWishlist?.(juego.id);
@@ -229,6 +230,38 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
           </Col>
         ))}
       </Row>
+      {/* Modal de Autenticación Requerida para Deseos */}
+      <Modal
+        show={showAuthModal}
+        onHide={() => setShowAuthModal(false)}
+        centered
+        size="sm"
+        contentClassName="bg-dark text-light border-secondary shadow"
+      >
+        <Modal.Header closeButton closeVariant="white">
+          <Modal.Title className="h6 mb-0">
+            <i className="bi bi-heart text-danger me-2" />Lista de Deseos
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="small text-secondary">
+          Debes iniciar sesión con tu cuenta para guardar <strong>{titulo}</strong> en tu lista personalizada de deseos.
+        </Modal.Body>
+        <Modal.Footer className="border-0 pt-0">
+          <Button size="sm" variant="secondary" onClick={() => setShowAuthModal(false)}>
+            Cancelar
+          </Button>
+          <Button
+            size="sm"
+            className="btn-epic-primary"
+            onClick={() => {
+              setShowAuthModal(false);
+              navigate("/login", { state: { tab: "login" } });
+            }}
+          >
+            Iniciar sesión
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
