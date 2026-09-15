@@ -81,9 +81,18 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
     toggleWishlist?.(juego.id);
   };
 
-  // Manejo de Reseñas
+  // Manejo y Estadísticas de Reseñas
   const resenas = Array.isArray(juego.resenas) ? juego.resenas : [];
   const esPositiva = (r) => r.esPositiva ?? r.voto === "positivo";
+  const totalResenas = resenas.length;
+  const positivas = resenas.filter(esPositiva).length;
+  const porcentajeAprobacion = totalResenas > 0 ? Math.round((positivas / totalResenas) * 100) : null;
+  const metricasResenas = {
+    texto: porcentajeAprobacion !== null ? `${porcentajeAprobacion}%` : "Sin opiniones",
+    detalle: porcentajeAprobacion !== null ? `${porcentajeAprobacion}% positivas (${totalResenas})` : "Aún sin reseñas",
+    clasificacion: porcentajeAprobacion === null ? "Pendiente" : porcentajeAprobacion >= 70 ? "Mayormente positivas" : porcentajeAprobacion >= 40 ? "Mixtas" : "Mayormente negativas",
+    variant: porcentajeAprobacion === null ? "secondary" : porcentajeAprobacion >= 70 ? "success" : porcentajeAprobacion >= 40 ? "warning" : "danger",
+  };
 
   return (
     <div className="detalle-producto-container py-3">
@@ -162,6 +171,12 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
                 <div className="d-flex justify-content-between py-1">
                   <span>Lanzamiento:</span>
                   <span className="text-light fw-semibold">{lanzamiento}</span>
+                </div>
+                <div className="d-flex justify-content-between align-items-center py-1">
+                  <span>Reseñas:</span>
+                  <Badge bg={metricasResenas.variant} className="small">
+                    {metricasResenas.texto} {totalResenas > 0 && `(${totalResenas})`}
+                  </Badge>
                 </div>
               </div>
             </div>
@@ -245,10 +260,15 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
 
       {/* Sección Reseñas Comunitarias */}
       <section className="mt-5">
-        <h2 className="epic-heading h4 mb-3 d-flex align-items-center gap-2">
-          <i className="bi bi-chat-square-quote text-primary" />
-          <span>Reseñas de la comunidad</span>
-        </h2>
+        <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+          <h2 className="epic-heading h4 mb-0 d-flex align-items-center gap-2">
+            <i className="bi bi-chat-square-quote text-primary" />
+            <span>Reseñas de la comunidad</span>
+          </h2>
+          <Badge bg={metricasResenas.variant} className="small py-2 px-3">
+            {metricasResenas.detalle} {totalResenas > 0 && `• ${metricasResenas.clasificacion}`}
+          </Badge>
+        </div>
 
         {resenas.length === 0 ? (
           <Card className="epic-box p-4 text-center text-secondary border-dashed">
