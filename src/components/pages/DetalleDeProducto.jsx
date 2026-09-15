@@ -81,6 +81,10 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
     toggleWishlist?.(juego.id);
   };
 
+  // Manejo de Reseñas
+  const resenas = Array.isArray(juego.resenas) ? juego.resenas : [];
+  const esPositiva = (r) => r.esPositiva ?? r.voto === "positivo";
+
   return (
     <div className="detalle-producto-container py-3">
       <Link to="/" className="text-secondary text-decoration-none small d-inline-flex align-items-center mb-3">
@@ -238,6 +242,52 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
           </Col>
         ))}
       </Row>
+
+      {/* Sección Reseñas Comunitarias */}
+      <section className="mt-5">
+        <h2 className="epic-heading h4 mb-3 d-flex align-items-center gap-2">
+          <i className="bi bi-chat-square-quote text-primary" />
+          <span>Reseñas de la comunidad</span>
+        </h2>
+
+        {resenas.length === 0 ? (
+          <Card className="epic-box p-4 text-center text-secondary border-dashed">
+            <i className="bi bi-chat-dots display-6 d-block mb-2 text-muted" />
+            <p className="mb-0">Aún no hay opiniones sobre este videojuego. ¡Sé el primero en compartir tu experiencia!</p>
+          </Card>
+        ) : (
+          <Row className="g-3">
+            {resenas.map((r, i) => {
+              const pos = esPositiva(r);
+              const autor = r.autor || r.usuario || "Gamer";
+              return (
+                <Col key={r.id || `resena-${i}`} md={6}>
+                  <Card className="epic-box p-3 h-100 text-light shadow-sm">
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <div className="d-flex align-items-center gap-2">
+                        <span className="badge bg-secondary rounded-circle p-2 text-uppercase">
+                          {autor.slice(0, 2)}
+                        </span>
+                        <div>
+                          <strong className="d-block small">{autor}</strong>
+                          <span className="text-secondary" style={{ fontSize: "0.75rem" }}>
+                            {r.fecha || "Reciente"}
+                          </span>
+                        </div>
+                      </div>
+                      <Badge bg={pos ? "success" : "danger"} className="d-inline-flex align-items-center gap-1">
+                        <i className={`bi ${pos ? "bi-hand-thumbs-up-fill" : "bi-hand-thumbs-down-fill"}`} />
+                        <span>{pos ? "Recomendado" : "No recomendado"}</span>
+                      </Badge>
+                    </div>
+                    <p className="text-secondary small mb-0 lh-base">{r.comentario}</p>
+                  </Card>
+                </Col>
+              );
+            })}
+          </Row>
+        )}
+      </section>
       {/* Modal de Autenticación Requerida para Deseos */}
       <Modal
         show={showAuthModal}
