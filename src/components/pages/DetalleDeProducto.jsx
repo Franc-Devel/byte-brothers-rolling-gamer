@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Badge, Button, Card, Col, Modal, Row } from "react-bootstrap";
+import { Alert, Badge, Button, Card, Col, Modal, Row } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
@@ -22,6 +22,8 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
   const productosCtx = useProductos();
   const { usuarioActual, isWishlisted, toggleWishlist } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showCompraModal, setShowCompraModal] = useState(false);
+  const [compraExitosa, setCompraExitosa] = useState(false);
 
   const buscar = buscarProducto || productosCtx?.buscarProducto;
   const agregar = agregarResena || productosCtx?.agregarResena;
@@ -180,7 +182,13 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
 
               {/* Acciones principales */}
               <div className="d-grid gap-2">
-                <Button className="btn-epic-primary py-2 fw-semibold">
+                <Button
+                  className="btn-epic-primary py-2 fw-semibold"
+                  onClick={() => {
+                    setCompraExitosa(false);
+                    setShowCompraModal(true);
+                  }}
+                >
                   <i className="bi bi-bag-check me-2" />Comprar ahora
                 </Button>
                 <Button
@@ -260,6 +268,65 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
           >
             Iniciar sesión
           </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Modal de Compra Simulada */}
+      <Modal
+        show={showCompraModal}
+        onHide={() => setShowCompraModal(false)}
+        centered
+        contentClassName="bg-dark text-light border-secondary shadow"
+      >
+        <Modal.Header closeButton closeVariant="white">
+          <Modal.Title className="h6 mb-0 d-flex align-items-center gap-2">
+            <i className="bi bi-cart-check text-primary" />
+            <span>Confirmar adquisición</span>
+            <Badge bg="secondary" className="small">Simulación</Badge>
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="small">
+          <div className="d-flex align-items-center gap-3 p-2 rounded bg-black bg-opacity-50 mb-3 border border-secondary border-opacity-25">
+            <img
+              src={portada}
+              alt={titulo}
+              className="rounded object-fit-cover"
+              style={{ width: 64, height: 40 }}
+              onError={(e) => { e.currentTarget.src = FALLBACK_IMG; }}
+            />
+            <div>
+              <strong className="d-block text-light text-truncate" style={{ maxWidth: 260 }}>{titulo}</strong>
+              <span className="text-primary fw-bold">{formatoMoneda(precioCalculado)}</span>
+            </div>
+          </div>
+
+          {compraExitosa ? (
+            <Alert variant="success" className="py-2 mb-0 text-center">
+              <i className="bi bi-check-circle-fill me-2" />
+              ¡Compra simulada registrada con éxito! Gracias por probar la plataforma.
+            </Alert>
+          ) : (
+            <Alert variant="info" className="py-2 mb-0 small text-secondary">
+              <i className="bi bi-info-circle me-1 text-info" />
+              Esta es una simulación de compra con fines educativos. No se realizarán cargos monetarios ni se añade a una biblioteca de descargas.
+            </Alert>
+          )}
+        </Modal.Body>
+        <Modal.Footer className="border-0 pt-0">
+          {compraExitosa ? (
+            <Button size="sm" className="btn-epic-primary w-100" onClick={() => setShowCompraModal(false)}>
+              Entendido / Cerrar
+            </Button>
+          ) : (
+            <>
+              <Button size="sm" variant="secondary" onClick={() => setShowCompraModal(false)}>
+                Cancelar
+              </Button>
+              <Button size="sm" className="btn-epic-primary" onClick={() => setCompraExitosa(true)}>
+                Confirmar compra simulada
+              </Button>
+            </>
+          )}
         </Modal.Footer>
       </Modal>
     </div>
