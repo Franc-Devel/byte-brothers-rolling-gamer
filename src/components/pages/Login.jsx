@@ -15,7 +15,7 @@ const Login = () => {
   const navigate = useNavigate(), location = useLocation();
   const destino = location.state?.from?.pathname || "/";
   const [modo, setModo] = useState(() => (location.state?.tab === "registro" ? "registro" : "login"));
-  const [msg, setMsg] = useState("");
+  const [alerta, setAlerta] = useState(null);
   const [verPass, setVerPass] = useState(false);
   const [verRepetir, setVerRepetir] = useState(false);
   const [form, setForm] = useState({ nombre: "", email: "", password: "", repetir: "" });
@@ -26,14 +26,14 @@ const Login = () => {
 
   const set = (e) => setForm({ ...form, [e.target.name]: e.target.value });
   const entrar = (u) => navigate(u?.rol === "admin" && destino === "/" ? "/admin" : destino, { replace: true });
-  const cambiarModo = (m) => { setModo(m); setMsg(""); };
+  const cambiarModo = (m) => { setModo(m); setAlerta(null); };
 
   const cargarDemo = (tipo) => {
     const cred = CREDENCIALES_DEMO[tipo];
     if (!cred) return;
     setModo("login");
     setForm((prev) => ({ ...prev, email: cred.email, password: cred.password }));
-    setMsg(`Credenciales de ${cred.label} cargadas. Presiona "Entrar" para continuar.`);
+    setAlerta({ variant: "info", texto: `Credenciales de ${cred.label} cargadas. Presiona "Entrar" para continuar.` });
   };
 
   const validarRegistro = () => {
@@ -45,16 +45,21 @@ const Login = () => {
   };
 
   const enviar = (e) => {
-    e.preventDefault(); setMsg("");
+    e.preventDefault(); setAlerta(null);
     if (modo === "login") {
       const r = login(form.email.trim(), form.password);
-      r.success ? entrar(r.usuario) : setMsg(r.mensaje || "Error al iniciar sesión.");
+      r.success ? entrar(r.usuario) : setAlerta({ variant: "danger", texto: r.mensaje || "Credenciales incorrectas." });
       return;
     }
     const err = validarRegistro();
-    if (err) { setMsg(err); return; }
+    if (err) { setAlerta({ variant: "warning", texto: err }); return; }
     const r = register({ nombre: form.nombre.trim(), email: form.email.trim(), password: form.password });
-    r.success ? entrar(r.usuario) : setMsg(r.mensaje || "Error al registrar la cuenta.");
+    if (r.success) {
+      setAlerta({ variant: "success", texto: "¡Cuenta creada exitosamente! Ingresando a la plataforma..." });
+      setTimeout(() => entrar(r.usuario), 800);
+    } else {
+      setAlerta({ variant: "danger", texto: r.mensaje || "No fue posible registrar la cuenta." });
+    }
   };
 
   return (
@@ -71,7 +76,7 @@ const Login = () => {
               </Nav.Item>
             ))}
           </Nav>
-          {msg && <Alert variant="warning" className="py-2">{msg}</Alert>}
+          {alerta && <Alert variant={alerta.variant} className="py-2 small">{alerta.texto}</Alert>}
           <Form onSubmit={enviar}>
             {modo === "registro" && (
               <Form.Control name="nombre" className="epic-input mb-3" placeholder="Nombre o alias (mínimo 3 caracteres)" value={form.nombre} onChange={set} required minLength={3} />
