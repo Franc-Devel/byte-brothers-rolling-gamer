@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, Badge, Button, Card, Col, Modal, Row } from "react-bootstrap";
+import { Alert, Badge, Button, Card, Col, Form, Modal, Row } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
@@ -24,6 +24,11 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showCompraModal, setShowCompraModal] = useState(false);
   const [compraExitosa, setCompraExitosa] = useState(false);
+
+  // Formulario de Reseñas
+  const [comentario, setComentario] = useState("");
+  const [votoPositivo, setVotoPositivo] = useState(true);
+  const [alertaResena, setAlertaResena] = useState(null);
 
   const buscar = buscarProducto || productosCtx?.buscarProducto;
   const agregar = agregarResena || productosCtx?.agregarResena;
@@ -92,6 +97,33 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
     detalle: porcentajeAprobacion !== null ? `${porcentajeAprobacion}% positivas (${totalResenas})` : "Aún sin reseñas",
     clasificacion: porcentajeAprobacion === null ? "Pendiente" : porcentajeAprobacion >= 70 ? "Mayormente positivas" : porcentajeAprobacion >= 40 ? "Mixtas" : "Mayormente negativas",
     variant: porcentajeAprobacion === null ? "secondary" : porcentajeAprobacion >= 70 ? "success" : porcentajeAprobacion >= 40 ? "warning" : "danger",
+  };
+
+  const handleEnviarResena = (e) => {
+    e.preventDefault();
+    setAlertaResena(null);
+    if (!usuarioActual) {
+      setAlertaResena({ variant: "warning", texto: "Debes iniciar sesión para publicar una reseña." });
+      return;
+    }
+    const texto = comentario.trim();
+    if (texto.length < 5) {
+      setAlertaResena({ variant: "warning", texto: "La opinión debe contener al menos 5 caracteres." });
+      return;
+    }
+    const nueva = {
+      id: `resena-${Date.now()}`,
+      autor: usuarioActual.nombre || "Gamer",
+      usuario: usuarioActual.nombre || "Gamer",
+      fecha: new Date().toISOString().split("T")[0],
+      voto: votoPositivo ? "positivo" : "negativo",
+      esPositiva: votoPositivo,
+      comentario: texto,
+    };
+    agregar?.(juego.id, nueva);
+    setComentario("");
+    setAlertaResena({ variant: "success", texto: "¡Tu reseña ha sido publicada y agregada a las estadísticas!" });
+    setTimeout(() => setAlertaResena(null), 3500);
   };
 
   return (
@@ -270,43 +302,135 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
           </Badge>
         </div>
 
-        {resenas.length === 0 ? (
-          <Card className="epic-box p-4 text-center text-secondary border-dashed">
-            <i className="bi bi-chat-dots display-6 d-block mb-2 text-muted" />
-            <p className="mb-0">Aún no hay opiniones sobre este videojuego. ¡Sé el primero en compartir tu experiencia!</p>
-          </Card>
-        ) : (
-          <Row className="g-3">
-            {resenas.map((r, i) => {
-              const pos = esPositiva(r);
-              const autor = r.autor || r.usuario || "Gamer";
-              return (
-                <Col key={r.id || `resena-${i}`} md={6}>
-                  <Card className="epic-box p-3 h-100 text-light shadow-sm">
-                    <div className="d-flex justify-content-between align-items-center mb-2">
-                      <div className="d-flex align-items-center gap-2">
-                        <span className="badge bg-secondary rounded-circle p-2 text-uppercase">
-                          {autor.slice(0, 2)}
-                        </span>
-                        <div>
-                          <strong className="d-block small">{autor}</strong>
-                          <span className="text-secondary" style={{ fontSize: "0.75rem" }}>
-                            {r.fecha || "Reciente"}
+        <Row className="g-4">
+          {/* Listado de Opiniones */}
+          <Col lg={7}>
+            {resenas.length === 0 ? (
+              <Card className="epic-box p-4 text-center text-secondary border-dashed">
+                <i className="bi bi-chat-dots display-6 d-block mb-2 text-muted" />
+                <p className="mb-0">Aún no hay opiniones sobre este videojuego. ¡Sé el primero en compartir tu experiencia!</p>
+              </Card>
+            ) : (
+              <div className="d-flex flex-column gap-3">
+                {resenas.map((r, i) => {
+                  const pos = esPositiva(r);
+                  const autor = r.autor || r.usuario || "Gamer";
+                  return (
+                    <Card key={r.id || `resena-${i}`} className="epic-box p-3 text-light shadow-sm">
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <div className="d-flex align-items-center gap-2">
+                          <span className="badge bg-secondary rounded-circle p-2 text-uppercase">
+                            {autor.slice(0, 2)}
                           </span>
+                          <div>
+                            <strong className="d-block small">{autor}</strong>
+                            <span className="text-secondary" style={{ fontSize: "0.75rem" }}>
+                              {r.fecha || "Reciente"}
+                            </span>
+                          </div>
                         </div>
+                        <Badge bg={pos ? "success" : "danger"} className="d-inline-flex align-items-center gap-1">
+                          <i className={`bi ${pos ? "bi-hand-thumbs-up-fill" : "bi-hand-thumbs-down-fill"}`} />
+                          <span>{pos ? "Recomendado" : "No recomendado"}</span>
+                        </Badge>
                       </div>
-                      <Badge bg={pos ? "success" : "danger"} className="d-inline-flex align-items-center gap-1">
-                        <i className={`bi ${pos ? "bi-hand-thumbs-up-fill" : "bi-hand-thumbs-down-fill"}`} />
-                        <span>{pos ? "Recomendado" : "No recomendado"}</span>
-                      </Badge>
+                      <p className="text-secondary small mb-0 lh-base">{r.comentario}</p>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+          </Col>
+
+          {/* Formulario de Publicación Protegido */}
+          <Col lg={5}>
+            <Card className="epic-box p-4 text-light shadow-sm sticky-lg-top" style={{ top: "90px" }}>
+              <h3 className="epic-heading h5 mb-3 d-flex align-items-center gap-2">
+                <i className="bi bi-pencil-square text-primary" />
+                <span>Publicar opinión</span>
+              </h3>
+
+              {alertaResena && (
+                <Alert variant={alertaResena.variant} className="py-2 small">
+                  {alertaResena.texto}
+                </Alert>
+              )}
+
+              {usuarioActual ? (
+                <Form onSubmit={handleEnviarResena}>
+                  <div className="mb-3">
+                    <Form.Label className="small text-secondary fw-semibold d-block mb-2">
+                      ¿Recomiendas este juego?
+                    </Form.Label>
+                    <div className="d-flex gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant={votoPositivo ? "success" : "outline-secondary"}
+                        className="w-50 d-flex align-items-center justify-content-center gap-1"
+                        onClick={() => setVotoPositivo(true)}
+                      >
+                        <i className="bi bi-hand-thumbs-up-fill" />
+                        <span>Sí, lo recomiendo</span>
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant={!votoPositivo ? "danger" : "outline-secondary"}
+                        className="w-50 d-flex align-items-center justify-content-center gap-1"
+                        onClick={() => setVotoPositivo(false)}
+                      >
+                        <i className="bi bi-hand-thumbs-down-fill" />
+                        <span>No lo recomiendo</span>
+                      </Button>
                     </div>
-                    <p className="text-secondary small mb-0 lh-base">{r.comentario}</p>
-                  </Card>
-                </Col>
-              );
-            })}
-          </Row>
-        )}
+                  </div>
+
+                  <Form.Group className="mb-3">
+                    <Form.Label className="small text-secondary fw-semibold">
+                      Tu comentario (mínimo 5 caracteres)
+                    </Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={4}
+                      className="epic-input"
+                      placeholder="Cuéntale a la comunidad tu experiencia jugando este título..."
+                      value={comentario}
+                      onChange={(e) => setComentario(e.target.value)}
+                      required
+                      minLength={5}
+                    />
+                    <div className="text-end mt-1">
+                      <small className={`small ${comentario.trim().length >= 5 ? "text-secondary" : "text-muted"}`}>
+                        {comentario.trim().length} / 5 mín.
+                      </small>
+                    </div>
+                  </Form.Group>
+
+                  <Button type="submit" className="btn-epic-primary w-100 py-2">
+                    <i className="bi bi-send me-1" />Publicar reseña
+                  </Button>
+                </Form>
+              ) : (
+                <div className="text-center py-3">
+                  <i className="bi bi-person-lock display-6 text-secondary d-block mb-2" />
+                  <p className="small text-secondary mb-3">
+                    Inicia sesión con tu cuenta de Rolling Gamer para calificar este juego y dejar tu opinión.
+                  </p>
+                  <Button
+                    as={Link}
+                    to="/login"
+                    state={{ tab: "login" }}
+                    size="sm"
+                    className="btn-epic-primary w-100"
+                  >
+                    <i className="bi bi-box-arrow-in-right me-1" />Iniciar sesión
+                  </Button>
+                </div>
+              )}
+            </Card>
+          </Col>
+        </Row>
       </section>
       {/* Modal de Autenticación Requerida para Deseos */}
       <Modal
