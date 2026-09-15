@@ -3,6 +3,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
 
+const formatoMoneda = (val) => `$${Number(val || 0).toLocaleString("es-AR")} ARS`;
+
 const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -37,6 +39,14 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
   const editor = juego.editor || juego.desarrollador || "Rolling Gamer Distribution";
   const lanzamiento = juego.lanzamiento || "Próximamente";
   const plataforma = juego.plataforma || "PC / Windows";
+
+  // Lógica de Precios coherente con CardJuego e Inicio
+  const precioOriginal = Number(juego.precio) || 0;
+  const descuento = Number(juego.descuento) || 0;
+  const tieneDescuento = descuento > 0;
+  const precioCalculado = tieneDescuento
+    ? Math.round(precioOriginal * (1 - descuento / 100))
+    : precioOriginal;
 
   return (
     <div className="detalle-producto-container py-3">
@@ -85,6 +95,25 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
                   <span>Lanzamiento:</span>
                   <span className="text-light fw-semibold">{lanzamiento}</span>
                 </div>
+              </div>
+            </div>
+
+            {/* Bloque de Precios y Oferta */}
+            <div className="border-top border-secondary border-opacity-25 pt-3">
+              <div className="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                {tieneDescuento && (
+                  <Badge bg="success" className="fs-6 px-2 py-1">
+                    -{descuento}%
+                  </Badge>
+                )}
+                {tieneDescuento && (
+                  <span className="text-muted text-decoration-line-through small">
+                    {formatoMoneda(precioOriginal)}
+                  </span>
+                )}
+              </div>
+              <div className="fs-3 fw-bold text-light mb-3">
+                {formatoMoneda(precioCalculado)}
               </div>
             </div>
           </div>
