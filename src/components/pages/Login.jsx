@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Alert, Button, Card, Form, Nav } from "react-bootstrap";
+import { Alert, Button, Card, Form, InputGroup, Nav } from "react-bootstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 
@@ -14,6 +14,8 @@ const Login = () => {
   const destino = location.state?.from?.pathname || "/";
   const [modo, setModo] = useState(() => (location.state?.tab === "registro" ? "registro" : "login"));
   const [msg, setMsg] = useState("");
+  const [verPass, setVerPass] = useState(false);
+  const [verRepetir, setVerRepetir] = useState(false);
   const [form, setForm] = useState({ nombre: "", email: "", password: "", repetir: "" });
 
   useEffect(() => {
@@ -56,10 +58,53 @@ const Login = () => {
           </Nav>
           {msg && <Alert variant="info" className="py-2">{msg}</Alert>}
           <Form onSubmit={enviar}>
-            {modo === "registro" && <Form.Control name="nombre" className="epic-input mb-3" placeholder="Nombre o alias" value={form.nombre} onChange={set} required />}
+            {modo === "registro" && (
+              <Form.Control name="nombre" className="epic-input mb-3" placeholder="Nombre o alias" value={form.nombre} onChange={set} required />
+            )}
             <Form.Control name="email" type="email" className="epic-input mb-3" placeholder="Email" value={form.email} onChange={set} required />
-            <Form.Control name="password" type="password" className="epic-input mb-3" placeholder="Contraseña" value={form.password} onChange={set} required minLength={6} />
-            {modo === "registro" && <Form.Control name="repetir" type="password" className="epic-input mb-3" placeholder="Repetir contraseña" value={form.repetir} onChange={set} required />}
+            <InputGroup className="mb-3">
+              <Form.Control
+                name="password"
+                type={verPass ? "text" : "password"}
+                className="epic-input border-end-0"
+                placeholder="Contraseña"
+                value={form.password}
+                onChange={set}
+                required
+                minLength={6}
+              />
+              <Button
+                variant="outline-secondary"
+                type="button"
+                className="bg-transparent text-secondary border-start-0"
+                onClick={() => setVerPass(!verPass)}
+                title={verPass ? "Ocultar contraseña" : "Ver contraseña"}
+              >
+                <i className={`bi ${verPass ? "bi-eye-slash" : "bi-eye"}`} />
+              </Button>
+            </InputGroup>
+            {modo === "registro" && (
+              <InputGroup className="mb-3">
+                <Form.Control
+                  name="repetir"
+                  type={verRepetir ? "text" : "password"}
+                  className="epic-input border-end-0"
+                  placeholder="Repetir contraseña"
+                  value={form.repetir}
+                  onChange={set}
+                  required
+                />
+                <Button
+                  variant="outline-secondary"
+                  type="button"
+                  className="bg-transparent text-secondary border-start-0"
+                  onClick={() => setVerRepetir(!verRepetir)}
+                  title={verRepetir ? "Ocultar contraseña" : "Ver contraseña"}
+                >
+                  <i className={`bi ${verRepetir ? "bi-eye-slash" : "bi-eye"}`} />
+                </Button>
+              </InputGroup>
+            )}
             <Button type="submit" className="btn-epic-primary w-100">{modo === "login" ? "Entrar" : "Registrarme"}</Button>
           </Form>
           <div className="d-grid gap-2 mt-3">
