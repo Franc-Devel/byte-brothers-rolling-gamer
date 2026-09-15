@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Badge, Button, Col, Row } from "react-bootstrap";
+import { Badge, Button, Card, Col, Row } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
@@ -42,6 +42,8 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
   const editor = juego.editor || juego.desarrollador || "Rolling Gamer Distribution";
   const lanzamiento = juego.lanzamiento || "Próximamente";
   const plataforma = juego.plataforma || "PC / Windows";
+  const descripcionCorta = juego.resumen || juego.descripcionCorta || "Sin sinopsis disponible.";
+  const descripcionLarga = juego.descripcion || juego.descripcionDetallada || descripcionCorta;
 
   // Lógica de Galería interactiva sin duplicados
   const portada = juego.imagen || juego.portada || FALLBACK_IMG;
@@ -120,7 +122,8 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
                 </Badge>
               </div>
 
-              <h1 className="epic-heading h3 text-light mb-3">{titulo}</h1>
+              <h1 className="epic-heading h3 text-light mb-2">{titulo}</h1>
+              <p className="text-secondary small mb-3">{descripcionCorta}</p>
 
               <div className="small text-secondary border-top border-secondary border-opacity-25 pt-3 mb-3">
                 <div className="d-flex justify-content-between py-1">
@@ -157,6 +160,20 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
               </div>
             </div>
           </div>
+        </Col>
+      </Row>
+
+      {/* Sección Descripción General Extensa */}
+      <Row className="mt-4">
+        <Col lg={8}>
+          <Card className="epic-box p-4 text-light shadow-sm">
+            <h2 className="epic-heading h5 mb-3 border-bottom border-secondary border-opacity-25 pb-2">
+              <i className="bi bi-card-text me-2 text-primary" />Acerca de este juego
+            </h2>
+            <p className="text-secondary lh-lg mb-0" style={{ whiteSpace: "pre-line" }}>
+              {descripcionLarga}
+            </p>
+          </Card>
         </Col>
       </Row>
     </div>
