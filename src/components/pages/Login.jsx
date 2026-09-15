@@ -3,8 +3,13 @@ import { Alert, Button, Card, Form, Nav } from "react-bootstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 
+const CREDENCIALES_DEMO = {
+  admin: { email: "admin@rollinggames.com", password: "admin123", label: "Administrador" },
+  usuario: { email: "user@rollinggames.com", password: "user123", label: "Usuario Gamer" },
+};
+
 const Login = () => {
-  const { login, register, loginRapido } = useAuth();
+  const { login, register } = useAuth();
   const navigate = useNavigate(), location = useLocation();
   const destino = location.state?.from?.pathname || "/";
   const [modo, setModo] = useState(() => (location.state?.tab === "registro" ? "registro" : "login"));
@@ -17,8 +22,15 @@ const Login = () => {
 
   const set = (e) => setForm({ ...form, [e.target.name]: e.target.value });
   const entrar = (u) => navigate(u?.rol === "admin" && destino === "/" ? "/admin" : destino, { replace: true });
-
   const cambiarModo = (m) => { setModo(m); setMsg(""); };
+
+  const cargarDemo = (tipo) => {
+    const cred = CREDENCIALES_DEMO[tipo];
+    if (!cred) return;
+    setModo("login");
+    setForm((prev) => ({ ...prev, email: cred.email, password: cred.password }));
+    setMsg(`Credenciales de ${cred.label} cargadas. Presiona "Entrar" para continuar.`);
+  };
 
   const enviar = (e) => {
     e.preventDefault(); setMsg("");
@@ -42,7 +54,7 @@ const Login = () => {
               </Nav.Item>
             ))}
           </Nav>
-          {msg && <Alert variant="danger" className="py-2">{msg}</Alert>}
+          {msg && <Alert variant="info" className="py-2">{msg}</Alert>}
           <Form onSubmit={enviar}>
             {modo === "registro" && <Form.Control name="nombre" className="epic-input mb-3" placeholder="Nombre o alias" value={form.nombre} onChange={set} required />}
             <Form.Control name="email" type="email" className="epic-input mb-3" placeholder="Email" value={form.email} onChange={set} required />
@@ -51,8 +63,8 @@ const Login = () => {
             <Button type="submit" className="btn-epic-primary w-100">{modo === "login" ? "Entrar" : "Registrarme"}</Button>
           </Form>
           <div className="d-grid gap-2 mt-3">
-            <Button variant="outline-warning" onClick={() => entrar(loginRapido("admin"))}>Demo admin</Button>
-            <Button variant="outline-info" onClick={() => entrar(loginRapido("usuario"))}>Demo usuario</Button>
+            <Button variant="outline-warning" onClick={() => cargarDemo("admin")}>Demo admin</Button>
+            <Button variant="outline-info" onClick={() => cargarDemo("usuario")}>Demo usuario</Button>
           </div>
           <Link to="/" className="text-secondary small text-center mt-3">Volver al catálogo</Link>
         </Card>
