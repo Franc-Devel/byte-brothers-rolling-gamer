@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, Badge, Button, Col, Row } from "react-bootstrap";
+import { Alert, Badge, Button, Card, Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
@@ -21,6 +21,12 @@ const Wishlist = ({ juegos: juegosProp }) => {
 
   const listaDisponible = Array.isArray(juegosProp) && juegosProp.length > 0 ? juegosProp : (productos || []);
   const juegos = usuarioActual && getWishlistJuegos ? getWishlistJuegos(listaDisponible) : [];
+
+  // Cálculos de Resumen
+  const totalJuegos = juegos.length;
+  const sumaPreciosOriginales = juegos.reduce((acc, j) => acc + (Number(j.precio) || 0), 0);
+  const sumaPreciosFinales = juegos.reduce((acc, j) => acc + calcularPrecioFinal(j), 0);
+  const ahorroTotal = sumaPreciosOriginales - sumaPreciosFinales;
 
   const handleQuitar = (juego) => {
     const nombre = juego.nombre || juego.titulo || "Videojuego";
@@ -46,11 +52,45 @@ const Wishlist = ({ juegos: juegosProp }) => {
 
   return (
     <>
-      <h1 className="epic-heading h3 mb-4">Mi lista de deseos</h1>
+      <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+        <h1 className="epic-heading h3 mb-0">Mi lista de deseos</h1>
+        {totalJuegos > 0 && (
+          <Badge bg="secondary" className="px-3 py-2 small">
+            <i className="bi bi-heart-fill text-danger me-1" />{totalJuegos} {totalJuegos === 1 ? "guardado" : "guardados"}
+          </Badge>
+        )}
+      </div>
+
       {aviso && (
         <Alert variant="info" className="py-2 small text-center mb-3">
           <i className="bi bi-info-circle me-1" />{aviso}
         </Alert>
+      )}
+
+      {/* Resumen de Selección en Pesos Argentinos */}
+      {totalJuegos > 0 && (
+        <Card className="epic-box p-3 mb-4 text-light shadow-sm">
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+              <div className="d-flex align-items-center gap-2 mb-1">
+                <span className="fw-semibold">Resumen de selección</span>
+                <Badge bg="primary" pill>{totalJuegos} {totalJuegos === 1 ? "título" : "títulos"}</Badge>
+              </div>
+              <small className="text-secondary d-block">
+                Lista de seguimiento personal. No opera como carrito de compras ni procesa pagos.
+              </small>
+            </div>
+            <div className="text-md-end border-top border-md-0 border-secondary border-opacity-25 pt-2 pt-md-0">
+              <span className="text-secondary small d-block">Inversión estimada total:</span>
+              <span className="fs-4 fw-bold text-primary">{formatoMoneda(sumaPreciosFinales)}</span>
+              {ahorroTotal > 0 && (
+                <small className="text-success d-block">
+                  <i className="bi bi-tag-fill me-1" />Ahorro en rebajas: {formatoMoneda(ahorroTotal)}
+                </small>
+              )}
+            </div>
+          </div>
+        </Card>
       )}
       <Row xs={1} md={2} lg={3} className="g-3">
         {juegos.map((j) => {
