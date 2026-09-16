@@ -51,7 +51,7 @@ const Wishlist = ({ juegos: juegosProp }) => {
   }
 
   return (
-    <>
+    <div className="wishlist-page-container py-3 py-md-4 px-1 px-sm-0">
       <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
         <h1 className="epic-heading h3 mb-0">Mi lista de deseos</h1>
         {totalJuegos > 0 && (
@@ -157,8 +157,22 @@ const Wishlist = ({ juegos: juegosProp }) => {
           );
         })}
       </Row>
-      {juegos.length === 0 && <p className="epic-box p-4 text-center text-secondary">Todavia no guardaste juegos.</p>}
-    </>
+
+      {juegos.length === 0 && (
+        <Card className="epic-box p-5 text-center text-secondary border-dashed my-4 shadow-sm">
+          <i className="bi bi-heartbreak display-4 text-secondary opacity-50 d-block mb-3" />
+          <h2 className="epic-heading h4 text-light mb-2">Tu lista de deseos está vacía</h2>
+          <p className="text-secondary small mb-4" style={{ maxWidth: 460, margin: "0 auto" }}>
+            Explora el catálogo de Rolling Gamer y guarda tus títulos favoritos haciendo clic en el icono de corazón en cada juego.
+          </p>
+          <div>
+            <Button as={Link} to="/" className="btn-epic-primary px-4 py-2">
+              <i className="bi bi-grid me-2" />Explorar el catálogo
+            </Button>
+          </div>
+        </Card>
+      )}
+    </div>
   );
 };
 
