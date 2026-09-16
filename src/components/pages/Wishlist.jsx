@@ -3,11 +3,27 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
 
-const Wishlist = () => {
+const Wishlist = ({ juegos: juegosProp }) => {
   const { usuarioActual, getWishlistJuegos, toggleWishlist } = useAuth();
   const { productos } = useProductos();
-  const juegos = getWishlistJuegos(productos);
-  if (!usuarioActual) return <div className="epic-box p-5 text-center"><h1 className="h3">Inicia sesion para ver tus deseos</h1><Button as={Link} to="/login" className="btn-epic-primary mt-2">Ingresar</Button></div>;
+
+  const listaDisponible = Array.isArray(juegosProp) && juegosProp.length > 0 ? juegosProp : (productos || []);
+  const juegos = usuarioActual && getWishlistJuegos ? getWishlistJuegos(listaDisponible) : [];
+
+  if (!usuarioActual) {
+    return (
+      <div className="epic-box p-5 text-center shadow">
+        <i className="bi bi-person-lock display-4 text-primary mb-3 d-block" />
+        <h1 className="epic-heading h3 mb-2">Inicia sesión para ver tus deseos</h1>
+        <p className="text-secondary small mb-3">
+          Tu lista de deseos está asociada a tu cuenta personal de Rolling Gamer.
+        </p>
+        <Button as={Link} to="/login" state={{ tab: "login" }} className="btn-epic-primary">
+          <i className="bi bi-box-arrow-in-right me-1" />Ingresar a mi cuenta
+        </Button>
+      </div>
+    );
+  }
   return (
     <>
       <h1 className="epic-heading h3 mb-4">Mi lista de deseos</h1>
