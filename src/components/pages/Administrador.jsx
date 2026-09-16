@@ -8,57 +8,45 @@ import ItemProducto from "./producto/ItemProducto.jsx";
 const Administrador = () => {
   const { productos, borrarProducto, recargarCatalogo } = useProductos();
   const { usuarios, usuarioActual, borrarUsuario } = useAuth();
-  const [tabActiva, setTabActiva] = useState("catalogo");
-  const [busqueda, setBusqueda] = useState("");
-  const [categoriaSel, setCategoriaSel] = useState("");
-  const [showRestaurar, setShowRestaurar] = useState(false);
+  const [tab, setTab] = useState("catalogo");
+  const [query, setQuery] = useState("");
+  const [categoria, setCategoria] = useState("");
+  const [modalReset, setModalReset] = useState(false);
 
   const categorias = useMemo(
     () => Array.from(new Set(productos.map((p) => p.categoria).filter(Boolean))).sort(),
     [productos]
   );
 
-  const metricas = useMemo(() => {
-    const cats = new Set(productos.map((p) => p.categoria).filter(Boolean));
-    const suma = productos.reduce((acc, p) => acc + (Number(p.precio) || 0), 0);
-    return {
-      totalJuegos: productos.length,
-      totalUsuarios: usuarios.length,
-      totalCategorias: cats.size,
-      sumaPrecios: `$${suma.toLocaleString("es-AR")}`,
-    };
-  }, [productos, usuarios]);
+  const metricas = useMemo(() => ({
+    juegos: productos.length,
+    usuarios: usuarios.length,
+    categorias: categorias.length,
+    valorBase: `$${productos.reduce((acc, p) => acc + (Number(p.precio) || 0), 0).toLocaleString("es-AR")}`,
+  }), [productos, usuarios, categorias]);
 
   const filtrados = useMemo(() => {
-    const term = busqueda.trim().toLowerCase();
+    const q = query.trim().toLowerCase();
     return productos.filter((p) => {
-      const matchTexto = !term ||
-        p.nombre?.toLowerCase().includes(term) ||
-        p.desarrollador?.toLowerCase().includes(term);
-      const matchCat = !categoriaSel || p.categoria === categoriaSel;
-      return matchTexto && matchCat;
+      const matchQ = !q || p.nombre?.toLowerCase().includes(q) || p.desarrollador?.toLowerCase().includes(q);
+      const matchC = !categoria || p.categoria === categoria;
+      return matchQ && matchC;
     });
-  }, [productos, busqueda, categoriaSel]);
+  }, [productos, query, categoria]);
 
-  const handleRestaurar = () => {
-    setShowRestaurar(false);
+  const confirmarReset = () => {
+    setModalReset(false);
     recargarCatalogo();
-    window.alert?.("Catálogo de videojuegos restablecido con éxito a los datos de fábrica.");
+    window.alert?.("Catálogo restablecido exitosamente a los datos de fábrica.");
   };
 
-  const eliminarUsuario = (u) => {
+  const bajaUsuario = (u) => {
     if (String(u.id) === String(usuarioActual?.id)) {
-      window.alert?.("No puedes eliminar la cuenta con la que has iniciado sesión.");
-      return;
+      return window.alert?.("No puedes eliminar la cuenta con la que has iniciado sesión.");
     }
-    if (window.confirm(`¿Confirmas la baja de la cuenta "${u.nombre}" (${u.email || u.correo})?`)) {
+    if (window.confirm(`¿Confirmas la baja de ${u.nombre} (${u.email || u.correo})?`)) {
       borrarUsuario(u.id);
     }
-  };
-
-  const limpiarFiltros = () => {
-    setBusqueda("");
-    setCategoriaSel("");
   };
 
   return (
@@ -69,64 +57,50 @@ const Administrador = () => {
           <h1 className="epic-heading h3 mb-0">Gestión de Plataforma</h1>
         </div>
         <div className="d-flex gap-2">
-          <Button variant="outline-secondary" onClick={() => setShowRestaurar(true)}>
+          <Button variant="outline-secondary" size="sm" onClick={() => setModalReset(true)}>
             <i className="bi bi-arrow-counterclockwise me-1" />Restaurar
           </Button>
-          <Button as={Link} to="/crear" className="btn-epic-primary">
+          <Button as={Link} to="/crear" size="sm" className="btn-epic-primary">
             <i className="bi bi-plus-lg me-1" />Nuevo juego
           </Button>
         </div>
       </div>
 
-      {/* Tarjetas de métricas globales */}
-      <Row className="g-3 mb-4">
-        <Col xs={6} md={3}>
-          <div className="epic-box p-3 text-center">
-            <span className="epic-subheading d-block mb-1">Catálogo</span>
-            <strong className="h4 text-light d-block mb-0">{metricas.totalJuegos}</strong>
-            <small className="text-secondary">Juegos totales</small>
-          </div>
-        </Col>
-        <Col xs={6} md={3}>
-          <div className="epic-box p-3 text-center">
-            <span className="epic-subheading d-block mb-1">Comunidad</span>
-            <strong className="h4 text-info d-block mb-0">{metricas.totalUsuarios}</strong>
-            <small className="text-secondary">Usuarios registrados</small>
-          </div>
-        </Col>
-        <Col xs={6} md={3}>
-          <div className="epic-box p-3 text-center">
-            <span className="epic-subheading d-block mb-1">Géneros</span>
-            <strong className="h4 text-warning d-block mb-0">{metricas.totalCategorias}</strong>
-            <small className="text-secondary">Categorías únicas</small>
-          </div>
-        </Col>
-        <Col xs={6} md={3}>
-          <div className="epic-box p-3 text-center">
-            <span className="epic-subheading d-block mb-1">Precios Base</span>
-            <strong className="h5 text-success d-block mb-0">{metricas.sumaPrecios}</strong>
-            <small className="text-secondary">Valor del catálogo</small>
-          </div>
-        </Col>
+      {/* Métricas del ecosistema */}
+      <Row className="g-2 g-md-3 mb-4">
+        {[
+          { label: "Catálogo", valor: metricas.juegos, desc: "Títulos totales", color: "text-light" },
+          { label: "Comunidad", valor: metricas.usuarios, desc: "Usuarios activos", color: "text-info" },
+          { label: "Géneros", valor: metricas.categorias, desc: "Categorías", color: "text-warning" },
+          { label: "Valor Base", valor: metricas.valorBase, desc: "Suma de precios", color: "text-success" },
+        ].map((m) => (
+          <Col xs={6} md={3} key={m.label}>
+            <div className="epic-box p-3 text-center h-100">
+              <span className="epic-subheading d-block mb-1">{m.label}</span>
+              <strong className={`h4 ${m.color} d-block mb-0`}>{m.valor}</strong>
+              <small className="text-secondary">{m.desc}</small>
+            </div>
+          </Col>
+        ))}
       </Row>
 
-      {/* Pestañas de gestión */}
+      {/* Navegación por pestañas */}
       <Nav variant="pills" className="bg-black rounded p-1 mb-3">
         <Nav.Item>
-          <Nav.Link active={tabActiva === "catalogo"} onClick={() => setTabActiva("catalogo")}>
+          <Nav.Link active={tab === "catalogo"} onClick={() => setTab("catalogo")}>
             <i className="bi bi-grid me-1" />Catálogo ({productos.length})
           </Nav.Link>
         </Nav.Item>
         <Nav.Item>
-          <Nav.Link active={tabActiva === "usuarios"} onClick={() => setTabActiva("usuarios")}>
+          <Nav.Link active={tab === "usuarios"} onClick={() => setTab("usuarios")}>
             <i className="bi bi-people me-1" />Usuarios ({usuarios.length})
           </Nav.Link>
         </Nav.Item>
       </Nav>
 
-      {tabActiva === "catalogo" ? (
+      {tab === "catalogo" ? (
         <Card className="epic-box p-3 mb-4 text-light">
-          {/* Barra de búsqueda y filtros */}
+          {/* Controles de búsqueda y filtros */}
           <div className="row g-2 mb-3 align-items-center">
             <div className="col-12 col-md-6">
               <InputGroup size="sm">
@@ -135,12 +109,12 @@ const Administrador = () => {
                 </InputGroup.Text>
                 <Form.Control
                   className="epic-input"
-                  placeholder="Buscar por título o estudio..."
-                  value={busqueda}
-                  onChange={(e) => setBusqueda(e.target.value)}
+                  placeholder="Buscar por título o desarrollador..."
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
                 />
-                {busqueda && (
-                  <Button variant="outline-secondary" onClick={() => setBusqueda("")}>
+                {query && (
+                  <Button variant="outline-secondary" onClick={() => setQuery("")}>
                     <i className="bi bi-x" />
                   </Button>
                 )}
@@ -150,28 +124,28 @@ const Administrador = () => {
               <Form.Select
                 size="sm"
                 className="epic-input"
-                value={categoriaSel}
-                onChange={(e) => setCategoriaSel(e.target.value)}
+                value={categoria}
+                onChange={(e) => setCategoria(e.target.value)}
               >
                 <option value="">Todas las categorías</option>
-                {categorias.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
+                {categorias.map((c) => (
+                  <option key={c} value={c}>{c}</option>
                 ))}
               </Form.Select>
             </div>
             <div className="col-4 col-md-2 text-end">
-              {(busqueda || categoriaSel) && (
-                <Button size="sm" variant="outline-secondary" className="w-100" onClick={limpiarFiltros}>
+              {(query || categoria) && (
+                <Button size="sm" variant="outline-secondary" className="w-100" onClick={() => { setQuery(""); setCategoria(""); }}>
                   Limpiar
                 </Button>
               )}
             </div>
           </div>
 
-          <Table responsive hover variant="dark" className="epic-table mb-0">
+          <Table responsive hover variant="dark" className="epic-table mb-0 align-middle">
             <thead>
               <tr>
-                <th style={{ width: 50 }}>#</th>
+                <th style={{ width: 45 }}>#</th>
                 <th>Juego</th>
                 <th>Categoría</th>
                 <th>Precio</th>
@@ -201,10 +175,10 @@ const Administrador = () => {
         </Card>
       ) : (
         <Card className="epic-box p-3 text-light">
-          <Table responsive hover variant="dark" className="epic-table mb-0">
+          <Table responsive hover variant="dark" className="epic-table mb-0 align-middle">
             <thead>
               <tr>
-                <th style={{ width: 50 }}>#</th>
+                <th style={{ width: 45 }}>#</th>
                 <th>Identidad</th>
                 <th>Correo</th>
                 <th>Rol</th>
@@ -216,7 +190,7 @@ const Administrador = () => {
               {usuarios.map((u, idx) => {
                 const esPropia = String(u.id) === String(usuarioActual?.id);
                 return (
-                  <tr key={u.id} className="align-middle">
+                  <tr key={u.id}>
                     <td className="text-secondary small">#{idx + 1}</td>
                     <td>
                       <span className="fw-bold text-light me-2">{u.nombre}</span>
@@ -226,9 +200,16 @@ const Administrador = () => {
                         </Badge>
                       )}
                     </td>
-                    <td className="text-secondary">{u.email || u.correo}</td>
+                    <td className="text-secondary small text-truncate" style={{ maxWidth: 200 }}>
+                      {u.email || u.correo}
+                    </td>
                     <td>
-                      <Badge bg={u.rol === "admin" ? "warning" : "info"} text="dark" className="text-uppercase" style={{ fontSize: "0.72rem" }}>
+                      <Badge
+                        bg={u.rol === "admin" ? "warning" : "info"}
+                        text="dark"
+                        className="text-uppercase"
+                        style={{ fontSize: "0.7rem" }}
+                      >
                         {u.rol}
                       </Badge>
                     </td>
@@ -240,7 +221,7 @@ const Administrador = () => {
                         size="sm"
                         variant={esPropia ? "secondary" : "outline-danger"}
                         disabled={esPropia}
-                        onClick={() => eliminarUsuario(u)}
+                        onClick={() => bajaUsuario(u)}
                         title={esPropia ? "Cuenta en uso actualmente" : "Dar de baja usuario"}
                       >
                         <i className="bi bi-trash me-1" />Baja
@@ -254,8 +235,8 @@ const Administrador = () => {
         </Card>
       )}
 
-      {/* Modal de confirmación para restablecer catálogo */}
-      <Modal show={showRestaurar} onHide={() => setShowRestaurar(false)} centered size="sm" contentClassName="bg-dark text-light border-secondary">
+      {/* Modal de confirmación para restablecer datos */}
+      <Modal show={modalReset} onHide={() => setModalReset(false)} centered size="sm" contentClassName="bg-dark text-light border-secondary">
         <Modal.Header closeButton closeVariant="white">
           <Modal.Title className="h6 mb-0">¿Restaurar catálogo?</Modal.Title>
         </Modal.Header>
@@ -263,10 +244,10 @@ const Administrador = () => {
           Esta acción reemplazará los videojuegos actuales por los datos de fábrica iniciales de la tienda.
         </Modal.Body>
         <Modal.Footer className="border-0 pt-0">
-          <Button size="sm" variant="secondary" onClick={() => setShowRestaurar(false)}>
+          <Button size="sm" variant="secondary" onClick={() => setModalReset(false)}>
             Cancelar
           </Button>
-          <Button size="sm" variant="warning" onClick={handleRestaurar}>
+          <Button size="sm" variant="warning" onClick={confirmarReset}>
             Restablecer
           </Button>
         </Modal.Footer>
