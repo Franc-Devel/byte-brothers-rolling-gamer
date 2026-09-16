@@ -3,6 +3,19 @@ import { Button, Form } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useProductos } from "../../../context/ProductosContext.jsx";
 
+const CATEGORIAS = [
+  "Acción",
+  "Aventura",
+  "RPG",
+  "Estrategia",
+  "Deportes",
+  "Simulación",
+  "Indie",
+  "Carreras",
+  "Terror",
+  "Disparos",
+];
+
 const base = {
   nombre: "",
   categoria: "Acción",
@@ -73,8 +86,72 @@ const FormularioProducto = ({
         <i className="bi bi-arrow-left me-1" />Volver al panel
       </Link>
       <h1 className="epic-heading h3 mb-3">{tituloPagina}</h1>
+
       <Form onSubmit={enviar} className="row g-3">
-        {["nombre", "categoria", "desarrollador", "imagen"].map((n) => <Form.Group className="col-md-6" key={n}><Form.Label>{n}</Form.Label><Form.Control name={n} className="epic-input" value={form[n] || ""} onChange={set} required /></Form.Group>)}
+        {/* Información básica */}
+        <Form.Group className="col-md-6">
+          <Form.Label className="small text-secondary fw-semibold">Título del videojuego *</Form.Label>
+          <Form.Control
+            name="nombre"
+            className="epic-input"
+            placeholder="Ej. Cyberpunk 2077: Phantom Liberty"
+            value={form.nombre || ""}
+            onChange={set}
+            required
+            minLength={2}
+          />
+        </Form.Group>
+
+        <Form.Group className="col-md-6">
+          <Form.Label className="small text-secondary fw-semibold">Categoría / Género *</Form.Label>
+          <Form.Select
+            name="categoria"
+            className="epic-input"
+            value={form.categoria || "Acción"}
+            onChange={set}
+            required
+          >
+            {CATEGORIAS.map((cat) => (
+              <option key={cat} value={cat} className="bg-dark text-light">
+                {cat}
+              </option>
+            ))}
+          </Form.Select>
+        </Form.Group>
+
+        <Form.Group className="col-md-4">
+          <Form.Label className="small text-secondary fw-semibold">Estudio / Desarrollador *</Form.Label>
+          <Form.Control
+            name="desarrollador"
+            className="epic-input"
+            placeholder="Ej. CD Projekt Red"
+            value={form.desarrollador || ""}
+            onChange={set}
+            required
+          />
+        </Form.Group>
+
+        <Form.Group className="col-md-4">
+          <Form.Label className="small text-secondary fw-semibold">Editor / Distribuidor</Form.Label>
+          <Form.Control
+            name="editor"
+            className="epic-input"
+            placeholder="Ej. CD Projekt"
+            value={form.editor || ""}
+            onChange={set}
+          />
+        </Form.Group>
+
+        <Form.Group className="col-md-4">
+          <Form.Label className="small text-secondary fw-semibold">Fecha de lanzamiento</Form.Label>
+          <Form.Control
+            name="lanzamiento"
+            type="date"
+            className="epic-input"
+            value={form.lanzamiento || ""}
+            onChange={set}
+          />
+        </Form.Group>
         <Form.Group className="col-md-3"><Form.Label>precio</Form.Label><Form.Control name="precio" type="number" min="0" className="epic-input" value={form.precio} onChange={set} required /></Form.Group>
         <Form.Group className="col-md-3"><Form.Label>descuento</Form.Label><Form.Control name="descuento" type="number" min="0" max="100" className="epic-input" value={form.descuento} onChange={set} /></Form.Group>
         <Form.Group className="col-12"><Form.Label>resumen</Form.Label><Form.Control name="resumen" className="epic-input" value={form.resumen || ""} onChange={set} /></Form.Group>
