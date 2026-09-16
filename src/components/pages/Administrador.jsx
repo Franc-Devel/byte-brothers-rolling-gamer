@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Badge, Button, Card, Col, Form, InputGroup, Nav, Row, Table } from "react-bootstrap";
+import { Badge, Button, Card, Col, Form, InputGroup, Modal, Nav, Row, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
@@ -11,6 +11,7 @@ const Administrador = () => {
   const [tabActiva, setTabActiva] = useState("catalogo");
   const [busqueda, setBusqueda] = useState("");
   const [categoriaSel, setCategoriaSel] = useState("");
+  const [showRestaurar, setShowRestaurar] = useState(false);
 
   const categorias = useMemo(
     () => Array.from(new Set(productos.map((p) => p.categoria).filter(Boolean))).sort(),
@@ -39,6 +40,12 @@ const Administrador = () => {
     });
   }, [productos, busqueda, categoriaSel]);
 
+  const handleRestaurar = () => {
+    setShowRestaurar(false);
+    recargarCatalogo();
+    window.alert?.("Catálogo de videojuegos restablecido con éxito a los datos de fábrica.");
+  };
+
   const eliminarUsuario = (u) => {
     if (String(u.id) === String(usuarioActual?.id)) {
       window.alert?.("No puedes eliminar la cuenta con la que has iniciado sesión.");
@@ -62,7 +69,7 @@ const Administrador = () => {
           <h1 className="epic-heading h3 mb-0">Gestión de Plataforma</h1>
         </div>
         <div className="d-flex gap-2">
-          <Button variant="outline-secondary" onClick={() => window.confirm("Restaurar catalogo inicial?") && recargarCatalogo()}>
+          <Button variant="outline-secondary" onClick={() => setShowRestaurar(true)}>
             <i className="bi bi-arrow-counterclockwise me-1" />Restaurar
           </Button>
           <Button as={Link} to="/crear" className="btn-epic-primary">
@@ -246,6 +253,24 @@ const Administrador = () => {
           </Table>
         </Card>
       )}
+
+      {/* Modal de confirmación para restablecer catálogo */}
+      <Modal show={showRestaurar} onHide={() => setShowRestaurar(false)} centered size="sm" contentClassName="bg-dark text-light border-secondary">
+        <Modal.Header closeButton closeVariant="white">
+          <Modal.Title className="h6 mb-0">¿Restaurar catálogo?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="small text-secondary">
+          Esta acción reemplazará los videojuegos actuales por los datos de fábrica iniciales de la tienda.
+        </Modal.Body>
+        <Modal.Footer className="border-0 pt-0">
+          <Button size="sm" variant="secondary" onClick={() => setShowRestaurar(false)}>
+            Cancelar
+          </Button>
+          <Button size="sm" variant="warning" onClick={handleRestaurar}>
+            Restablecer
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };
