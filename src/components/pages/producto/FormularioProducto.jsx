@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Badge, Button, Form } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useProductos } from "../../../context/ProductosContext.jsx";
 
@@ -151,9 +151,42 @@ const FormularioProducto = ({
             value={form.lanzamiento || ""}
             onChange={set}
           />
+        {/* Precios y descuentos */}
+        <Form.Group className="col-md-6">
+          <Form.Label className="small text-secondary fw-semibold">Precio (ARS) * (mínimo $50)</Form.Label>
+          <Form.Control
+            name="precio"
+            type="number"
+            min="50"
+            step="1"
+            className="epic-input"
+            placeholder="Ej. 15000"
+            value={form.precio}
+            onChange={set}
+            required
+          />
         </Form.Group>
-        <Form.Group className="col-md-3"><Form.Label>precio</Form.Label><Form.Control name="precio" type="number" min="0" className="epic-input" value={form.precio} onChange={set} required /></Form.Group>
-        <Form.Group className="col-md-3"><Form.Label>descuento</Form.Label><Form.Control name="descuento" type="number" min="0" max="100" className="epic-input" value={form.descuento} onChange={set} /></Form.Group>
+
+        <Form.Group className="col-md-6">
+          <div className="d-flex justify-content-between align-items-center mb-1">
+            <Form.Label className="small text-secondary fw-semibold mb-0">Descuento (%) (0 a 90)</Form.Label>
+            {Number(form.descuento) > 0 && (
+              <Badge bg="success" className="small">
+                Final: ${Math.round(Number(form.precio || 0) * (1 - Math.min(90, Number(form.descuento)) / 100)).toLocaleString("es-AR")} ARS
+              </Badge>
+            )}
+          </div>
+          <Form.Control
+            name="descuento"
+            type="number"
+            min="0"
+            max="90"
+            className="epic-input"
+            placeholder="0 a 90"
+            value={form.descuento}
+            onChange={set}
+          />
+        </Form.Group>
         <Form.Group className="col-12"><Form.Label>resumen</Form.Label><Form.Control name="resumen" className="epic-input" value={form.resumen || ""} onChange={set} /></Form.Group>
         <Form.Group className="col-12"><Form.Label>descripcion</Form.Label><Form.Control as="textarea" rows={4} name="descripcion" className="epic-input" value={form.descripcion || ""} onChange={set} /></Form.Group>
         <div className="col-12 d-flex gap-2"><Button type="submit" className="btn-epic-primary">Guardar</Button><Button as={Link} to="/admin" variant="outline-secondary">Cancelar</Button></div>
