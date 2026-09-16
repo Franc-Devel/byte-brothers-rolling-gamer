@@ -1,4 +1,5 @@
-import { Badge, Button, Col, Row } from "react-bootstrap";
+import { useState } from "react";
+import { Alert, Badge, Button, Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
@@ -16,9 +17,17 @@ const calcularPrecioFinal = (p) => {
 const Wishlist = ({ juegos: juegosProp }) => {
   const { usuarioActual, getWishlistJuegos, toggleWishlist } = useAuth();
   const { productos } = useProductos();
+  const [aviso, setAviso] = useState(null);
 
   const listaDisponible = Array.isArray(juegosProp) && juegosProp.length > 0 ? juegosProp : (productos || []);
   const juegos = usuarioActual && getWishlistJuegos ? getWishlistJuegos(listaDisponible) : [];
+
+  const handleQuitar = (juego) => {
+    const nombre = juego.nombre || juego.titulo || "Videojuego";
+    toggleWishlist?.(juego.id);
+    setAviso(`"${nombre}" fue eliminado de tu lista de deseos.`);
+    setTimeout(() => setAviso(null), 3500);
+  };
 
   if (!usuarioActual) {
     return (
@@ -38,6 +47,11 @@ const Wishlist = ({ juegos: juegosProp }) => {
   return (
     <>
       <h1 className="epic-heading h3 mb-4">Mi lista de deseos</h1>
+      {aviso && (
+        <Alert variant="info" className="py-2 small text-center mb-3">
+          <i className="bi bi-info-circle me-1" />{aviso}
+        </Alert>
+      )}
       <Row xs={1} md={2} lg={3} className="g-3">
         {juegos.map((j) => {
           const precioOriginal = Number(j.precio) || 0;
@@ -93,7 +107,7 @@ const Wishlist = ({ juegos: juegosProp }) => {
                     <Button as={Link} to={`/detalle/${j.id}`} size="sm" className="btn-epic-primary w-50">
                       <i className="bi bi-eye me-1" />Detalle
                     </Button>
-                    <Button size="sm" variant="outline-danger" className="w-50" onClick={() => toggleWishlist(j.id)}>
+                    <Button size="sm" variant="outline-danger" className="w-50" onClick={() => handleQuitar(j)}>
                       <i className="bi bi-trash me-1" />Quitar
                     </Button>
                   </div>
