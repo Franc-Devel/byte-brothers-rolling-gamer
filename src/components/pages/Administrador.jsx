@@ -1,4 +1,5 @@
-import { Badge, Button, Card, Table } from "react-bootstrap";
+import { useState, useMemo } from "react";
+import { Badge, Button, Card, Col, Nav, Row, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
@@ -6,49 +7,135 @@ import { useProductos } from "../../context/ProductosContext.jsx";
 const Administrador = () => {
   const { productos, borrarProducto, recargarCatalogo } = useProductos();
   const { usuarios, usuarioActual, borrarUsuario } = useAuth();
+  const [tabActiva, setTabActiva] = useState("catalogo");
+
+  const metricas = useMemo(() => {
+    const cats = new Set(productos.map((p) => p.categoria).filter(Boolean));
+    const suma = productos.reduce((acc, p) => acc + (Number(p.precio) || 0), 0);
+    return {
+      totalJuegos: productos.length,
+      totalUsuarios: usuarios.length,
+      totalCategorias: cats.size,
+      sumaPrecios: `$${suma.toLocaleString("es-AR")}`,
+    };
+  }, [productos, usuarios]);
+
   const eliminarJuego = (p) => window.confirm(`Eliminar ${p.nombre}?`) && borrarProducto(p.id);
   const eliminarUsuario = (u) => {
-    const r = String(u.id) === String(usuarioActual?.id) ? { success: false, mensaje: "No podes borrar la cuenta activa." } : window.confirm(`Dar de baja a ${u.nombre}?`) && borrarUsuario(u.id);
+    const r = String(u.id) === String(usuarioActual?.id)
+      ? { success: false, mensaje: "No podes borrar la cuenta activa." }
+      : window.confirm(`Dar de baja a ${u.nombre}?`) && borrarUsuario(u.id);
     if (r?.mensaje) window.alert(r.mensaje);
   };
 
   return (
     <>
-      <div className="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
-        <div><span className="epic-subheading">Admin</span><h1 className="epic-heading h3 mb-0">Gestion de plataforma</h1></div>
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+          <span className="epic-subheading">Panel de Control</span>
+          <h1 className="epic-heading h3 mb-0">Gestión de Plataforma</h1>
+        </div>
         <div className="d-flex gap-2">
-          <Button variant="outline-secondary" onClick={() => window.confirm("Restaurar catalogo inicial?") && recargarCatalogo()}>Restaurar</Button>
-          <Button as={Link} to="/crear" className="btn-epic-primary">Nuevo juego</Button>
+          <Button variant="outline-secondary" onClick={() => window.confirm("Restaurar catalogo inicial?") && recargarCatalogo()}>
+            <i className="bi bi-arrow-counterclockwise me-1" />Restaurar
+          </Button>
+          <Button as={Link} to="/crear" className="btn-epic-primary">
+            <i className="bi bi-plus-lg me-1" />Nuevo juego
+          </Button>
         </div>
       </div>
 
-      <Card className="epic-box p-3 mb-4 text-light">
-        <h2 className="h5">Catalogo ({productos.length})</h2>
-        <Table responsive hover variant="dark" className="epic-table mb-0">
-          <thead><tr><th>Juego</th><th>Categoria</th><th>Precio</th><th className="text-end">Acciones</th></tr></thead>
-          <tbody>{productos.map((p) => (
-            <tr key={p.id}>
-              <td><img src={p.imagen} alt="" className="rounded object-fit-cover me-2" style={{ width: 52, height: 36 }} />{p.nombre}</td>
-              <td><Badge bg="secondary">{p.categoria}</Badge></td>
-              <td>${Number(p.precio).toLocaleString("es-AR")}</td>
-              <td className="text-end">
-                <Button as={Link} to={`/editar/${p.id}`} size="sm" variant="outline-info" className="me-2">Editar</Button>
-                <Button size="sm" variant="outline-danger" onClick={() => eliminarJuego(p)}>Borrar</Button>
-              </td>
-            </tr>
-          ))}</tbody>
-        </Table>
-      </Card>
+      {/* Tarjetas de métricas globales */}
+      <Row className="g-3 mb-4">
+        <Col xs={6} md={3}>
+          <div className="epic-box p-3 text-center">
+            <span className="epic-subheading d-block mb-1">Catálogo</span>
+            <strong className="h4 text-light d-block mb-0">{metricas.totalJuegos}</strong>
+            <small className="text-secondary">Juegos totales</small>
+          </div>
+        </Col>
+        <Col xs={6} md={3}>
+          <div className="epic-box p-3 text-center">
+            <span className="epic-subheading d-block mb-1">Comunidad</span>
+            <strong className="h4 text-info d-block mb-0">{metricas.totalUsuarios}</strong>
+            <small className="text-secondary">Usuarios registrados</small>
+          </div>
+        </Col>
+        <Col xs={6} md={3}>
+          <div className="epic-box p-3 text-center">
+            <span className="epic-subheading d-block mb-1">Géneros</span>
+            <strong className="h4 text-warning d-block mb-0">{metricas.totalCategorias}</strong>
+            <small className="text-secondary">Categorías únicas</small>
+          </div>
+        </Col>
+        <Col xs={6} md={3}>
+          <div className="epic-box p-3 text-center">
+            <span className="epic-subheading d-block mb-1">Precios Base</span>
+            <strong className="h5 text-success d-block mb-0">{metricas.sumaPrecios}</strong>
+            <small className="text-secondary">Valor del catálogo</small>
+          </div>
+        </Col>
+      </Row>
 
-      <Card className="epic-box p-3 text-light">
-        <h2 className="h5">Usuarios ({usuarios.length})</h2>
-        <Table responsive hover variant="dark" className="epic-table mb-0">
-          <thead><tr><th>Nombre</th><th>Email</th><th>Rol</th><th className="text-end">Acciones</th></tr></thead>
-          <tbody>{usuarios.map((u) => (
-            <tr key={u.id}><td>{u.nombre}</td><td>{u.email || u.correo}</td><td>{u.rol}</td><td className="text-end"><Button size="sm" variant="outline-danger" onClick={() => eliminarUsuario(u)}>Baja</Button></td></tr>
-          ))}</tbody>
-        </Table>
-      </Card>
+      {/* Pestañas de gestión */}
+      <Nav variant="pills" className="bg-black rounded p-1 mb-3">
+        <Nav.Item>
+          <Nav.Link active={tabActiva === "catalogo"} onClick={() => setTabActiva("catalogo")}>
+            <i className="bi bi-grid me-1" />Catálogo ({productos.length})
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link active={tabActiva === "usuarios"} onClick={() => setTabActiva("usuarios")}>
+            <i className="bi bi-people me-1" />Usuarios ({usuarios.length})
+          </Nav.Link>
+        </Nav.Item>
+      </Nav>
+
+      {tabActiva === "catalogo" ? (
+        <Card className="epic-box p-3 mb-4 text-light">
+          <Table responsive hover variant="dark" className="epic-table mb-0">
+            <thead>
+              <tr><th>Juego</th><th>Categoría</th><th>Precio</th><th className="text-end">Acciones</th></tr>
+            </thead>
+            <tbody>
+              {productos.map((p) => (
+                <tr key={p.id}>
+                  <td>
+                    <img src={p.imagen} alt="" className="rounded object-fit-cover me-2" style={{ width: 52, height: 36 }} />
+                    {p.nombre}
+                  </td>
+                  <td><Badge bg="secondary">{p.categoria}</Badge></td>
+                  <td>${Number(p.precio).toLocaleString("es-AR")}</td>
+                  <td className="text-end">
+                    <Button as={Link} to={`/editar/${p.id}`} size="sm" variant="outline-info" className="me-2">Editar</Button>
+                    <Button size="sm" variant="outline-danger" onClick={() => eliminarJuego(p)}>Borrar</Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </Card>
+      ) : (
+        <Card className="epic-box p-3 text-light">
+          <Table responsive hover variant="dark" className="epic-table mb-0">
+            <thead>
+              <tr><th>Nombre</th><th>Email</th><th>Rol</th><th className="text-end">Acciones</th></tr>
+            </thead>
+            <tbody>
+              {usuarios.map((u) => (
+                <tr key={u.id}>
+                  <td>{u.nombre}</td>
+                  <td>{u.email || u.correo}</td>
+                  <td>{u.rol}</td>
+                  <td className="text-end">
+                    <Button size="sm" variant="outline-danger" onClick={() => eliminarUsuario(u)}>Baja</Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </Card>
+      )}
     </>
   );
 };
