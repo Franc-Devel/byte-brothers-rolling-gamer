@@ -1,8 +1,9 @@
 import { useState, useMemo } from "react";
-import { Badge, Button, Card, Col, Nav, Row, Table } from "react-bootstrap";
+import { Button, Card, Col, Nav, Row, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
+import ItemProducto from "./producto/ItemProducto.jsx";
 
 const Administrador = () => {
   const { productos, borrarProducto, recargarCatalogo } = useProductos();
@@ -20,7 +21,6 @@ const Administrador = () => {
     };
   }, [productos, usuarios]);
 
-  const eliminarJuego = (p) => window.confirm(`Eliminar ${p.nombre}?`) && borrarProducto(p.id);
   const eliminarUsuario = (u) => {
     const r = String(u.id) === String(usuarioActual?.id)
       ? { success: false, mensaje: "No podes borrar la cuenta activa." }
@@ -95,22 +95,23 @@ const Administrador = () => {
         <Card className="epic-box p-3 mb-4 text-light">
           <Table responsive hover variant="dark" className="epic-table mb-0">
             <thead>
-              <tr><th>Juego</th><th>Categoría</th><th>Precio</th><th className="text-end">Acciones</th></tr>
+              <tr>
+                <th style={{ width: 50 }}>#</th>
+                <th>Juego</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Aprobación</th>
+                <th className="text-end">Acciones</th>
+              </tr>
             </thead>
             <tbody>
-              {productos.map((p) => (
-                <tr key={p.id}>
-                  <td>
-                    <img src={p.imagen} alt="" className="rounded object-fit-cover me-2" style={{ width: 52, height: 36 }} />
-                    {p.nombre}
-                  </td>
-                  <td><Badge bg="secondary">{p.categoria}</Badge></td>
-                  <td>${Number(p.precio).toLocaleString("es-AR")}</td>
-                  <td className="text-end">
-                    <Button as={Link} to={`/editar/${p.id}`} size="sm" variant="outline-info" className="me-2">Editar</Button>
-                    <Button size="sm" variant="outline-danger" onClick={() => eliminarJuego(p)}>Borrar</Button>
-                  </td>
-                </tr>
+              {productos.map((p, idx) => (
+                <ItemProducto
+                  key={p.id}
+                  itemProducto={p}
+                  fila={idx + 1}
+                  borrarProducto={borrarProducto}
+                />
               ))}
             </tbody>
           </Table>
