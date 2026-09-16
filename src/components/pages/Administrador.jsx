@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Button, Card, Col, Nav, Row, Table } from "react-bootstrap";
+import { Button, Card, Col, Form, InputGroup, Nav, Row, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
@@ -9,6 +9,13 @@ const Administrador = () => {
   const { productos, borrarProducto, recargarCatalogo } = useProductos();
   const { usuarios, usuarioActual, borrarUsuario } = useAuth();
   const [tabActiva, setTabActiva] = useState("catalogo");
+  const [busqueda, setBusqueda] = useState("");
+  const [categoriaSel, setCategoriaSel] = useState("");
+
+  const categorias = useMemo(
+    () => Array.from(new Set(productos.map((p) => p.categoria).filter(Boolean))).sort(),
+    [productos]
+  );
 
   const metricas = useMemo(() => {
     const cats = new Set(productos.map((p) => p.categoria).filter(Boolean));
@@ -21,11 +28,27 @@ const Administrador = () => {
     };
   }, [productos, usuarios]);
 
+  const filtrados = useMemo(() => {
+    const term = busqueda.trim().toLowerCase();
+    return productos.filter((p) => {
+      const matchTexto = !term ||
+        p.nombre?.toLowerCase().includes(term) ||
+        p.desarrollador?.toLowerCase().includes(term);
+      const matchCat = !categoriaSel || p.categoria === categoriaSel;
+      return matchTexto && matchCat;
+    });
+  }, [productos, busqueda, categoriaSel]);
+
   const eliminarUsuario = (u) => {
     const r = String(u.id) === String(usuarioActual?.id)
       ? { success: false, mensaje: "No podes borrar la cuenta activa." }
       : window.confirm(`Dar de baja a ${u.nombre}?`) && borrarUsuario(u.id);
     if (r?.mensaje) window.alert(r.mensaje);
+  };
+
+  const limpiarFiltros = () => {
+    setBusqueda("");
+    setCategoriaSel("");
   };
 
   return (
@@ -93,6 +116,48 @@ const Administrador = () => {
 
       {tabActiva === "catalogo" ? (
         <Card className="epic-box p-3 mb-4 text-light">
+          {/* Barra de búsqueda y filtros */}
+          <div className="row g-2 mb-3 align-items-center">
+            <div className="col-12 col-md-6">
+              <InputGroup size="sm">
+                <InputGroup.Text className="bg-dark border-secondary text-secondary">
+                  <i className="bi bi-search" />
+                </InputGroup.Text>
+                <Form.Control
+                  className="epic-input"
+                  placeholder="Buscar por título o estudio..."
+                  value={busqueda}
+                  onChange={(e) => setBusqueda(e.target.value)}
+                />
+                {busqueda && (
+                  <Button variant="outline-secondary" onClick={() => setBusqueda("")}>
+                    <i className="bi bi-x" />
+                  </Button>
+                )}
+              </InputGroup>
+            </div>
+            <div className="col-8 col-md-4">
+              <Form.Select
+                size="sm"
+                className="epic-input"
+                value={categoriaSel}
+                onChange={(e) => setCategoriaSel(e.target.value)}
+              >
+                <option value="">Todas las categorías</option>
+                {categorias.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </Form.Select>
+            </div>
+            <div className="col-4 col-md-2 text-end">
+              {(busqueda || categoriaSel) && (
+                <Button size="sm" variant="outline-secondary" className="w-100" onClick={limpiarFiltros}>
+                  Limpiar
+                </Button>
+              )}
+            </div>
+          </div>
+
           <Table responsive hover variant="dark" className="epic-table mb-0">
             <thead>
               <tr>
@@ -105,14 +170,22 @@ const Administrador = () => {
               </tr>
             </thead>
             <tbody>
-              {productos.map((p, idx) => (
-                <ItemProducto
-                  key={p.id}
-                  itemProducto={p}
-                  fila={idx + 1}
-                  borrarProducto={borrarProducto}
-                />
-              ))}
+              {filtrados.length > 0 ? (
+                filtrados.map((p, idx) => (
+                  <ItemProducto
+                    key={p.id}
+                    itemProducto={p}
+                    fila={idx + 1}
+                    borrarProducto={borrarProducto}
+                  />
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={6} className="text-center py-4 text-secondary">
+                    No se encontraron videojuegos coincidentes con el filtro.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </Table>
         </Card>
