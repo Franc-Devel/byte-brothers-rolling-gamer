@@ -1,4 +1,5 @@
-import { Badge, Button, Container, Nav, Navbar } from "react-bootstrap";
+import { useState } from "react";
+import { Alert, Badge, Button, Container, Nav, Navbar } from "react-bootstrap";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useUIModal } from "../../context/UIModalContext.jsx";
@@ -7,25 +8,46 @@ const Menu = () => {
   const { usuarioActual, esAdmin, logout, wishlistIds } = useAuth();
   const { abrirModal } = useUIModal();
   const navigate = useNavigate();
+  const [avisoIdioma, setAvisoIdioma] = useState(false);
 
   const salir = () => { logout(); navigate("/"); };
+
+  const mostrarIdioma = () => {
+    setAvisoIdioma(true);
+    setTimeout(() => setAvisoIdioma(false), 3000);
+  };
 
   return (
     <header className="sticky-top">
       <div className="epic-topbar d-none d-md-block">
         <Container className="d-flex justify-content-between align-items-center">
-          <div className="d-flex gap-2">
+          <div className="d-flex align-items-center gap-3">
             {["noticias", "distribucion", "ayuda"].map((t) => (
               <button key={t} className="epic-topbar-link bg-transparent border-0 text-capitalize" onClick={() => abrirModal(t)}>
                 {t}
               </button>
             ))}
           </div>
-          <span className="text-secondary small">
-            <i className="bi bi-shield-check text-primary me-1" />Rolling Gamer
-          </span>
+          <div className="d-flex align-items-center gap-2">
+            <button
+              className="badge bg-secondary bg-opacity-25 text-light border-0 px-2 py-1 small"
+              onClick={mostrarIdioma}
+              title="Idioma predeterminado"
+            >
+              <i className="bi bi-globe2 me-1" />ES
+            </button>
+            <span className="text-secondary small">
+              <i className="bi bi-shield-check text-primary me-1" />Rolling Gamer
+            </span>
+          </div>
         </Container>
       </div>
+
+      {avisoIdioma && (
+        <Alert variant="info" className="py-1 px-3 mb-0 text-center small rounded-0 border-0 bg-dark text-info">
+          <i className="bi bi-info-circle me-1" />Plataforma en Español (Latinoamérica). Interfaz localizada predeterminada.
+        </Alert>
+      )}
 
       <Navbar expand="lg" variant="dark" className="epic-navbar">
         <Container>
