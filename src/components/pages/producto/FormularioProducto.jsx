@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Badge, Button, Form } from "react-bootstrap";
+import { Badge, Button, Card, Form } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useProductos } from "../../../context/ProductosContext.jsx";
 
@@ -28,6 +28,16 @@ const base = {
   galeria: "",
   resumen: "",
   descripcion: "",
+  req_min_so: "",
+  req_min_cpu: "",
+  req_min_ram: "",
+  req_min_gpu: "",
+  req_min_disco: "",
+  req_rec_so: "",
+  req_rec_cpu: "",
+  req_rec_ram: "",
+  req_rec_gpu: "",
+  req_rec_disco: "",
 };
 
 const FormularioProducto = ({
@@ -151,6 +161,8 @@ const FormularioProducto = ({
             value={form.lanzamiento || ""}
             onChange={set}
           />
+        </Form.Group>
+
         {/* Precios y descuentos */}
         <Form.Group className="col-md-6">
           <Form.Label className="small text-secondary fw-semibold">Precio (ARS) * (mínimo $50)</Form.Label>
@@ -222,6 +234,8 @@ const FormularioProducto = ({
               onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80"; }}
             />
           </div>
+        </Form.Group>
+
         {/* Descripciones con validaciones de longitud */}
         <Form.Group className="col-12">
           <div className="d-flex justify-content-between align-items-center mb-1">
@@ -260,7 +274,148 @@ const FormularioProducto = ({
             minLength={20}
           />
         </Form.Group>
-        <div className="col-12 d-flex gap-2"><Button type="submit" className="btn-epic-primary">Guardar</Button><Button as={Link} to="/admin" variant="outline-secondary">Cancelar</Button></div>
+
+        {/* Requisitos de Sistema */}
+        <div className="col-12 mt-4">
+          <div className="d-flex align-items-center gap-2 mb-2">
+            <i className="bi bi-cpu text-warning fs-5" />
+            <h2 className="h5 mb-0 text-light fw-bold">Requisitos de Sistema para PC</h2>
+          </div>
+          <p className="text-secondary small mb-3">
+            Completa las especificaciones técnicas mínimas y recomendadas para guiar a los jugadores.
+          </p>
+
+          <div className="row g-3">
+            {/* Requisitos Mínimos */}
+            <div className="col-12 col-lg-6">
+              <Card className="bg-black bg-opacity-40 border border-secondary border-opacity-25 h-100">
+                <Card.Header className="bg-transparent border-secondary border-opacity-25 py-2">
+                  <span className="badge bg-secondary bg-opacity-50 text-light me-2">Mínimos</span>
+                  <small className="text-secondary">Configuración básica</small>
+                </Card.Header>
+                <Card.Body className="d-flex flex-column gap-2 p-3">
+                  <div>
+                    <Form.Label className="small text-secondary fw-semibold mb-1">Sistema Operativo</Form.Label>
+                    <Form.Control
+                      name="req_min_so"
+                      className="epic-input"
+                      placeholder="Ej. Windows 10 64-bit"
+                      value={form.req_min_so || ""}
+                      onChange={set}
+                    />
+                  </div>
+                  <div>
+                    <Form.Label className="small text-secondary fw-semibold mb-1">Procesador (CPU)</Form.Label>
+                    <Form.Control
+                      name="req_min_cpu"
+                      className="epic-input"
+                      placeholder="Ej. Intel Core i5-3570K / AMD FX-8310"
+                      value={form.req_min_cpu || ""}
+                      onChange={set}
+                    />
+                  </div>
+                  <div>
+                    <Form.Label className="small text-secondary fw-semibold mb-1">Memoria RAM</Form.Label>
+                    <Form.Control
+                      name="req_min_ram"
+                      className="epic-input"
+                      placeholder="Ej. 8 GB RAM"
+                      value={form.req_min_ram || ""}
+                      onChange={set}
+                    />
+                  </div>
+                  <div>
+                    <Form.Label className="small text-secondary fw-semibold mb-1">Tarjeta Gráfica (GPU)</Form.Label>
+                    <Form.Control
+                      name="req_min_gpu"
+                      className="epic-input"
+                      placeholder="Ej. NVIDIA GeForce GTX 780 3GB / AMD Radeon RX 470"
+                      value={form.req_min_gpu || ""}
+                      onChange={set}
+                    />
+                  </div>
+                  <div>
+                    <Form.Label className="small text-secondary fw-semibold mb-1">Almacenamiento</Form.Label>
+                    <Form.Control
+                      name="req_min_disco"
+                      className="epic-input"
+                      placeholder="Ej. 70 GB de espacio disponible"
+                      value={form.req_min_disco || ""}
+                      onChange={set}
+                    />
+                  </div>
+                </Card.Body>
+              </Card>
+            </div>
+
+            {/* Requisitos Recomendados */}
+            <div className="col-12 col-lg-6">
+              <Card className="bg-black bg-opacity-40 border border-secondary border-opacity-25 h-100">
+                <Card.Header className="bg-transparent border-secondary border-opacity-25 py-2">
+                  <span className="badge bg-warning bg-opacity-75 text-dark fw-bold me-2">Recomendados</span>
+                  <small className="text-secondary">Rendimiento óptimo</small>
+                </Card.Header>
+                <Card.Body className="d-flex flex-column gap-2 p-3">
+                  <div>
+                    <Form.Label className="small text-secondary fw-semibold mb-1">Sistema Operativo</Form.Label>
+                    <Form.Control
+                      name="req_rec_so"
+                      className="epic-input"
+                      placeholder="Ej. Windows 10/11 64-bit"
+                      value={form.req_rec_so || ""}
+                      onChange={set}
+                    />
+                  </div>
+                  <div>
+                    <Form.Label className="small text-secondary fw-semibold mb-1">Procesador (CPU)</Form.Label>
+                    <Form.Control
+                      name="req_rec_cpu"
+                      className="epic-input"
+                      placeholder="Ej. Intel Core i7-4790 / AMD Ryzen 3 3200G"
+                      value={form.req_rec_cpu || ""}
+                      onChange={set}
+                    />
+                  </div>
+                  <div>
+                    <Form.Label className="small text-secondary fw-semibold mb-1">Memoria RAM</Form.Label>
+                    <Form.Control
+                      name="req_rec_ram"
+                      className="epic-input"
+                      placeholder="Ej. 16 GB RAM"
+                      value={form.req_rec_ram || ""}
+                      onChange={set}
+                    />
+                  </div>
+                  <div>
+                    <Form.Label className="small text-secondary fw-semibold mb-1">Tarjeta Gráfica (GPU)</Form.Label>
+                    <Form.Control
+                      name="req_rec_gpu"
+                      className="epic-input"
+                      placeholder="Ej. NVIDIA GeForce GTX 1060 6GB / AMD Radeon R9 Fury"
+                      value={form.req_rec_gpu || ""}
+                      onChange={set}
+                    />
+                  </div>
+                  <div>
+                    <Form.Label className="small text-secondary fw-semibold mb-1">Almacenamiento</Form.Label>
+                    <Form.Control
+                      name="req_rec_disco"
+                      className="epic-input"
+                      placeholder="Ej. 70 GB SSD"
+                      value={form.req_rec_disco || ""}
+                      onChange={set}
+                    />
+                  </div>
+                </Card.Body>
+              </Card>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-12 d-flex gap-2">
+          <Button type="submit" className="btn-epic-primary">Guardar</Button>
+          <Button as={Link} to="/admin" variant="outline-secondary">Cancelar</Button>
+        </div>
       </Form>
     </section>
   );
