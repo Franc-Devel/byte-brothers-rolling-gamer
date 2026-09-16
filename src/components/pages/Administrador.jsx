@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Button, Card, Col, Form, InputGroup, Nav, Row, Table } from "react-bootstrap";
+import { Badge, Button, Card, Col, Form, InputGroup, Nav, Row, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
@@ -40,10 +40,13 @@ const Administrador = () => {
   }, [productos, busqueda, categoriaSel]);
 
   const eliminarUsuario = (u) => {
-    const r = String(u.id) === String(usuarioActual?.id)
-      ? { success: false, mensaje: "No podes borrar la cuenta activa." }
-      : window.confirm(`Dar de baja a ${u.nombre}?`) && borrarUsuario(u.id);
-    if (r?.mensaje) window.alert(r.mensaje);
+    if (String(u.id) === String(usuarioActual?.id)) {
+      window.alert?.("No puedes eliminar la cuenta con la que has iniciado sesión.");
+      return;
+    }
+    if (window.confirm(`¿Confirmas la baja de la cuenta "${u.nombre}" (${u.email || u.correo})?`)) {
+      borrarUsuario(u.id);
+    }
   };
 
   const limpiarFiltros = () => {
@@ -193,19 +196,52 @@ const Administrador = () => {
         <Card className="epic-box p-3 text-light">
           <Table responsive hover variant="dark" className="epic-table mb-0">
             <thead>
-              <tr><th>Nombre</th><th>Email</th><th>Rol</th><th className="text-end">Acciones</th></tr>
+              <tr>
+                <th style={{ width: 50 }}>#</th>
+                <th>Identidad</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Fecha de alta</th>
+                <th className="text-end">Acciones</th>
+              </tr>
             </thead>
             <tbody>
-              {usuarios.map((u) => (
-                <tr key={u.id}>
-                  <td>{u.nombre}</td>
-                  <td>{u.email || u.correo}</td>
-                  <td>{u.rol}</td>
-                  <td className="text-end">
-                    <Button size="sm" variant="outline-danger" onClick={() => eliminarUsuario(u)}>Baja</Button>
-                  </td>
-                </tr>
-              ))}
+              {usuarios.map((u, idx) => {
+                const esPropia = String(u.id) === String(usuarioActual?.id);
+                return (
+                  <tr key={u.id} className="align-middle">
+                    <td className="text-secondary small">#{idx + 1}</td>
+                    <td>
+                      <span className="fw-bold text-light me-2">{u.nombre}</span>
+                      {esPropia && (
+                        <Badge bg="primary" className="small">
+                          <i className="bi bi-person-check me-1" />Tú
+                        </Badge>
+                      )}
+                    </td>
+                    <td className="text-secondary">{u.email || u.correo}</td>
+                    <td>
+                      <Badge bg={u.rol === "admin" ? "warning" : "info"} text="dark" className="text-uppercase" style={{ fontSize: "0.72rem" }}>
+                        {u.rol}
+                      </Badge>
+                    </td>
+                    <td className="text-secondary small">
+                      {u.fechaRegistro || u.fecha || "Preexistente"}
+                    </td>
+                    <td className="text-end">
+                      <Button
+                        size="sm"
+                        variant={esPropia ? "secondary" : "outline-danger"}
+                        disabled={esPropia}
+                        onClick={() => eliminarUsuario(u)}
+                        title={esPropia ? "Cuenta en uso actualmente" : "Dar de baja usuario"}
+                      >
+                        <i className="bi bi-trash me-1" />Baja
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </Table>
         </Card>
