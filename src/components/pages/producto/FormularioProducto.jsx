@@ -187,6 +187,42 @@ const FormularioProducto = ({
             onChange={set}
           />
         </Form.Group>
+
+        {/* Multimedia */}
+        <Form.Group className="col-md-8">
+          <Form.Label className="small text-secondary fw-semibold">URL de imagen de portada *</Form.Label>
+          <Form.Control
+            name="imagen"
+            type="url"
+            className="epic-input mb-2"
+            placeholder="https://images.unsplash.com/..."
+            value={form.imagen || ""}
+            onChange={set}
+            required
+          />
+          <Form.Label className="small text-secondary fw-semibold">Galería de capturas (URLs separadas por comas)</Form.Label>
+          <Form.Control
+            name="galeria"
+            className="epic-input"
+            placeholder="https://ejemplo.com/foto1.jpg, https://ejemplo.com/foto2.jpg"
+            value={form.galeria || ""}
+            onChange={set}
+          />
+          <small className="text-secondary opacity-75">Opcional. Se normalizarán automáticamente al guardar.</small>
+        </Form.Group>
+
+        <Form.Group className="col-md-4">
+          <Form.Label className="small text-secondary fw-semibold d-block">Vista previa de portada</Form.Label>
+          <div className="epic-box p-1 text-center bg-black bg-opacity-50 border border-secondary border-opacity-25 rounded" style={{ minHeight: 120 }}>
+            <img
+              src={form.imagen || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80"}
+              alt="Previsualización"
+              className="w-100 rounded object-fit-cover shadow-sm"
+              style={{ height: 115 }}
+              onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80"; }}
+            />
+          </div>
+        </Form.Group>
         <Form.Group className="col-12"><Form.Label>resumen</Form.Label><Form.Control name="resumen" className="epic-input" value={form.resumen || ""} onChange={set} /></Form.Group>
         <Form.Group className="col-12"><Form.Label>descripcion</Form.Label><Form.Control as="textarea" rows={4} name="descripcion" className="epic-input" value={form.descripcion || ""} onChange={set} /></Form.Group>
         <div className="col-12 d-flex gap-2"><Button type="submit" className="btn-epic-primary">Guardar</Button><Button as={Link} to="/admin" variant="outline-secondary">Cancelar</Button></div>
