@@ -127,8 +127,12 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
   };
 
   return (
-    <div className="detalle-producto-container py-3">
-      <Link to="/" className="text-secondary text-decoration-none small d-inline-flex align-items-center mb-3">
+    <div className="detalle-producto-container py-3 py-md-4 px-1 px-sm-0">
+      <Link
+        to="/"
+        className="text-secondary text-decoration-none small d-inline-flex align-items-center mb-3"
+        title="Regresar al catálogo principal"
+      >
         <i className="bi bi-arrow-left me-1" />Volver al catálogo
       </Link>
 
@@ -149,12 +153,13 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
 
           {/* Miniaturas de la Galería */}
           {imagenesGaleria.length > 1 && (
-            <div className="d-flex gap-2 mt-3 overflow-x-auto pb-2">
+            <div className="d-flex gap-2 mt-3 overflow-x-auto pb-2" role="region" aria-label="Galería de imágenes">
               {imagenesGaleria.map((img, idx) => (
                 <button
                   key={`${img}-${idx}`}
                   type="button"
                   onClick={() => setImgActiva(img)}
+                  aria-label={`Mostrar imagen ${idx + 1} de ${imagenesGaleria.length}`}
                   className={`btn p-0 border rounded overflow-hidden flex-shrink-0 transition-all ${
                     imgActiva === img ? "border-primary shadow" : "border-secondary border-opacity-50 opacity-75"
                   }`}
