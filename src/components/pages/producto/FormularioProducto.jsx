@@ -222,9 +222,44 @@ const FormularioProducto = ({
               onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80"; }}
             />
           </div>
+        {/* Descripciones con validaciones de longitud */}
+        <Form.Group className="col-12">
+          <div className="d-flex justify-content-between align-items-center mb-1">
+            <Form.Label className="small text-secondary fw-semibold mb-0">Resumen / Descripción corta * (mínimo 10 caracteres)</Form.Label>
+            <small className={`small ${String(form.resumen || "").trim().length >= 10 ? "text-secondary" : "text-warning"}`}>
+              {String(form.resumen || "").trim().length} / 10 mín.
+            </small>
+          </div>
+          <Form.Control
+            name="resumen"
+            className="epic-input"
+            placeholder="Ej. Aventura de espionaje y supervivencia en el distrito de Dogtown."
+            value={form.resumen || ""}
+            onChange={set}
+            required
+            minLength={10}
+          />
         </Form.Group>
-        <Form.Group className="col-12"><Form.Label>resumen</Form.Label><Form.Control name="resumen" className="epic-input" value={form.resumen || ""} onChange={set} /></Form.Group>
-        <Form.Group className="col-12"><Form.Label>descripcion</Form.Label><Form.Control as="textarea" rows={4} name="descripcion" className="epic-input" value={form.descripcion || ""} onChange={set} /></Form.Group>
+
+        <Form.Group className="col-12">
+          <div className="d-flex justify-content-between align-items-center mb-1">
+            <Form.Label className="small text-secondary fw-semibold mb-0">Descripción detallada del juego * (mínimo 20 caracteres)</Form.Label>
+            <small className={`small ${String(form.descripcion || "").trim().length >= 20 ? "text-secondary" : "text-warning"}`}>
+              {String(form.descripcion || "").trim().length} / 20 mín.
+            </small>
+          </div>
+          <Form.Control
+            as="textarea"
+            rows={4}
+            name="descripcion"
+            className="epic-input"
+            placeholder="Argumento principal, mecánicas de juego, ambientación..."
+            value={form.descripcion || ""}
+            onChange={set}
+            required
+            minLength={20}
+          />
+        </Form.Group>
         <div className="col-12 d-flex gap-2"><Button type="submit" className="btn-epic-primary">Guardar</Button><Button as={Link} to="/admin" variant="outline-secondary">Cancelar</Button></div>
       </Form>
     </section>
