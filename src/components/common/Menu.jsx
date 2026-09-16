@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, Badge, Button, Container, Nav, Navbar } from "react-bootstrap";
+import { Alert, Badge, Button, Container, Modal, Nav, Navbar } from "react-bootstrap";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useUIModal } from "../../context/UIModalContext.jsx";
@@ -9,8 +9,13 @@ const Menu = () => {
   const { abrirModal } = useUIModal();
   const navigate = useNavigate();
   const [avisoIdioma, setAvisoIdioma] = useState(false);
+  const [confirmarSalir, setConfirmarSalir] = useState(false);
 
-  const salir = () => { logout(); navigate("/"); };
+  const ejecutarSalir = () => {
+    setConfirmarSalir(false);
+    logout();
+    navigate("/");
+  };
 
   const mostrarIdioma = () => {
     setAvisoIdioma(true);
@@ -78,8 +83,13 @@ const Menu = () => {
 
             {usuarioActual ? (
               <div className="d-flex align-items-center gap-2">
-                <span className="small text-secondary">{usuarioActual.nombre}</span>
-                <Button size="sm" variant="outline-secondary" onClick={salir}>
+                <div className="d-flex flex-column text-end">
+                  <span className="small text-light fw-bold">{usuarioActual.nombre}</span>
+                  <span className="badge bg-secondary bg-opacity-50 text-uppercase py-0 px-1" style={{ fontSize: "0.65rem" }}>
+                    {esAdmin ? "Administrador" : "Gamer"}
+                  </span>
+                </div>
+                <Button size="sm" variant="outline-danger" onClick={() => setConfirmarSalir(true)} title="Cerrar sesión">
                   <i className="bi bi-box-arrow-right me-1" />Salir
                 </Button>
               </div>
@@ -96,6 +106,24 @@ const Menu = () => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
+
+      {/* Modal de confirmación de cierre de sesión */}
+      <Modal show={confirmarSalir} onHide={() => setConfirmarSalir(false)} centered size="sm" contentClassName="bg-dark text-light border-secondary">
+        <Modal.Header closeButton closeVariant="white">
+          <Modal.Title className="h6 mb-0">¿Cerrar sesión?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="small text-secondary">
+          Al confirmar saldrás de tu cuenta y regresarás al catálogo principal.
+        </Modal.Body>
+        <Modal.Footer className="border-0 pt-0">
+          <Button size="sm" variant="secondary" onClick={() => setConfirmarSalir(false)}>
+            Cancelar
+          </Button>
+          <Button size="sm" variant="danger" onClick={ejecutarSalir}>
+            Cerrar sesión
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </header>
   );
 };
