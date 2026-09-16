@@ -8,16 +8,20 @@ const Menu = () => {
   const { usuarioActual, esAdmin, logout, wishlistIds } = useAuth();
   const { abrirModal } = useUIModal();
   const navigate = useNavigate();
+  const [expandido, setExpandido] = useState(false);
   const [avisoIdioma, setAvisoIdioma] = useState(false);
   const [confirmarSalir, setConfirmarSalir] = useState(false);
 
+  const cerrarMenu = () => setExpandido(false);
+
   const ejecutarSalir = () => {
     setConfirmarSalir(false);
+    cerrarMenu();
     logout();
     navigate("/");
   };
 
-  const mostrarIdioma = () => {
+  const alternarIdioma = () => {
     setAvisoIdioma(true);
     setTimeout(() => setAvisoIdioma(false), 3000);
   };
@@ -34,11 +38,7 @@ const Menu = () => {
             ))}
           </div>
           <div className="d-flex align-items-center gap-2">
-            <button
-              className="badge bg-secondary bg-opacity-25 text-light border-0 px-2 py-1 small"
-              onClick={mostrarIdioma}
-              title="Idioma predeterminado"
-            >
+            <button className="badge bg-secondary bg-opacity-25 text-light border-0 px-2 py-1 small" onClick={alternarIdioma} title="Idioma de plataforma">
               <i className="bi bi-globe2 me-1" />ES
             </button>
             <span className="text-secondary small">
@@ -50,42 +50,42 @@ const Menu = () => {
 
       {avisoIdioma && (
         <Alert variant="info" className="py-1 px-3 mb-0 text-center small rounded-0 border-0 bg-dark text-info">
-          <i className="bi bi-info-circle me-1" />Plataforma en Español (Latinoamérica). Interfaz localizada predeterminada.
+          <i className="bi bi-info-circle me-1" />Plataforma configurada en Español (Latinoamérica). Interfaz localizada.
         </Alert>
       )}
 
-      <Navbar expand="lg" variant="dark" className="epic-navbar">
+      <Navbar expand="lg" variant="dark" className="epic-navbar" expanded={expandido} onToggle={setExpandido}>
         <Container>
-          <Navbar.Brand as={Link} to="/" className="d-flex align-items-center gap-2">
+          <Navbar.Brand as={Link} to="/" onClick={cerrarMenu} className="d-flex align-items-center gap-2">
             <span className="epic-logo-badge">R</span>
             <span className="epic-heading h5 mb-0">ROLLING<span className="text-primary">GAMER</span></span>
           </Navbar.Brand>
 
-          <Navbar.Toggle aria-controls="nav" />
+          <Navbar.Toggle aria-controls="nav-gamer" />
 
-          <Navbar.Collapse id="nav">
-            <Nav className="me-auto ms-lg-3">
-              <Nav.Link as={NavLink} to="/" end className="epic-nav-link">
+          <Navbar.Collapse id="nav-gamer">
+            <Nav className="me-auto ms-lg-3 py-2 py-lg-0">
+              <Nav.Link as={NavLink} to="/" end onClick={cerrarMenu} className="epic-nav-link">
                 <i className="bi bi-grid me-1" />Descubrir
               </Nav.Link>
-              <Nav.Link as={NavLink} to="/wishlist" className="epic-nav-link">
+              <Nav.Link as={NavLink} to="/wishlist" onClick={cerrarMenu} className="epic-nav-link">
                 <i className="bi bi-heart me-1" />Deseos {usuarioActual && wishlistIds.length > 0 && <Badge bg="primary" pill>{wishlistIds.length}</Badge>}
               </Nav.Link>
-              <Nav.Link as={NavLink} to="/about" className="epic-nav-link">
+              <Nav.Link as={NavLink} to="/about" onClick={cerrarMenu} className="epic-nav-link">
                 <i className="bi bi-people me-1" />Equipo
               </Nav.Link>
               {esAdmin && (
-                <Nav.Link as={NavLink} to="/admin" className="epic-nav-link">
+                <Nav.Link as={NavLink} to="/admin" onClick={cerrarMenu} className="epic-nav-link">
                   <i className="bi bi-speedometer2 me-1" />Admin
                 </Nav.Link>
               )}
             </Nav>
 
             {usuarioActual ? (
-              <div className="d-flex align-items-center gap-2">
-                <div className="d-flex flex-column text-end">
-                  <span className="small text-light fw-bold">{usuarioActual.nombre}</span>
-                  <span className="badge bg-secondary bg-opacity-50 text-uppercase py-0 px-1" style={{ fontSize: "0.65rem" }}>
+              <div className="d-flex align-items-center gap-2 pt-2 pt-lg-0 border-top border-lg-0 border-secondary border-opacity-25">
+                <div className="d-flex flex-column text-lg-end">
+                  <span className="small text-light fw-bold text-truncate" style={{ maxWidth: "160px" }}>{usuarioActual.nombre}</span>
+                  <span className="badge bg-secondary bg-opacity-50 text-uppercase py-0 px-1" style={{ fontSize: "0.65rem", width: "fit-content" }}>
                     {esAdmin ? "Administrador" : "Gamer"}
                   </span>
                 </div>
@@ -94,11 +94,11 @@ const Menu = () => {
                 </Button>
               </div>
             ) : (
-              <div className="d-flex align-items-center gap-2">
-                <Button as={Link} to="/login" state={{ tab: "login" }} size="sm" className="btn-epic-primary">
+              <div className="d-flex align-items-center gap-2 pt-2 pt-lg-0 border-top border-lg-0 border-secondary border-opacity-25">
+                <Button as={Link} to="/login" state={{ tab: "login" }} onClick={cerrarMenu} size="sm" className="btn-epic-primary">
                   <i className="bi bi-person me-1" />Ingresar
                 </Button>
-                <Button as={Link} to="/login" state={{ tab: "registro" }} size="sm" variant="outline-light">
+                <Button as={Link} to="/login" state={{ tab: "registro" }} onClick={cerrarMenu} size="sm" variant="outline-light">
                   Registro
                 </Button>
               </div>
@@ -107,7 +107,6 @@ const Menu = () => {
         </Container>
       </Navbar>
 
-      {/* Modal de confirmación de cierre de sesión */}
       <Modal show={confirmarSalir} onHide={() => setConfirmarSalir(false)} centered size="sm" contentClassName="bg-dark text-light border-secondary">
         <Modal.Header closeButton closeVariant="white">
           <Modal.Title className="h6 mb-0">¿Cerrar sesión?</Modal.Title>
