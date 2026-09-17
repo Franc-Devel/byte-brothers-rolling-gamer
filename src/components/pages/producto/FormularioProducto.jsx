@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Badge, Button, Card, Form } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useProductos } from "../../../context/ProductosContext.jsx";
@@ -40,6 +40,35 @@ const base = {
   req_rec_disco: "",
 };
 
+const mapearJuegoAForm = (juego) => {
+  if (!juego) return base;
+  return {
+    ...base,
+    ...juego,
+    nombre: juego.nombre || juego.titulo || "",
+    categoria: juego.categoria || juego.genero || "Acción",
+    precio: juego.precio ?? 0,
+    descuento: juego.descuento ?? 0,
+    desarrollador: juego.desarrollador || juego.estudio || "",
+    editor: juego.editor || "",
+    lanzamiento: juego.lanzamiento || "",
+    imagen: juego.imagen || juego.portada || "",
+    galeria: Array.isArray(juego.galeria) ? juego.galeria.join(", ") : (juego.galeria || ""),
+    resumen: juego.resumen || "",
+    descripcion: juego.descripcion || "",
+    req_min_so: juego.requisitos?.minimos?.so || juego.req_min_so || "",
+    req_min_cpu: juego.requisitos?.minimos?.cpu || juego.req_min_cpu || "",
+    req_min_ram: juego.requisitos?.minimos?.ram || juego.req_min_ram || "",
+    req_min_gpu: juego.requisitos?.minimos?.gpu || juego.req_min_gpu || "",
+    req_min_disco: juego.requisitos?.minimos?.disco || juego.req_min_disco || "",
+    req_rec_so: juego.requisitos?.recomendados?.so || juego.req_rec_so || "",
+    req_rec_cpu: juego.requisitos?.recomendados?.cpu || juego.req_rec_cpu || "",
+    req_rec_ram: juego.requisitos?.recomendados?.ram || juego.req_rec_ram || "",
+    req_rec_gpu: juego.requisitos?.recomendados?.gpu || juego.req_rec_gpu || "",
+    req_rec_disco: juego.requisitos?.recomendados?.disco || juego.req_rec_disco || "",
+  };
+};
+
 const FormularioProducto = ({
   titulo: tituloProp,
   crearProducto: crearProp,
@@ -60,10 +89,16 @@ const FormularioProducto = ({
 
   const [form, setForm] = useState(() => {
     if (editando && juegoExistente) {
-      return { ...base, ...juegoExistente };
+      return mapearJuegoAForm(juegoExistente);
     }
     return base;
   });
+
+  useEffect(() => {
+    if (editando && juegoExistente) {
+      setForm(mapearJuegoAForm(juegoExistente));
+    }
+  }, [id, juegoExistente, editando]);
 
   const tituloPagina = tituloProp || (editando ? "Editar videojuego" : "Crear videojuego");
 
