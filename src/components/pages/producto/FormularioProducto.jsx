@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Alert, Badge, Button, Card, Form, Spinner } from "react-bootstrap";
+import { Alert, Badge, Button, Card, Form, Modal, Spinner } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useProductos } from "../../../context/ProductosContext.jsx";
 
@@ -97,12 +97,29 @@ const FormularioProducto = ({
   const [errores, setErrores] = useState({});
   const [alerta, setAlerta] = useState(null);
   const [guardando, setGuardando] = useState(false);
+  const [mostrarModalCancelar, setMostrarModalCancelar] = useState(false);
 
   useEffect(() => {
     if (editando && juegoExistente) {
       setForm(mapearJuegoAForm(juegoExistente));
     }
   }, [id, juegoExistente, editando]);
+
+  const esFormularioModificado = () => {
+    const inicial = editando && juegoExistente ? mapearJuegoAForm(juegoExistente) : base;
+    return Object.keys(base).some((k) => String(form[k] ?? "") !== String(inicial[k] ?? ""));
+  };
+
+  const manejarCancelar = (e) => {
+    if (e && typeof e.preventDefault === "function") {
+      e.preventDefault();
+    }
+    if (esFormularioModificado()) {
+      setMostrarModalCancelar(true);
+    } else {
+      navigate("/admin");
+    }
+  };
 
   const tituloPagina = tituloProp || (editando ? "Editar videojuego" : "Crear videojuego");
 
@@ -259,9 +276,13 @@ const FormularioProducto = ({
 
   return (
     <section className="epic-box p-4">
-      <Link to="/admin" className="text-secondary text-decoration-none small d-inline-flex align-items-center mb-3">
+      <button
+        type="button"
+        onClick={manejarCancelar}
+        className="btn btn-link p-0 text-secondary text-decoration-none small d-inline-flex align-items-center mb-3"
+      >
         <i className="bi bi-arrow-left me-1" />Volver al panel
-      </Link>
+      </button>
       <h1 className="epic-heading h3 mb-3">{tituloPagina}</h1>
 
       {alerta && (
@@ -623,11 +644,41 @@ const FormularioProducto = ({
               </>
             )}
           </Button>
-          <Button as={Link} to="/admin" variant="outline-secondary" disabled={guardando}>
+          <Button
+            type="button"
+            variant="outline-secondary"
+            disabled={guardando}
+            onClick={manejarCancelar}
+          >
             Cancelar
           </Button>
         </div>
       </Form>
+
+      <Modal
+        show={mostrarModalCancelar}
+        onHide={() => setMostrarModalCancelar(false)}
+        centered
+        contentClassName="bg-dark text-light border border-secondary border-opacity-25 shadow-lg"
+      >
+        <Modal.Header closeButton closeVariant="white" className="border-secondary border-opacity-25">
+          <Modal.Title className="h5 d-flex align-items-center gap-2">
+            <i className="bi bi-exclamation-circle text-warning" />
+            ¿Descartar cambios?
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="text-secondary small">
+          Tienes modificaciones sin guardar en el formulario. Si sales ahora, los datos introducidos se perderán.
+        </Modal.Body>
+        <Modal.Footer className="border-secondary border-opacity-25">
+          <Button variant="outline-secondary" size="sm" onClick={() => setMostrarModalCancelar(false)}>
+            Continuar editando
+          </Button>
+          <Button variant="danger" size="sm" onClick={() => navigate("/admin")}>
+            Descartar y volver
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </section>
   );
 };
