@@ -94,6 +94,8 @@ const FormularioProducto = ({
     return base;
   });
 
+  const [errores, setErrores] = useState({});
+
   useEffect(() => {
     if (editando && juegoExistente) {
       setForm(mapearJuegoAForm(juegoExistente));
@@ -117,9 +119,73 @@ const FormularioProducto = ({
     );
   }
 
-  const set = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const validarFormulario = () => {
+    const err = {};
+    const nombreLimpio = String(form.nombre || "").trim();
+    if (!nombreLimpio) {
+      err.nombre = "El título del videojuego es obligatorio.";
+    } else if (nombreLimpio.length < 2) {
+      err.nombre = "El título debe contener al menos 2 caracteres.";
+    }
+
+    const desarrolladorLimpio = String(form.desarrollador || "").trim();
+    if (!desarrolladorLimpio) {
+      err.desarrollador = "El estudio o desarrollador es obligatorio.";
+    }
+
+    const numPrecio = Number(form.precio);
+    if (isNaN(numPrecio) || form.precio === "" || numPrecio < 50) {
+      err.precio = "El precio debe ser un monto numérico mayor o igual a $50 ARS.";
+    }
+
+    const numDescuento = Number(form.descuento);
+    if (isNaN(numDescuento) || numDescuento < 0 || numDescuento > 90) {
+      err.descuento = "El porcentaje de descuento debe estar comprendido entre 0 y 90%.";
+    }
+
+    const imgLimpia = String(form.imagen || "").trim();
+    if (!imgLimpia) {
+      err.imagen = "La URL de la imagen de portada es obligatoria.";
+    } else if (!/^https?:\/\/.+/i.test(imgLimpia)) {
+      err.imagen = "Ingresa una URL válida que comience con http:// o https://.";
+    }
+
+    const resumenLimpio = String(form.resumen || "").trim();
+    if (!resumenLimpio) {
+      err.resumen = "El resumen del videojuego es obligatorio.";
+    } else if (resumenLimpio.length < 10) {
+      err.resumen = "El resumen debe tener como mínimo 10 caracteres.";
+    }
+
+    const descLimpia = String(form.descripcion || "").trim();
+    if (!descLimpia) {
+      err.descripcion = "La descripción detallada es obligatoria.";
+    } else if (descLimpia.length < 20) {
+      err.descripcion = "La descripción debe tener como mínimo 20 caracteres.";
+    }
+
+    return err;
+  };
+
+  const set = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    if (errores[name]) {
+      setErrores((prev) => {
+        const copia = { ...prev };
+        delete copia[name];
+        return copia;
+      });
+    }
+  };
+
   const enviar = (e) => {
     e.preventDefault();
+    const fallas = validarFormulario();
+    if (Object.keys(fallas).length > 0) {
+      setErrores(fallas);
+      return;
+    }
     const listo = { ...form, precio: Number(form.precio), descuento: Number(form.descuento), titulo: form.nombre, genero: form.categoria, portada: form.imagen };
     editando ? modificar(listo) : crear(listo);
     navigate("/admin");
@@ -132,7 +198,7 @@ const FormularioProducto = ({
       </Link>
       <h1 className="epic-heading h3 mb-3">{tituloPagina}</h1>
 
-      <Form onSubmit={enviar} className="row g-3">
+      <Form onSubmit={enviar} noValidate className="row g-3">
         {/* Información básica */}
         <Form.Group className="col-md-6">
           <Form.Label className="small text-secondary fw-semibold">Título del videojuego *</Form.Label>
@@ -142,9 +208,11 @@ const FormularioProducto = ({
             placeholder="Ej. Cyberpunk 2077: Phantom Liberty"
             value={form.nombre || ""}
             onChange={set}
+            isInvalid={Boolean(errores.nombre)}
             required
             minLength={2}
           />
+          <Form.Control.Feedback type="invalid">{errores.nombre}</Form.Control.Feedback>
         </Form.Group>
 
         <Form.Group className="col-md-6">
@@ -172,8 +240,10 @@ const FormularioProducto = ({
             placeholder="Ej. CD Projekt Red"
             value={form.desarrollador || ""}
             onChange={set}
+            isInvalid={Boolean(errores.desarrollador)}
             required
           />
+          <Form.Control.Feedback type="invalid">{errores.desarrollador}</Form.Control.Feedback>
         </Form.Group>
 
         <Form.Group className="col-md-4">
@@ -210,8 +280,10 @@ const FormularioProducto = ({
             placeholder="Ej. 15000"
             value={form.precio}
             onChange={set}
+            isInvalid={Boolean(errores.precio)}
             required
           />
+          <Form.Control.Feedback type="invalid">{errores.precio}</Form.Control.Feedback>
         </Form.Group>
 
         <Form.Group className="col-md-6">
@@ -232,7 +304,9 @@ const FormularioProducto = ({
             placeholder="0 a 90"
             value={form.descuento}
             onChange={set}
+            isInvalid={Boolean(errores.descuento)}
           />
+          <Form.Control.Feedback type="invalid">{errores.descuento}</Form.Control.Feedback>
         </Form.Group>
 
         {/* Multimedia */}
@@ -245,8 +319,10 @@ const FormularioProducto = ({
             placeholder="https://images.unsplash.com/..."
             value={form.imagen || ""}
             onChange={set}
+            isInvalid={Boolean(errores.imagen)}
             required
           />
+          <Form.Control.Feedback type="invalid">{errores.imagen}</Form.Control.Feedback>
           <Form.Label className="small text-secondary fw-semibold">Galería de capturas (URLs separadas por comas)</Form.Label>
           <Form.Control
             name="galeria"
@@ -285,9 +361,11 @@ const FormularioProducto = ({
             placeholder="Ej. Aventura de espionaje y supervivencia en el distrito de Dogtown."
             value={form.resumen || ""}
             onChange={set}
+            isInvalid={Boolean(errores.resumen)}
             required
             minLength={10}
           />
+          <Form.Control.Feedback type="invalid">{errores.resumen}</Form.Control.Feedback>
         </Form.Group>
 
         <Form.Group className="col-12">
@@ -305,9 +383,11 @@ const FormularioProducto = ({
             placeholder="Argumento principal, mecánicas de juego, ambientación..."
             value={form.descripcion || ""}
             onChange={set}
+            isInvalid={Boolean(errores.descripcion)}
             required
             minLength={20}
           />
+          <Form.Control.Feedback type="invalid">{errores.descripcion}</Form.Control.Feedback>
         </Form.Group>
 
         {/* Requisitos de Sistema */}
