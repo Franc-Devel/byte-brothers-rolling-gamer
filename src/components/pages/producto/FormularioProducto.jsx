@@ -279,6 +279,7 @@ const FormularioProducto = ({
       <button
         type="button"
         onClick={manejarCancelar}
+        aria-label="Volver al panel de administración"
         className="btn btn-link p-0 text-secondary text-decoration-none small d-inline-flex align-items-center mb-3"
       >
         <i className="bi bi-arrow-left me-1" />Volver al panel
@@ -299,7 +300,7 @@ const FormularioProducto = ({
 
       <Form onSubmit={enviar} noValidate className="row g-3">
         {/* Información básica */}
-        <Form.Group className="col-md-6">
+        <Form.Group className="col-md-6" controlId="formTituloVideojuego">
           <Form.Label className="small text-secondary fw-semibold">Título del videojuego *</Form.Label>
           <Form.Control
             name="nombre"
@@ -314,7 +315,7 @@ const FormularioProducto = ({
           <Form.Control.Feedback type="invalid">{errores.nombre}</Form.Control.Feedback>
         </Form.Group>
 
-        <Form.Group className="col-md-6">
+        <Form.Group className="col-md-6" controlId="formCategoriaVideojuego">
           <Form.Label className="small text-secondary fw-semibold">Categoría / Género *</Form.Label>
           <Form.Select
             name="categoria"
@@ -331,7 +332,7 @@ const FormularioProducto = ({
           </Form.Select>
         </Form.Group>
 
-        <Form.Group className="col-md-4">
+        <Form.Group className="col-md-4" controlId="formDesarrollador">
           <Form.Label className="small text-secondary fw-semibold">Estudio / Desarrollador *</Form.Label>
           <Form.Control
             name="desarrollador"
@@ -345,7 +346,7 @@ const FormularioProducto = ({
           <Form.Control.Feedback type="invalid">{errores.desarrollador}</Form.Control.Feedback>
         </Form.Group>
 
-        <Form.Group className="col-md-4">
+        <Form.Group className="col-md-4" controlId="formEditor">
           <Form.Label className="small text-secondary fw-semibold">Editor / Distribuidor</Form.Label>
           <Form.Control
             name="editor"
@@ -356,7 +357,7 @@ const FormularioProducto = ({
           />
         </Form.Group>
 
-        <Form.Group className="col-md-4">
+        <Form.Group className="col-md-4" controlId="formLanzamiento">
           <Form.Label className="small text-secondary fw-semibold">Fecha de lanzamiento</Form.Label>
           <Form.Control
             name="lanzamiento"
@@ -368,7 +369,7 @@ const FormularioProducto = ({
         </Form.Group>
 
         {/* Precios y descuentos */}
-        <Form.Group className="col-md-6">
+        <Form.Group className="col-md-6" controlId="formPrecio">
           <Form.Label className="small text-secondary fw-semibold">Precio (ARS) * (mínimo $50)</Form.Label>
           <Form.Control
             name="precio"
@@ -385,7 +386,7 @@ const FormularioProducto = ({
           <Form.Control.Feedback type="invalid">{errores.precio}</Form.Control.Feedback>
         </Form.Group>
 
-        <Form.Group className="col-md-6">
+        <Form.Group className="col-md-6" controlId="formDescuento">
           <div className="d-flex justify-content-between align-items-center mb-1">
             <Form.Label className="small text-secondary fw-semibold mb-0">Descuento (%) (0 a 90)</Form.Label>
             {Number(form.descuento) > 0 && (
@@ -409,7 +410,7 @@ const FormularioProducto = ({
         </Form.Group>
 
         {/* Multimedia */}
-        <Form.Group className="col-md-8">
+        <Form.Group className="col-md-8" controlId="formImagenPortada">
           <Form.Label className="small text-secondary fw-semibold">URL de imagen de portada *</Form.Label>
           <Form.Control
             name="imagen"
@@ -438,7 +439,7 @@ const FormularioProducto = ({
           <div className="epic-box p-1 text-center bg-black bg-opacity-50 border border-secondary border-opacity-25 rounded" style={{ minHeight: 120 }}>
             <img
               src={form.imagen || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80"}
-              alt="Previsualización"
+              alt="Previsualización de portada"
               className="w-100 rounded object-fit-cover shadow-sm"
               style={{ height: 115 }}
               onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80"; }}
@@ -447,7 +448,7 @@ const FormularioProducto = ({
         </Form.Group>
 
         {/* Descripciones con validaciones de longitud */}
-        <Form.Group className="col-12">
+        <Form.Group className="col-12" controlId="formResumen">
           <div className="d-flex justify-content-between align-items-center mb-1">
             <Form.Label className="small text-secondary fw-semibold mb-0">Resumen / Descripción corta * (mínimo 10 caracteres)</Form.Label>
             <small className={`small ${String(form.resumen || "").trim().length >= 10 ? "text-secondary" : "text-warning"}`}>
@@ -467,7 +468,7 @@ const FormularioProducto = ({
           <Form.Control.Feedback type="invalid">{errores.resumen}</Form.Control.Feedback>
         </Form.Group>
 
-        <Form.Group className="col-12">
+        <Form.Group className="col-12" controlId="formDescripcionDetallada">
           <div className="d-flex justify-content-between align-items-center mb-1">
             <Form.Label className="small text-secondary fw-semibold mb-0">Descripción detallada del juego * (mínimo 20 caracteres)</Form.Label>
             <small className={`small ${String(form.descripcion || "").trim().length >= 20 ? "text-secondary" : "text-warning"}`}>
@@ -509,8 +510,9 @@ const FormularioProducto = ({
                 </Card.Header>
                 <Card.Body className="d-flex flex-column gap-2 p-3">
                   <div>
-                    <Form.Label className="small text-secondary fw-semibold mb-1">Sistema Operativo</Form.Label>
+                    <Form.Label htmlFor="req_min_so" className="small text-secondary fw-semibold mb-1">Sistema Operativo</Form.Label>
                     <Form.Control
+                      id="req_min_so"
                       name="req_min_so"
                       className="epic-input"
                       placeholder="Ej. Windows 10 64-bit"
@@ -519,8 +521,9 @@ const FormularioProducto = ({
                     />
                   </div>
                   <div>
-                    <Form.Label className="small text-secondary fw-semibold mb-1">Procesador (CPU)</Form.Label>
+                    <Form.Label htmlFor="req_min_cpu" className="small text-secondary fw-semibold mb-1">Procesador (CPU)</Form.Label>
                     <Form.Control
+                      id="req_min_cpu"
                       name="req_min_cpu"
                       className="epic-input"
                       placeholder="Ej. Intel Core i5-3570K / AMD FX-8310"
@@ -529,8 +532,9 @@ const FormularioProducto = ({
                     />
                   </div>
                   <div>
-                    <Form.Label className="small text-secondary fw-semibold mb-1">Memoria RAM</Form.Label>
+                    <Form.Label htmlFor="req_min_ram" className="small text-secondary fw-semibold mb-1">Memoria RAM</Form.Label>
                     <Form.Control
+                      id="req_min_ram"
                       name="req_min_ram"
                       className="epic-input"
                       placeholder="Ej. 8 GB RAM"
@@ -539,8 +543,9 @@ const FormularioProducto = ({
                     />
                   </div>
                   <div>
-                    <Form.Label className="small text-secondary fw-semibold mb-1">Tarjeta Gráfica (GPU)</Form.Label>
+                    <Form.Label htmlFor="req_min_gpu" className="small text-secondary fw-semibold mb-1">Tarjeta Gráfica (GPU)</Form.Label>
                     <Form.Control
+                      id="req_min_gpu"
                       name="req_min_gpu"
                       className="epic-input"
                       placeholder="Ej. NVIDIA GeForce GTX 780 3GB / AMD Radeon RX 470"
@@ -549,8 +554,9 @@ const FormularioProducto = ({
                     />
                   </div>
                   <div>
-                    <Form.Label className="small text-secondary fw-semibold mb-1">Almacenamiento</Form.Label>
+                    <Form.Label htmlFor="req_min_disco" className="small text-secondary fw-semibold mb-1">Almacenamiento</Form.Label>
                     <Form.Control
+                      id="req_min_disco"
                       name="req_min_disco"
                       className="epic-input"
                       placeholder="Ej. 70 GB de espacio disponible"
@@ -571,8 +577,9 @@ const FormularioProducto = ({
                 </Card.Header>
                 <Card.Body className="d-flex flex-column gap-2 p-3">
                   <div>
-                    <Form.Label className="small text-secondary fw-semibold mb-1">Sistema Operativo</Form.Label>
+                    <Form.Label htmlFor="req_rec_so" className="small text-secondary fw-semibold mb-1">Sistema Operativo</Form.Label>
                     <Form.Control
+                      id="req_rec_so"
                       name="req_rec_so"
                       className="epic-input"
                       placeholder="Ej. Windows 10/11 64-bit"
@@ -581,8 +588,9 @@ const FormularioProducto = ({
                     />
                   </div>
                   <div>
-                    <Form.Label className="small text-secondary fw-semibold mb-1">Procesador (CPU)</Form.Label>
+                    <Form.Label htmlFor="req_rec_cpu" className="small text-secondary fw-semibold mb-1">Procesador (CPU)</Form.Label>
                     <Form.Control
+                      id="req_rec_cpu"
                       name="req_rec_cpu"
                       className="epic-input"
                       placeholder="Ej. Intel Core i7-4790 / AMD Ryzen 3 3200G"
@@ -591,8 +599,9 @@ const FormularioProducto = ({
                     />
                   </div>
                   <div>
-                    <Form.Label className="small text-secondary fw-semibold mb-1">Memoria RAM</Form.Label>
+                    <Form.Label htmlFor="req_rec_ram" className="small text-secondary fw-semibold mb-1">Memoria RAM</Form.Label>
                     <Form.Control
+                      id="req_rec_ram"
                       name="req_rec_ram"
                       className="epic-input"
                       placeholder="Ej. 16 GB RAM"
@@ -601,8 +610,9 @@ const FormularioProducto = ({
                     />
                   </div>
                   <div>
-                    <Form.Label className="small text-secondary fw-semibold mb-1">Tarjeta Gráfica (GPU)</Form.Label>
+                    <Form.Label htmlFor="req_rec_gpu" className="small text-secondary fw-semibold mb-1">Tarjeta Gráfica (GPU)</Form.Label>
                     <Form.Control
+                      id="req_rec_gpu"
                       name="req_rec_gpu"
                       className="epic-input"
                       placeholder="Ej. NVIDIA GeForce GTX 1060 6GB / AMD Radeon R9 Fury"
@@ -611,8 +621,9 @@ const FormularioProducto = ({
                     />
                   </div>
                   <div>
-                    <Form.Label className="small text-secondary fw-semibold mb-1">Almacenamiento</Form.Label>
+                    <Form.Label htmlFor="req_rec_disco" className="small text-secondary fw-semibold mb-1">Almacenamiento</Form.Label>
                     <Form.Control
+                      id="req_rec_disco"
                       name="req_rec_disco"
                       className="epic-input"
                       placeholder="Ej. 70 GB SSD"
