@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Badge, Button, Card, Form } from "react-bootstrap";
+import { Alert, Badge, Button, Card, Form, Spinner } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useProductos } from "../../../context/ProductosContext.jsx";
 
@@ -95,6 +95,8 @@ const FormularioProducto = ({
   });
 
   const [errores, setErrores] = useState({});
+  const [alerta, setAlerta] = useState(null);
+  const [guardando, setGuardando] = useState(false);
 
   useEffect(() => {
     if (editando && juegoExistente) {
@@ -184,9 +186,14 @@ const FormularioProducto = ({
     const fallas = validarFormulario();
     if (Object.keys(fallas).length > 0) {
       setErrores(fallas);
+      setAlerta({
+        tipo: "danger",
+        mensaje: "Por favor corrige los campos marcados en rojo antes de guardar.",
+      });
       return;
     }
 
+    setGuardando(true);
     const galeriaArray = typeof form.galeria === "string"
       ? form.galeria
           .split(",")
@@ -233,13 +240,21 @@ const FormularioProducto = ({
       resenas: editando && juegoExistente?.resenas ? juegoExistente.resenas : [],
     };
 
-    if (editando && modificar) {
-      modificar(productoListo);
-    } else if (crear) {
-      crear(productoListo);
-    }
+    setAlerta({
+      tipo: "success",
+      mensaje: editando
+        ? "¡Videojuego modificado exitosamente! Redirigiendo al panel..."
+        : "¡Videojuego registrado exitosamente! Redirigiendo al panel...",
+    });
 
-    navigate("/admin");
+    setTimeout(() => {
+      if (editando && modificar) {
+        modificar(productoListo);
+      } else if (crear) {
+        crear(productoListo);
+      }
+      navigate("/admin");
+    }, 600);
   };
 
   return (
@@ -248,6 +263,18 @@ const FormularioProducto = ({
         <i className="bi bi-arrow-left me-1" />Volver al panel
       </Link>
       <h1 className="epic-heading h3 mb-3">{tituloPagina}</h1>
+
+      {alerta && (
+        <Alert
+          variant={alerta.tipo}
+          dismissible
+          onClose={() => setAlerta(null)}
+          className="d-flex align-items-center gap-2 mb-4"
+        >
+          <i className={`bi ${alerta.tipo === "success" ? "bi-check-circle-fill" : "bi-exclamation-octagon-fill"} fs-5`} />
+          <span>{alerta.mensaje}</span>
+        </Alert>
+      )}
 
       <Form onSubmit={enviar} noValidate className="row g-3">
         {/* Información básica */}
@@ -578,9 +605,27 @@ const FormularioProducto = ({
           </div>
         </div>
 
-        <div className="col-12 d-flex gap-2">
-          <Button type="submit" className="btn-epic-primary">Guardar</Button>
-          <Button as={Link} to="/admin" variant="outline-secondary">Cancelar</Button>
+        <div className="col-12 d-flex gap-2 pt-2">
+          <Button
+            type="submit"
+            className="btn-epic-primary d-inline-flex align-items-center gap-2"
+            disabled={guardando}
+          >
+            {guardando ? (
+              <>
+                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                <span>Guardando videojuego...</span>
+              </>
+            ) : (
+              <>
+                <i className="bi bi-check-lg" />
+                <span>Guardar videojuego</span>
+              </>
+            )}
+          </Button>
+          <Button as={Link} to="/admin" variant="outline-secondary" disabled={guardando}>
+            Cancelar
+          </Button>
         </div>
       </Form>
     </section>
