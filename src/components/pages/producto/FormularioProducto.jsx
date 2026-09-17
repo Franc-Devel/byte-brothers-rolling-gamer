@@ -186,8 +186,59 @@ const FormularioProducto = ({
       setErrores(fallas);
       return;
     }
-    const listo = { ...form, precio: Number(form.precio), descuento: Number(form.descuento), titulo: form.nombre, genero: form.categoria, portada: form.imagen };
-    editando ? modificar(listo) : crear(listo);
+
+    const galeriaArray = typeof form.galeria === "string"
+      ? form.galeria
+          .split(",")
+          .map((url) => url.trim())
+          .filter(Boolean)
+      : (Array.isArray(form.galeria) ? form.galeria : []);
+
+    const requisitosNormalizados = {
+      minimos: {
+        so: form.req_min_so?.trim() || "Windows 10 64-bit",
+        cpu: form.req_min_cpu?.trim() || "Intel Core i5 / AMD Ryzen 3",
+        ram: form.req_min_ram?.trim() || "8 GB RAM",
+        gpu: form.req_min_gpu?.trim() || "NVIDIA GTX 1050 / AMD Radeon RX 560",
+        disco: form.req_min_disco?.trim() || "50 GB de espacio libre",
+      },
+      recomendados: {
+        so: form.req_rec_so?.trim() || "Windows 10/11 64-bit",
+        cpu: form.req_rec_cpu?.trim() || "Intel Core i7 / AMD Ryzen 5",
+        ram: form.req_rec_ram?.trim() || "16 GB RAM",
+        gpu: form.req_rec_gpu?.trim() || "NVIDIA RTX 2060 / AMD Radeon RX 5700",
+        disco: form.req_rec_disco?.trim() || "50 GB SSD",
+      },
+    };
+
+    const productoListo = {
+      ...(editando && juegoExistente ? juegoExistente : {}),
+      id: editando && juegoExistente ? juegoExistente.id : Date.now().toString(),
+      nombre: String(form.nombre || "").trim(),
+      titulo: String(form.nombre || "").trim(),
+      categoria: form.categoria,
+      genero: form.categoria,
+      precio: Number(form.precio),
+      descuento: Number(form.descuento || 0),
+      desarrollador: String(form.desarrollador || "").trim(),
+      estudio: String(form.desarrollador || "").trim(),
+      editor: String(form.editor || "").trim(),
+      lanzamiento: form.lanzamiento || "",
+      imagen: String(form.imagen || "").trim(),
+      portada: String(form.imagen || "").trim(),
+      galeria: galeriaArray,
+      resumen: String(form.resumen || "").trim(),
+      descripcion: String(form.descripcion || "").trim(),
+      requisitos: requisitosNormalizados,
+      resenas: editando && juegoExistente?.resenas ? juegoExistente.resenas : [],
+    };
+
+    if (editando && modificar) {
+      modificar(productoListo);
+    } else if (crear) {
+      crear(productoListo);
+    }
+
     navigate("/admin");
   };
 
