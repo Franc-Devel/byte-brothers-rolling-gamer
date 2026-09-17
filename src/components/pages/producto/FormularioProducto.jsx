@@ -275,7 +275,7 @@ const FormularioProducto = ({
   };
 
   return (
-    <section className="epic-box p-4">
+    <section className="epic-box p-3 p-sm-4 shadow-sm">
       <button
         type="button"
         onClick={manejarCancelar}
@@ -626,10 +626,10 @@ const FormularioProducto = ({
           </div>
         </div>
 
-        <div className="col-12 d-flex gap-2 pt-2">
+        <div className="col-12 d-flex flex-column flex-sm-row gap-2 pt-3 border-top border-secondary border-opacity-25 mt-4">
           <Button
             type="submit"
-            className="btn-epic-primary d-inline-flex align-items-center gap-2"
+            className="btn-epic-primary d-inline-flex justify-content-center align-items-center gap-2 py-2 px-4"
             disabled={guardando}
           >
             {guardando ? (
@@ -639,14 +639,15 @@ const FormularioProducto = ({
               </>
             ) : (
               <>
-                <i className="bi bi-check-lg" />
-                <span>Guardar videojuego</span>
+                <i className="bi bi-check-lg fs-5" />
+                <span className="fw-semibold">Guardar videojuego</span>
               </>
             )}
           </Button>
           <Button
             type="button"
             variant="outline-secondary"
+            className="d-inline-flex justify-content-center align-items-center py-2 px-4"
             disabled={guardando}
             onClick={manejarCancelar}
           >
