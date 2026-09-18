@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Alert, Button, Card, Form, InputGroup, Nav } from "react-bootstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
@@ -19,10 +19,6 @@ const Login = () => {
   const [verPass, setVerPass] = useState(false);
   const [verRepetir, setVerRepetir] = useState(false);
   const [form, setForm] = useState({ nombre: "", email: "", password: "", repetir: "" });
-
-  useEffect(() => {
-    if (location.state?.tab === "registro") setModo("registro");
-  }, [location.state?.tab]);
 
   const set = (e) => setForm({ ...form, [e.target.name]: e.target.value });
   const entrar = (u) => navigate(u?.rol === "admin" && destino === "/" ? "/admin" : destino, { replace: true });
