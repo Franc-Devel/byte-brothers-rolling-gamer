@@ -16,6 +16,16 @@ const specs = (r = {}) => [
   ["Almacenamiento", r.almacenamiento || r.disco || "50 GB de espacio disponible"],
 ];
 
+const crearPayloadResena = ({ usuario, texto, esPositiva }) => ({
+  id: `resena-${Date.now()}`,
+  autor: usuario?.nombre || "Gamer",
+  usuario: usuario?.nombre || "Gamer",
+  fecha: new Date().toISOString().split("T")[0],
+  voto: esPositiva ? "positivo" : "negativo",
+  esPositiva,
+  comentario: texto,
+});
+
 const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -29,6 +39,9 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
   const [comentario, setComentario] = useState("");
   const [votoPositivo, setVotoPositivo] = useState(true);
   const [alertaResena, setAlertaResena] = useState(null);
+
+  // Galería interactiva (declarada incondicionalmente antes de cualquier retorno)
+  const [imgSeleccionada, setImgSeleccionada] = useState(null);
 
   const buscar = buscarProducto || productosCtx?.buscarProducto;
   const agregar = agregarResena || productosCtx?.agregarResena;
@@ -66,7 +79,7 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
   const imagenesGaleria = Array.from(
     new Set([portada, ...(Array.isArray(juego.galeria) ? juego.galeria : [])].filter(Boolean))
   );
-  const [imgActiva, setImgActiva] = useState(portada);
+  const imgActiva = imgSeleccionada || portada;
 
   // Lógica de Precios coherente con CardJuego e Inicio
   const precioOriginal = Number(juego.precio) || 0;
@@ -111,15 +124,11 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
       setAlertaResena({ variant: "warning", texto: "La opinión debe contener al menos 5 caracteres." });
       return;
     }
-    const nueva = {
-      id: `resena-${Date.now()}`,
-      autor: usuarioActual.nombre || "Gamer",
-      usuario: usuarioActual.nombre || "Gamer",
-      fecha: new Date().toISOString().split("T")[0],
-      voto: votoPositivo ? "positivo" : "negativo",
+    const nueva = crearPayloadResena({
+      usuario: usuarioActual,
+      texto,
       esPositiva: votoPositivo,
-      comentario: texto,
-    };
+    });
     agregar?.(juego.id, nueva);
     setComentario("");
     setAlertaResena({ variant: "success", texto: "¡Tu reseña ha sido publicada y agregada a las estadísticas!" });
@@ -158,7 +167,7 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
                 <button
                   key={`${img}-${idx}`}
                   type="button"
-                  onClick={() => setImgActiva(img)}
+                  onClick={() => setImgSeleccionada(img)}
                   aria-label={`Mostrar imagen ${idx + 1} de ${imagenesGaleria.length}`}
                   className={`btn p-0 border rounded overflow-hidden flex-shrink-0 transition-all ${
                     imgActiva === img ? "border-primary shadow" : "border-secondary border-opacity-50 opacity-75"
