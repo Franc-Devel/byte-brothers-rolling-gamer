@@ -16,6 +16,16 @@ const specs = (r = {}) => [
   ["Almacenamiento", r.almacenamiento || r.disco || "50 GB de espacio disponible"],
 ];
 
+const crearPayloadResena = ({ usuario, texto, esPositiva }) => ({
+  id: `resena-${Date.now()}`,
+  autor: usuario?.nombre || "Gamer",
+  usuario: usuario?.nombre || "Gamer",
+  fecha: new Date().toISOString().split("T")[0],
+  voto: esPositiva ? "positivo" : "negativo",
+  esPositiva,
+  comentario: texto,
+});
+
 const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -114,15 +124,11 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
       setAlertaResena({ variant: "warning", texto: "La opinión debe contener al menos 5 caracteres." });
       return;
     }
-    const nueva = {
-      id: `resena-${Date.now()}`,
-      autor: usuarioActual.nombre || "Gamer",
-      usuario: usuarioActual.nombre || "Gamer",
-      fecha: new Date().toISOString().split("T")[0],
-      voto: votoPositivo ? "positivo" : "negativo",
+    const nueva = crearPayloadResena({
+      usuario: usuarioActual,
+      texto,
       esPositiva: votoPositivo,
-      comentario: texto,
-    };
+    });
     agregar?.(juego.id, nueva);
     setComentario("");
     setAlertaResena({ variant: "success", texto: "¡Tu reseña ha sido publicada y agregada a las estadísticas!" });
