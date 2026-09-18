@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Alert, Badge, Button, Card, Form, Modal, Spinner } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useProductos } from "../../../context/ProductosContext.jsx";
@@ -98,12 +98,6 @@ const FormularioProducto = ({
   const [alerta, setAlerta] = useState(null);
   const [guardando, setGuardando] = useState(false);
   const [mostrarModalCancelar, setMostrarModalCancelar] = useState(false);
-
-  useEffect(() => {
-    if (editando && juegoExistente) {
-      setForm(mapearJuegoAForm(juegoExistente));
-    }
-  }, [id, juegoExistente, editando]);
 
   const esFormularioModificado = () => {
     const inicial = editando && juegoExistente ? mapearJuegoAForm(juegoExistente) : base;
