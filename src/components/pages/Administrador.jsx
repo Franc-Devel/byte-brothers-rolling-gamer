@@ -44,6 +44,9 @@ const Administrador = () => {
     if (String(u.id) === String(usuarioActual?.id)) {
       return window.alert?.("No puedes eliminar la cuenta con la que has iniciado sesión.");
     }
+    if (u.rol === "admin") {
+      return window.alert?.("Por seguridad de la plataforma, las cuentas con rol Administrador están protegidas contra eliminación.");
+    }
     if (window.confirm(`¿Confirmas la baja de ${u.nombre} (${u.email || u.correo})?`)) {
       borrarUsuario(u.id);
     }
@@ -189,6 +192,8 @@ const Administrador = () => {
             <tbody>
               {usuarios.map((u, idx) => {
                 const esPropia = String(u.id) === String(usuarioActual?.id);
+                const esAdmin = u.rol === "admin";
+                const protegido = esPropia || esAdmin;
                 return (
                   <tr key={u.id}>
                     <td className="text-secondary small">#{idx + 1}</td>
@@ -219,10 +224,16 @@ const Administrador = () => {
                     <td className="text-end">
                       <Button
                         size="sm"
-                        variant={esPropia ? "secondary" : "outline-danger"}
-                        disabled={esPropia}
+                        variant={protegido ? "secondary" : "outline-danger"}
+                        disabled={protegido}
                         onClick={() => bajaUsuario(u)}
-                        title={esPropia ? "Cuenta en uso actualmente" : "Dar de baja usuario"}
+                        title={
+                          esPropia
+                            ? "Cuenta en uso actualmente"
+                            : esAdmin
+                            ? "Las cuentas de administrador están protegidas contra eliminación"
+                            : "Dar de baja usuario"
+                        }
                       >
                         <i className="bi bi-trash me-1" />Baja
                       </Button>
