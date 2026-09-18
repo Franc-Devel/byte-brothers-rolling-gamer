@@ -98,6 +98,13 @@ const FormularioProducto = ({
   const [alerta, setAlerta] = useState(null);
   const [guardando, setGuardando] = useState(false);
   const [mostrarModalCancelar, setMostrarModalCancelar] = useState(false);
+  const [idPrevio, setIdPrevio] = useState(id);
+
+  if (id !== idPrevio) {
+    setIdPrevio(id);
+    setForm(editando && juegoExistente ? mapearJuegoAForm(juegoExistente) : base);
+    setErrores({});
+  }
 
   const esFormularioModificado = () => {
     const inicial = editando && juegoExistente ? mapearJuegoAForm(juegoExistente) : base;
