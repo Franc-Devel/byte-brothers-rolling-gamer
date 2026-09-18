@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { Badge, Button, Card, Col, Form, InputGroup, Modal, Nav, Row, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
 import ItemProducto from "./producto/ItemProducto.jsx";
@@ -37,19 +38,68 @@ const Administrador = () => {
   const confirmarReset = () => {
     setModalReset(false);
     recargarCatalogo();
-    window.alert?.("Catálogo restablecido exitosamente a los datos de fábrica.");
+    Swal.fire({
+      icon: "success",
+      title: "Catálogo restablecido",
+      text: "El inventario fue restaurado con éxito a los datos de fábrica.",
+      background: "#18181c",
+      color: "#f3f3f3",
+      confirmButtonColor: "#0078f2",
+      timer: 2000,
+      showConfirmButton: false,
+    });
   };
 
   const bajaUsuario = (u) => {
     if (String(u.id) === String(usuarioActual?.id)) {
-      return window.alert?.("No puedes eliminar la cuenta con la que has iniciado sesión.");
+      Swal.fire({
+        icon: "info",
+        title: "Acción no permitida",
+        text: "No puedes eliminar la cuenta con la que has iniciado sesión.",
+        background: "#18181c",
+        color: "#f3f3f3",
+        confirmButtonColor: "#0078f2",
+      });
+      return;
     }
     if (u.rol === "admin") {
-      return window.alert?.("Por seguridad de la plataforma, las cuentas con rol Administrador están protegidas contra eliminación.");
+      Swal.fire({
+        icon: "warning",
+        title: "Cuenta protegida",
+        text: "Por seguridad de la plataforma, las cuentas con rol Administrador están protegidas contra eliminación.",
+        background: "#18181c",
+        color: "#f3f3f3",
+        confirmButtonColor: "#0078f2",
+      });
+      return;
     }
-    if (window.confirm(`¿Confirmas la baja de ${u.nombre} (${u.email || u.correo})?`)) {
-      borrarUsuario(u.id);
-    }
+
+    Swal.fire({
+      title: "¿Confirmas la baja?",
+      text: `¿Estás seguro de que deseas eliminar al usuario "${u.nombre}" (${u.email || u.correo})?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, dar de baja",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#e53e3e",
+      cancelButtonColor: "#4a5568",
+      background: "#18181c",
+      color: "#f3f3f3",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        borrarUsuario(u.id);
+        Swal.fire({
+          icon: "success",
+          title: "Usuario eliminado",
+          text: `La cuenta de "${u.nombre}" fue dada de baja correctamente.`,
+          background: "#18181c",
+          color: "#f3f3f3",
+          confirmButtonColor: "#0078f2",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      }
+    });
   };
 
   return (
