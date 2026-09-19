@@ -35,7 +35,7 @@ const Login = () => {
   const validarRegistro = () => {
     if (form.nombre.trim().length < 3) return "El nombre debe contener al menos 3 caracteres.";
     if (!EMAIL_REGEX.test(form.email.trim())) return "Ingresa un correo electrónico con formato válido.";
-    if (form.password.length < 6) return "La contraseña debe tener un mínimo de 6 caracteres.";
+    if (form.password.length < 6 || form.password.length > 20) return "La contraseña debe tener entre 6 y 20 caracteres.";
     if (form.password !== form.repetir) return "Las contraseñas no coinciden.";
     return null;
   };
@@ -44,6 +44,10 @@ const Login = () => {
     e.preventDefault();
     setAlerta(null);
     if (modo === "login") {
+      if (form.password.length < 6 || form.password.length > 20) {
+        setAlerta({ variant: "warning", texto: "La contraseña debe tener entre 6 y 20 caracteres." });
+        return;
+      }
       const r = login(form.email.trim(), form.password);
       r.success ? entrar(r.usuario) : setAlerta({ variant: "danger", texto: r.mensaje || "Credenciales incorrectas." });
       return;
@@ -102,11 +106,12 @@ const Login = () => {
                 name="password"
                 type={verPass ? "text" : "password"}
                 className="epic-input border-end-0"
-                placeholder="Contraseña (mínimo 6 caracteres)"
+                placeholder="Contraseña (6 a 20 caracteres)"
                 value={form.password}
                 onChange={set}
                 required
                 minLength={6}
+                maxLength={20}
               />
               <Button
                 variant="outline-secondary"
@@ -124,10 +129,12 @@ const Login = () => {
                   name="repetir"
                   type={verRepetir ? "text" : "password"}
                   className="epic-input border-end-0"
-                  placeholder="Repetir contraseña"
+                  placeholder="Repetir contraseña (6 a 20 caracteres)"
                   value={form.repetir}
                   onChange={set}
                   required
+                  minLength={6}
+                  maxLength={20}
                 />
                 <Button
                   variant="outline-secondary"
