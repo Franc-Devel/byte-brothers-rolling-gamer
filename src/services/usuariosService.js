@@ -116,10 +116,14 @@ export const eliminarUsuario = (idAEliminar, idSesionActiva) => {
       return { success: false, exito: false, mensaje: "No es posible eliminar la cuenta actualmente en uso." };
     }
     const list = obtenerUsuarios();
-    const actualizados = list.filter(u => String(u.id) !== String(idAEliminar));
-    if (actualizados.length === list.length) {
+    const usuarioAEliminar = list.find(u => String(u.id) === String(idAEliminar));
+    if (!usuarioAEliminar) {
       return { success: false, exito: false, mensaje: "Usuario no encontrado." };
     }
+    if (usuarioAEliminar.rol === "admin") {
+      return { success: false, exito: false, mensaje: "Por seguridad de la plataforma, no está permitido eliminar cuentas con rol Administrador." };
+    }
+    const actualizados = list.filter(u => String(u.id) !== String(idAEliminar));
     guardarUsuarios(actualizados);
     return { success: true, exito: true, usuarios: actualizados, mensaje: "Usuario eliminado correctamente." };
   } catch (e) {
