@@ -96,14 +96,24 @@ const About = () => {
                 ))}
               </div>
             </div>
-            <a
-              href="https://trello.com"
-              target="_blank"
-              rel="noreferrer"
-              className="btn-epic-secondary py-2 px-3 small text-center text-decoration-none"
-            >
-              <i className="bi bi-kanban me-2"></i> Abrir Tablero de Trello
-            </a>
+            <div className="d-flex flex-column flex-sm-row gap-2">
+              <a
+                href="https://trello.com/b/qyopevQH/rolling-gamer"
+                target="_blank"
+                rel="noreferrer"
+                className="btn-epic-secondary py-2 px-3 small text-center text-decoration-none flex-fill"
+              >
+                <i className="bi bi-trello me-2"></i> Abrir Tablero de Trello
+              </a>
+              <a
+                href="https://github.com/Franc-Devel/byte-brothers-rolling-gamer"
+                target="_blank"
+                rel="noreferrer"
+                className="btn-epic-secondary py-2 px-3 small text-center text-decoration-none flex-fill"
+              >
+                <i className="bi bi-github me-2"></i> Repositorio en GitHub
+              </a>
+            </div>
           </div>
         </Col>
 

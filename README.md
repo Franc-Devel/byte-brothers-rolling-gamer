@@ -139,11 +139,15 @@ Rolling-Gamer/
 
 ---
 
-## 👥 Equipo de Desarrollo
+## 👥 Equipo de Desarrollo y Metodología
 
 El proyecto fue concebido, diseñado e implementado por:
 - **[Francisco Delgado (Franc-Devel)](https://github.com/Franc-Devel)**: *Team Leader & Full Stack Developer* — Arquitectura general con React 19, persistencia de catálogo en `LocalStorage`, enrutamiento con React Router, seguridad y panel de administración.
 - **[Franco Triviño (francotrivio321)](https://github.com/francotrivio321)**: *Scrum Master & Frontend Developer* — Organización ágil y gestión de sprints en Trello, diseño temático inspirado en Epic Games Store, validaciones de formularios y experiencia de usuario.
+
+### 📋 Gestión del Proyecto y Código Fuente
+- **Tablero Ágil Oficial (Trello):** [https://trello.com/b/qyopevQH/rolling-gamer](https://trello.com/b/qyopevQH/rolling-gamer)
+- **Repositorio Oficial (GitHub):** [https://github.com/Franc-Devel/byte-brothers-rolling-gamer](https://github.com/Franc-Devel/byte-brothers-rolling-gamer)
 
 ---
 
