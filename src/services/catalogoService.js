@@ -45,21 +45,11 @@ const sincronizarAssetsLocales = (productos) => {
   return productosSincronizados;
 };
 
-/**
- * Recupera el catálogo de videojuegos desde localStorage.
- * Garantiza que:
- * 1. Si no existe la clave o la versión del catálogo es anterior, se inicializa con los 19 juegos oficiales de Steam.
- * 2. Si ya existen datos bajo la versión vigente, se conservan las operaciones CRUD del administrador.
- * 3. Si los datos almacenados están corruptos, se recupera el catálogo base sin bloquear la aplicación.
- *
- * @returns {Array<Object>} Lista de videojuegos válidos
- */
 export const obtenerProductos = () => {
   try {
     const versionGuardada = localStorage.getItem(CATALOGO_VERSION_KEY);
     const datosAlmacenados = localStorage.getItem(PRODUCTOS_KEY);
 
-    // Si es primera carga o si el catálogo pertenece a una versión previa, se migra al dataset oficial de 19 juegos
     if (versionGuardada !== CATALOGO_VERSION || datosAlmacenados === null || datosAlmacenados === undefined) {
       guardarProductos(juegosIniciales);
       guardarVersionCatalogo();
@@ -84,11 +74,6 @@ export const obtenerProductos = () => {
   }
 };
 
-/**
- * Persiste la lista de productos en localStorage bajo la clave acordada.
- *
- * @param {Array<Object>} productos Lista de videojuegos a persistir
- */
 export const guardarProductos = (productos) => {
   try {
     if (!Array.isArray(productos)) {
@@ -100,12 +85,6 @@ export const guardarProductos = (productos) => {
   }
 };
 
-/**
- * Busca un producto en el catálogo persistente mediante su identificador.
- *
- * @param {string} id Identificador único del videojuego
- * @returns {Object|null} El producto coincidente o null si no se encuentra
- */
 export const buscarProducto = (id) => {
   if (!id) return null;
   const productos = obtenerProductos();
@@ -113,12 +92,6 @@ export const buscarProducto = (id) => {
   return productoEncontrado ? { ...productoEncontrado } : null;
 };
 
-/**
- * Crea un nuevo videojuego en el catálogo persistente asignando ID y estructura base.
- *
- * @param {Object} nuevoProducto Datos del videojuego a dar de alta
- * @returns {Object} El videojuego creado y persistido
- */
 export const crearProducto = (nuevoProducto) => {
   if (!nuevoProducto || typeof nuevoProducto !== "object") {
     throw new Error("Datos inválidos para la creación del videojuego.");
@@ -143,12 +116,6 @@ export const crearProducto = (nuevoProducto) => {
   return productoListo;
 };
 
-/**
- * Elimina un producto del catálogo persistente por su ID.
- *
- * @param {string} id Identificador único del videojuego a borrar
- * @returns {boolean} True si se eliminó, false si no se encontró
- */
 export const borrarProducto = (id) => {
   if (!id) return false;
 
@@ -165,12 +132,6 @@ export const borrarProducto = (id) => {
   return true;
 };
 
-/**
- * Modifica los datos de un producto existente garantizando la conservación de su ID y sus reseñas.
- *
- * @param {Object} productoActualizado Objeto con los nuevos valores del videojuego
- * @returns {Object} El producto modificado y persistido
- */
 export const modificarProducto = (productoActualizado) => {
   if (!productoActualizado || !productoActualizado.id) {
     throw new Error("Se requiere un producto válido con ID para modificarlo.");
@@ -187,12 +148,11 @@ export const modificarProducto = (productoActualizado) => {
 
   const productoOriginal = productosActuales[indice];
 
-  // Regla de aceptación: "editar conserva id y reseñas"
   const productoFusionado = {
     ...productoOriginal,
     ...productoActualizado,
-    id: productoOriginal.id, // ID inmutable
-    resenas: Array.isArray(productoOriginal.resenas) ? [...productoOriginal.resenas] : [], // Reseñas conservadas
+    id: productoOriginal.id,
+    resenas: Array.isArray(productoOriginal.resenas) ? [...productoOriginal.resenas] : [],
     precio: Number(productoActualizado.precio !== undefined ? productoActualizado.precio : productoOriginal.precio) || 0,
     descuento: Number(productoActualizado.descuento !== undefined ? productoActualizado.descuento : productoOriginal.descuento) || 0,
     destacado: productoActualizado.destacado !== undefined ? Boolean(productoActualizado.destacado) : productoOriginal.destacado
@@ -204,13 +164,6 @@ export const modificarProducto = (productoActualizado) => {
   return productoFusionado;
 };
 
-/**
- * Agrega una reseña comunitaria al videojuego especificado y actualiza la persistencia.
- *
- * @param {string} idJuego Identificador del videojuego sobre el que se opina
- * @param {Object} nuevaResena Datos de la reseña (usuario, comentario, esPositiva)
- * @returns {Object} El videojuego con la nueva reseña añadida
- */
 export const agregarResena = (idJuego, nuevaResena) => {
   if (!idJuego || !nuevaResena) {
     throw new Error("Se requiere idJuego y los datos de la reseña.");
@@ -245,11 +198,6 @@ export const agregarResena = (idJuego, nuevaResena) => {
   return productoConResena;
 };
 
-/**
- * Restaura el catálogo a los datos de fábrica iniciales persistiendo en productosKey.
- *
- * @returns {Array<Object>} Lista de videojuegos restaurados
- */
 export const recargarCatalogoInicial = () => {
   guardarProductos(juegosIniciales);
   guardarVersionCatalogo();

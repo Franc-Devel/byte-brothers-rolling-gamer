@@ -119,7 +119,6 @@ const Administrador = () => {
         </div>
       </div>
 
-      {/* Métricas del ecosistema */}
       <Row className="g-2 g-md-3 mb-4">
         {[
           { label: "Catálogo", valor: metricas.juegos, desc: "Títulos totales", color: "text-light" },
@@ -137,7 +136,6 @@ const Administrador = () => {
         ))}
       </Row>
 
-      {/* Navegación por pestañas */}
       <Nav variant="pills" className="bg-black rounded p-1 mb-3">
         <Nav.Item>
           <Nav.Link active={tab === "catalogo"} onClick={() => setTab("catalogo")}>
@@ -153,7 +151,6 @@ const Administrador = () => {
 
       {tab === "catalogo" ? (
         <Card className="epic-box p-3 mb-4 text-light">
-          {/* Controles de búsqueda y filtros */}
           <div className="row g-2 mb-3 align-items-center">
             <div className="col-12 col-md-6">
               <InputGroup size="sm">
@@ -297,7 +294,6 @@ const Administrador = () => {
         </Card>
       )}
 
-      {/* Modal de confirmación para restablecer datos */}
       <Modal show={modalReset} onHide={() => setModalReset(false)} centered size="sm" contentClassName="bg-dark text-light border-secondary">
         <Modal.Header closeButton closeVariant="white">
           <Modal.Title className="h6 mb-0">¿Restaurar catálogo?</Modal.Title>

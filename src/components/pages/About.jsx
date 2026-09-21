@@ -27,7 +27,6 @@ const TECNOLOGIAS = [
 const About = () => {
   return (
     <Container className="py-4 py-md-5">
-      {/* Cabecera institucional */}
       <header className="text-center mb-5">
         <span className="epic-subheading mb-2 d-block text-primary">
           EQUIPO DE DESARROLLO · ROLLINGCODE SCHOOL
@@ -40,7 +39,6 @@ const About = () => {
         </p>
       </header>
 
-      {/* Tarjetas del equipo */}
       <section className="mb-5">
         <div className="epic-subheading mb-4 text-center">
           Desarrolladores del Proyecto
@@ -76,7 +74,6 @@ const About = () => {
         </Row>
       </section>
 
-      {/* Metodología Ágil y Stack Tecnológico */}
       <Row className="g-4">
         <Col lg={7}>
           <div className="epic-box p-4 h-100 d-flex flex-column justify-content-between">

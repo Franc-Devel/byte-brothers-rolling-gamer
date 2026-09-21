@@ -10,7 +10,6 @@
 * { box-sizing: border-box; }
 body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: var(--epic-bg-dark); color: var(--epic-text-primary); min-height: 100vh; margin: 0; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
-/* Scrollbar y Layout Base */
 ::-webkit-scrollbar { width: 7px; }
 ::-webkit-scrollbar-track { background: var(--epic-bg-dark); }
 ::-webkit-scrollbar-thumb { background: #2c2c30; border-radius: 4px; }
@@ -18,11 +17,9 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Robo
 #root { min-height: 100vh; display: flex; flex-direction: column; }
 main { flex-grow: 1; }
 
-/* Tipografia */
 .epic-heading { font-weight: 800; letter-spacing: 0; color: #fff; }
 .epic-subheading { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--epic-text-muted); }
 
-/* Navegacion y Header */
 .epic-topbar { background: #101014; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 0.35rem 0; font-size: 0.8rem; }
 .epic-topbar-link { color: var(--epic-text-muted); text-decoration: none; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.2s; padding: 0.25rem 0.6rem; }
 .epic-topbar-link:hover, .epic-topbar-link.active { color: #fff; }
@@ -32,7 +29,6 @@ main { flex-grow: 1; }
 .epic-nav-link.active { color: #fff !important; border-bottom: 2px solid var(--epic-blue); border-radius: 0; }
 .epic-logo-badge { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; background: #fff; color: #000; border-radius: 6px; font-weight: 900; font-size: 1.25rem; box-shadow: 0 2px 8px rgba(0,0,0,0.5); clip-path: polygon(50% 0%, 100% 15%, 100% 85%, 50% 100%, 0% 85%, 0% 15%); }
 
-/* Hero Showcase Carousel */
 .epic-hero-container { border-radius: var(--epic-radius); overflow: hidden; background: var(--epic-bg-secondary); }
 .epic-hero-main { position: relative; border-radius: var(--epic-radius); overflow: hidden; height: 480px; background: #000; }
 .epic-hero-image { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; filter: brightness(0.8); transition: transform 0.6s ease; }
@@ -43,7 +39,6 @@ main { flex-grow: 1; }
 .epic-hero-sidebar-item.active .epic-thumb { border-color: var(--epic-blue); }
 .epic-thumb { width: 74px; height: 42px; object-fit: cover; border-radius: var(--epic-radius-sm); border: 1px solid var(--epic-border); flex-shrink: 0; }
 
-/* Cards y Badges */
 .epic-card { background: transparent; border: none; border-radius: var(--epic-radius); transition: transform 0.2s ease; cursor: pointer; }
 .epic-card:hover { transform: translateY(-4px); }
 .epic-card-media { position: relative; aspect-ratio: 16 / 9; border-radius: var(--epic-radius); overflow: hidden; background: #1e1e1e; box-shadow: 0 8px 16px rgba(0,0,0,0.3); }
@@ -55,7 +50,6 @@ main { flex-grow: 1; }
 .epic-wishlist-btn:hover { background: rgba(0,120,242,0.85); border-color: var(--epic-blue); transform: scale(1.1); }
 .epic-wishlist-btn.active { background: var(--epic-blue); border-color: var(--epic-blue); color: #fff; }
 
-/* Botones y Controles */
 .btn-epic-primary { background: var(--epic-blue); color: #fff; border: none; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.6px; padding: 0.85rem 1.6rem; border-radius: var(--epic-radius-sm); transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; }
 .btn-epic-primary:hover { background: var(--epic-blue-hover); color: #fff; box-shadow: 0 4px 15px var(--epic-blue-glow); }
 .btn-epic-secondary { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid var(--epic-border); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.6px; padding: 0.85rem 1.6rem; border-radius: var(--epic-radius-sm); transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; }
@@ -64,7 +58,6 @@ main { flex-grow: 1; }
 .epic-input:focus { border-color: var(--epic-blue) !important; box-shadow: 0 0 0 2px var(--epic-blue-glow) !important; outline: none !important; }
 .epic-input::placeholder { color: var(--epic-text-muted) !important; }
 
-/* Filtros, Paneles y Tablas */
 .epic-filter-pill { background: transparent; border: none; color: var(--epic-text-muted); font-size: 0.9rem; font-weight: 600; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: all 0.2s ease; }
 .epic-filter-pill:hover { color: #fff; background: rgba(255,255,255,0.06); }
 .epic-filter-pill.active { color: #fff; background: var(--epic-bg-surface); border: 1px solid var(--epic-border); }
@@ -83,7 +76,6 @@ main { flex-grow: 1; }
 .epic-table tr:hover td { background: var(--epic-bg-surface) !important; }
 .epic-footer { background: #121212; border-top: 1px solid var(--epic-border); color: var(--epic-text-muted); }
 
-/* Adaptacion Responsive */
 @media (max-width: 991px) {
   .epic-hero-main { height: 420px; }
   .epic-hero-overlay { padding: 1.5rem; }

@@ -15,7 +15,6 @@ const Footer = () => {
   return (
     <footer className="epic-footer pt-5 pb-4 mt-auto">
       <Container>
-        {/* Redes sociales externas y retorno al inicio */}
         <div className="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary border-opacity-25">
           <div className="d-flex align-items-center gap-3 fs-5">
             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-secondary text-decoration-none" aria-label="Facebook de Rolling Gamer">
@@ -34,7 +33,6 @@ const Footer = () => {
           </button>
         </div>
 
-        {/* Columnas de navegación interna, recursos y legales */}
         <Row className="gy-4 mb-4 small text-center text-md-start">
           <Col xs={12} sm={6} md={3}>
             <span className="epic-subheading d-block mb-3">Navegación</span>
@@ -76,7 +74,6 @@ const Footer = () => {
 
         <hr className="border-secondary border-opacity-25 my-4" />
 
-        {/* Derechos de autor y accesos rápidos legales */}
         <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 small text-secondary text-center text-md-start">
           <div>
             &copy; {new Date().getFullYear()} Rolling Gamer. Proyecto educativo de RollingCode School.

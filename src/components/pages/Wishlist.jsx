@@ -22,7 +22,6 @@ const Wishlist = ({ juegos: juegosProp }) => {
   const listaDisponible = Array.isArray(juegosProp) && juegosProp.length > 0 ? juegosProp : (productos || []);
   const juegos = usuarioActual && getWishlistJuegos ? getWishlistJuegos(listaDisponible) : [];
 
-  // Cálculos de Resumen
   const totalJuegos = juegos.length;
   const sumaPreciosOriginales = juegos.reduce((acc, j) => acc + (Number(j.precio) || 0), 0);
   const sumaPreciosFinales = juegos.reduce((acc, j) => acc + calcularPrecioFinal(j), 0);
@@ -67,7 +66,6 @@ const Wishlist = ({ juegos: juegosProp }) => {
         </Alert>
       )}
 
-      {/* Resumen de Selección en Pesos Argentinos */}
       {totalJuegos > 0 && (
         <Card className="epic-box p-3 mb-4 text-light shadow-sm">
           <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">

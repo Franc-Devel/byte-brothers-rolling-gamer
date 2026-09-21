@@ -309,7 +309,6 @@ const FormularioProducto = ({
       )}
 
       <Form onSubmit={enviar} noValidate className="row g-3">
-        {/* Información básica */}
         <Form.Group className="col-md-6" controlId="formTituloVideojuego">
           <Form.Label className="small text-secondary fw-semibold">Título del videojuego *</Form.Label>
           <Form.Control
@@ -382,7 +381,6 @@ const FormularioProducto = ({
           />
         </Form.Group>
 
-        {/* Precios y descuentos */}
         <Form.Group className="col-md-6" controlId="formPrecio">
           <Form.Label className="small text-secondary fw-semibold">Precio (ARS) * (mínimo $50)</Form.Label>
           <Form.Control
@@ -424,7 +422,6 @@ const FormularioProducto = ({
           <Form.Control.Feedback type="invalid">{errores.descuento}</Form.Control.Feedback>
         </Form.Group>
 
-        {/* Multimedia */}
         <Form.Group className="col-md-8" controlId="formImagenPortada">
           <Form.Label className="small text-secondary fw-semibold">URL de imagen de portada *</Form.Label>
           <Form.Control
@@ -464,7 +461,6 @@ const FormularioProducto = ({
           </div>
         </Form.Group>
 
-        {/* Descripciones con validaciones de longitud */}
         <Form.Group className="col-12" controlId="formResumen">
           <div className="d-flex justify-content-between align-items-center mb-1">
             <Form.Label className="small text-secondary fw-semibold mb-0">Resumen / Descripción corta * (10 a 150 caracteres)</Form.Label>
@@ -509,7 +505,6 @@ const FormularioProducto = ({
           <Form.Control.Feedback type="invalid">{errores.descripcion}</Form.Control.Feedback>
         </Form.Group>
 
-        {/* Requisitos de Sistema */}
         <div className="col-12 mt-4">
           <div className="d-flex align-items-center gap-2 mb-2">
             <i className="bi bi-cpu text-warning fs-5" />
@@ -520,7 +515,6 @@ const FormularioProducto = ({
           </p>
 
           <div className="row g-3">
-            {/* Requisitos Mínimos */}
             <div className="col-12 col-lg-6">
               <Card className="bg-black bg-opacity-40 border border-secondary border-opacity-25 h-100">
                 <Card.Header className="bg-transparent border-secondary border-opacity-25 py-2">
@@ -592,7 +586,6 @@ const FormularioProducto = ({
               </Card>
             </div>
 
-            {/* Requisitos Recomendados */}
             <div className="col-12 col-lg-6">
               <Card className="bg-black bg-opacity-40 border border-secondary border-opacity-25 h-100">
                 <Card.Header className="bg-transparent border-secondary border-opacity-25 py-2">

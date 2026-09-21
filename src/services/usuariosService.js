@@ -7,8 +7,9 @@ export const WISHLISTS_KEY = "rollingGamer_wishlists";
 
 export const sanitizarUsuario = (u) => {
   if (!u) return null;
-  // eslint-disable-next-line no-unused-vars
-  const { password, contrasenia, ...seguro } = u;
+  const seguro = { ...u };
+  delete seguro.password;
+  delete seguro.contrasenia;
   return seguro;
 };
 
