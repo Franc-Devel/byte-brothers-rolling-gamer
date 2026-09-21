@@ -6,7 +6,9 @@
 [![React_Router](https://img.shields.io/badge/React_Router-v8-CA4245?logo=react-router&logoColor=white)](https://reactrouter.com/)
 [![Status](https://img.shields.io/badge/RollingCode_School-Cohorte_9P-red)](#)
 
-Plataforma web profesional **ROLLING GAMER**, desarrollada con **React 19**, **Vite**, **Bootstrap 5** y **React Router**. Cuenta con carrusel cinematográfico con selector lateral, catálogo de más de 20 títulos, fichas de producto con especificaciones técnicas, sistema de reseñas y panel de administración protegido.
+Plataforma web profesional **ROLLING GAMER**, desarrollada con **React 19**, **Vite**, **Bootstrap 5** y **React Router**. Cuenta con carrusel cinematográfico con selector lateral, catálogo oficial de 19 títulos de Steam con assets locales sincronizados, fichas de producto con especificaciones técnicas, sistema de reseñas y panel de administración protegido.
+
+> 🚀 **Sitio Web en Producción (Vercel):** [https://byte-brothers-rolling-gamer.vercel.app/](https://byte-brothers-rolling-gamer.vercel.app/)
 
 ---
 
@@ -24,9 +26,9 @@ Plataforma web profesional **ROLLING GAMER**, desarrollada con **React 19**, **V
 ## 📖 Descripción del Proyecto
 
 ROLLING GAMER es una solución e-commerce moderna para gamers que ofrece:
-- **Catálogo digital de más de 20 títulos AAA e Indies** precargados con datos reales, precios, géneros, capturas y requisitos de sistema.
+- **Catálogo digital de 19 títulos oficiales de Steam** precargados con datos reales, precios, géneros, capturas locales y requisitos de sistema.
 - **Buscador en tiempo real** por título, desarrollador y género.
-- **Filtros por categoría** (RPG, Acción, Aventura, Terror, Simulación, Deportes, Indie) y opciones de ordenamiento por precio y satisfacción.
+- **Filtros por categoría** (Acción, Disparos, Carreras, Estrategia, Simulación) y opciones de ordenamiento por precio y satisfacción.
 - **Ficha técnica extendida** (`/detalle/:id`) con requisitos mínimos y recomendados de hardware (SO, Procesador, RAM, Tarjeta Gráfica y Espacio en Disco).
 - **Sistema interactivo de reseñas** con cálculo dinámico en tiempo real del porcentaje de satisfacción estilo Steam (*Extremadamente Positivas*, *Mayormente Positivas*, *Mixtas*).
 - **Lista de deseos personal (Wishlist)** sincronizada por usuario autenticado.
@@ -48,7 +50,7 @@ ROLLING GAMER es una solución e-commerce moderna para gamers que ofrece:
 | **Gestión de Usuarios** | Tabla de usuarios registrados para visualización y eliminación (con protección de la cuenta admin activa). | ✅ |
 | **Seguridad de Rutas** | Componente guardián `RutaProtegida` que restringe el acceso al panel `/admin` solo a usuarios con rol `admin`. | ✅ |
 | **Simulación de Autenticación** | Login y Registro con validaciones, hashing/distinción entre Administrador precargado y usuarios invitados. | ✅ |
-| **Catálogo de +20 Productos** | **22 videojuegos completos** precargados (Cyberpunk 2077, Elden Ring, Baldur's Gate 3, RDR2, God of War, etc.). | ✅ |
+| **Catálogo de 19 Juegos Steam** | **19 videojuegos oficiales** precargados con assets locales sincronizados, trailers y especificaciones técnicas. | ✅ |
 | **Diseño Responsive & Moderno** | UI moderna para gaming con paleta oscura, acentos neon, cards interactivas y tipografía Google Fonts. | ✅ |
 
 ---
@@ -151,15 +153,16 @@ El proyecto fue concebido, diseñado e implementado por:
 
 ---
 
-## 🌐 Despliegue (Netlify / Vercel)
+## 🌐 Despliegue en Producción (Vercel)
 
-El proyecto incluye el archivo `public/_redirects` para garantizar que el enrutamiento del lado del cliente (`client-side routing` de React Router) funcione correctamente al recargar páginas profundas como `/detalle/:id` o `/admin`.
+El proyecto se encuentra desplegado y accesible públicamente en **Vercel**:
+- 🔗 **Demo Oficial en Vivo:** [https://byte-brothers-rolling-gamer.vercel.app/](https://byte-brothers-rolling-gamer.vercel.app/)
 
-### Para desplegar en Netlify:
-1. Conectar el repositorio de GitHub en Netlify.
-2. Build command: `npm run build`
-3. Publish directory: `dist`
-4. ¡Listo! El archivo `_redirects` se copiará automáticamente a `dist/_redirects`.
+El repositorio incluye la configuración para Single Page Application (SPA):
+- **Vercel:** `vercel.json` con regla de reescritura hacia `/index.html`.
+- **Netlify:** `public/_redirects` con `/* /index.html 200`.
+
+Ambas configuraciones garantizan que el enrutamiento del lado del cliente (`client-side routing` de React Router) funcione correctamente al recargar páginas profundas como `/detalle/:id`, `/administrador` o `/wishlist`.
 
 ---
 
