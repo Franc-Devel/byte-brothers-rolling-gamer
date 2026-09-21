@@ -36,3 +36,10 @@ lerna-debug.log*
 *.sw?
 .DS_Store
 Thumbs.db
+
+# Syncthing / Cloud sync conflicts
+*sync-conflict*
+
+# Repomix outputs
+repomix-output.*
+
