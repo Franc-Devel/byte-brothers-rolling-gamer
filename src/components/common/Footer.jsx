@@ -35,10 +35,10 @@ const Footer = () => {
         </div>
 
         {/* Columnas de navegación interna, recursos y legales */}
-        <Row className="gy-4 mb-4 small">
+        <Row className="gy-4 mb-4 small text-center text-md-start">
           <Col xs={12} sm={6} md={3}>
             <span className="epic-subheading d-block mb-3">Navegación</span>
-            <ul className="list-unstyled d-flex flex-column gap-2 text-secondary mb-0">
+            <ul className="list-unstyled d-flex flex-column align-items-center align-items-md-start gap-2 text-secondary mb-0">
               <li><Link to="/" className="text-secondary text-decoration-none">Tienda y Catálogo</Link></li>
               <li><Link to="/about" className="text-secondary text-decoration-none">Equipo de Desarrollo</Link></li>
               <li><Link to="/wishlist" className="text-secondary text-decoration-none">Lista de Deseos</Link></li>
@@ -48,20 +48,20 @@ const Footer = () => {
 
           <Col xs={12} sm={6} md={3}>
             <span className="epic-subheading d-block mb-3">Recursos y Soporte</span>
-            <ul className="list-unstyled d-flex flex-column gap-2 text-secondary mb-0">
-              <li><button type="button" className="btn btn-link p-0 text-secondary text-decoration-none small text-start border-0" onClick={() => abrirModal("ayuda")}>Centro de Ayuda</button></li>
-              <li><button type="button" className="btn btn-link p-0 text-secondary text-decoration-none small text-start border-0" onClick={() => abrirModal("noticias")}>Noticias de Temporada</button></li>
-              <li><button type="button" className="btn btn-link p-0 text-secondary text-decoration-none small text-start border-0" onClick={() => abrirModal("distribucion")}>Publicar Videojuegos</button></li>
+            <ul className="list-unstyled d-flex flex-column align-items-center align-items-md-start gap-2 text-secondary mb-0">
+              <li><button type="button" className="btn btn-link p-0 text-secondary text-decoration-none small text-center text-md-start border-0" onClick={() => abrirModal("ayuda")}>Centro de Ayuda</button></li>
+              <li><button type="button" className="btn btn-link p-0 text-secondary text-decoration-none small text-center text-md-start border-0" onClick={() => abrirModal("noticias")}>Noticias de Temporada</button></li>
+              <li><button type="button" className="btn btn-link p-0 text-secondary text-decoration-none small text-center text-md-start border-0" onClick={() => abrirModal("distribucion")}>Publicar Videojuegos</button></li>
             </ul>
           </Col>
 
           <Col xs={12} sm={6} md={3}>
             <span className="epic-subheading d-block mb-3">Términos y Políticas</span>
-            <ul className="list-unstyled d-flex flex-column gap-2 text-secondary mb-0">
-              <li><button type="button" className="btn btn-link p-0 text-secondary text-decoration-none small text-start border-0" onClick={() => abrirModal("terminos")}>Términos del Servicio</button></li>
-              <li><button type="button" className="btn btn-link p-0 text-secondary text-decoration-none small text-start border-0" onClick={() => abrirModal("privacidad")}>Política de Privacidad</button></li>
-              <li><button type="button" className="btn btn-link p-0 text-secondary text-decoration-none small text-start border-0" onClick={() => abrirModal("reembolsos")}>Política de Reembolsos</button></li>
-              <li><button type="button" className="btn btn-link p-0 text-secondary text-decoration-none small text-start border-0" onClick={() => abrirModal("seguridad")}>Consejos de Seguridad</button></li>
+            <ul className="list-unstyled d-flex flex-column align-items-center align-items-md-start gap-2 text-secondary mb-0">
+              <li><button type="button" className="btn btn-link p-0 text-secondary text-decoration-none small text-center text-md-start border-0" onClick={() => abrirModal("terminos")}>Términos del Servicio</button></li>
+              <li><button type="button" className="btn btn-link p-0 text-secondary text-decoration-none small text-center text-md-start border-0" onClick={() => abrirModal("privacidad")}>Política de Privacidad</button></li>
+              <li><button type="button" className="btn btn-link p-0 text-secondary text-decoration-none small text-center text-md-start border-0" onClick={() => abrirModal("reembolsos")}>Política de Reembolsos</button></li>
+              <li><button type="button" className="btn btn-link p-0 text-secondary text-decoration-none small text-center text-md-start border-0" onClick={() => abrirModal("seguridad")}>Consejos de Seguridad</button></li>
             </ul>
           </Col>
 
@@ -77,11 +77,11 @@ const Footer = () => {
         <hr className="border-secondary border-opacity-25 my-4" />
 
         {/* Derechos de autor y accesos rápidos legales */}
-        <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 small text-secondary">
+        <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 small text-secondary text-center text-md-start">
           <div>
             &copy; {new Date().getFullYear()} Rolling Gamer. Proyecto educativo de RollingCode School.
           </div>
-          <div className="d-flex gap-3 text-nowrap">
+          <div className="d-flex gap-3 text-nowrap justify-content-center justify-content-md-end">
             <button type="button" className="btn btn-link p-0 text-secondary text-decoration-none small border-0" onClick={() => abrirModal("privacidad")}>Privacidad</button>
             <span>•</span>
             <button type="button" className="btn btn-link p-0 text-secondary text-decoration-none small border-0" onClick={() => abrirModal("terminos")}>Condiciones</button>
