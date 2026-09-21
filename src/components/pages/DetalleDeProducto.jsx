@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Alert, Badge, Button, Card, Col, Form, Modal, Row } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
@@ -42,6 +42,10 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
 
   // Galería interactiva (declarada incondicionalmente antes de cualquier retorno)
   const [imgSeleccionada, setImgSeleccionada] = useState(null);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [id]);
 
   const buscar = buscarProducto || productosCtx?.buscarProducto;
   const agregar = agregarResena || productosCtx?.agregarResena;
