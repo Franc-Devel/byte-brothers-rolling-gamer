@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
 
-const FALLBACK_IMG = "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80";
+const FALLBACK_IMG = "/images/games/07-counter-strike-2/header.jpg";
 
 const formatoMoneda = (val) => `$${Number(val || 0).toLocaleString("es-AR")} ARS`;
 
@@ -75,7 +75,7 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
   const descripcionLarga = juego.descripcion || juego.descripcionDetallada || descripcionCorta;
 
   // Lógica de Galería interactiva sin duplicados
-  const portada = juego.imagen || juego.portada || FALLBACK_IMG;
+  const portada = juego.portada || juego.imagen || FALLBACK_IMG;
   const imagenesGaleria = Array.from(
     new Set([portada, ...(Array.isArray(juego.galeria) ? juego.galeria : [])].filter(Boolean))
   );

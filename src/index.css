@@ -19,7 +19,7 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Robo
 main { flex-grow: 1; }
 
 /* Tipografia */
-.epic-heading { font-weight: 800; letter-spacing: -0.5px; color: #fff; }
+.epic-heading { font-weight: 800; letter-spacing: 0; color: #fff; }
 .epic-subheading { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--epic-text-muted); }
 
 /* Navegacion y Header */
@@ -41,12 +41,12 @@ main { flex-grow: 1; }
 .epic-hero-sidebar-item:hover { background: rgba(255,255,255,0.05); }
 .epic-hero-sidebar-item.active { background: var(--epic-bg-surface); border-left: 3px solid var(--epic-blue); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
 .epic-hero-sidebar-item.active .epic-thumb { border-color: var(--epic-blue); }
-.epic-thumb { width: 50px; height: 65px; object-fit: cover; border-radius: var(--epic-radius-sm); border: 1px solid var(--epic-border); }
+.epic-thumb { width: 74px; height: 42px; object-fit: cover; border-radius: var(--epic-radius-sm); border: 1px solid var(--epic-border); flex-shrink: 0; }
 
 /* Cards y Badges */
 .epic-card { background: transparent; border: none; border-radius: var(--epic-radius); transition: transform 0.2s ease; cursor: pointer; }
 .epic-card:hover { transform: translateY(-4px); }
-.epic-card-media { position: relative; aspect-ratio: 3 / 4; border-radius: var(--epic-radius); overflow: hidden; background: #1e1e1e; box-shadow: 0 8px 16px rgba(0,0,0,0.3); }
+.epic-card-media { position: relative; aspect-ratio: 16 / 9; border-radius: var(--epic-radius); overflow: hidden; background: #1e1e1e; box-shadow: 0 8px 16px rgba(0,0,0,0.3); }
 .epic-card-media img { width: 100%; height: 100%; object-fit: cover; transition: filter 0.2s ease, transform 0.3s ease; }
 .epic-card:hover .epic-card-media img { filter: brightness(1.08); transform: scale(1.02); }
 .epic-badge-discount { background: var(--epic-blue); color: #fff; font-weight: 700; font-size: 0.75rem; padding: 3px 8px; border-radius: var(--epic-radius-sm); letter-spacing: 0.2px; }
@@ -69,6 +69,12 @@ main { flex-grow: 1; }
 .epic-filter-pill:hover { color: #fff; background: rgba(255,255,255,0.06); }
 .epic-filter-pill.active { color: #fff; background: var(--epic-bg-surface); border: 1px solid var(--epic-border); }
 .epic-box { background: var(--epic-bg-secondary); border: 1px solid var(--epic-border); border-radius: var(--epic-radius); }
+.epic-team-card { overflow: hidden; }
+.epic-team-photo { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: var(--epic-bg-surface); border-bottom: 1px solid var(--epic-border); }
+.epic-team-photo::after { content: ""; position: absolute; inset: 0; box-shadow: inset 0 -28px 35px -30px rgba(0,120,242,0.7); pointer-events: none; }
+.epic-team-photo img { object-position: center top; transition: transform 0.35s ease, filter 0.35s ease; }
+.epic-team-card:hover .epic-team-photo img { transform: scale(1.015); filter: brightness(1.04); }
+.epic-team-content { min-height: 260px; }
 .epic-specs-col { background: var(--epic-bg-surface); border-radius: var(--epic-radius-sm); padding: 1.25rem; border: 1px solid var(--epic-border); }
 .epic-specs-title { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--epic-text-muted); margin-bottom: 1rem; border-bottom: 1px solid var(--epic-border); padding-bottom: 0.5rem; }
 .epic-table { color: var(--epic-text-primary) !important; background: transparent !important; border-color: var(--epic-border) !important; }
@@ -79,10 +85,14 @@ main { flex-grow: 1; }
 
 /* Adaptacion Responsive */
 @media (max-width: 991px) {
-  .epic-hero-main { height: 360px; }
+  .epic-hero-main { height: 420px; }
   .epic-hero-overlay { padding: 1.5rem; }
+  .epic-hero-title { font-size: 1.85rem !important; }
 }
 @media (max-width: 767px) {
-  .epic-hero-main { height: 260px; }
+  .epic-hero-main { height: auto; min-height: 380px; }
+  .epic-hero-overlay { position: relative; padding: 1.25rem; background: linear-gradient(0deg, rgba(18,18,18,0.98) 0%, rgba(18,18,18,0.85) 60%, rgba(18,18,18,0.45) 100%); }
+  .epic-hero-image { position: absolute; inset: 0; }
+  .epic-hero-title { font-size: 1.45rem !important; line-height: 1.25; }
   .btn-epic-primary, .btn-epic-secondary { width: 100%; }
 }

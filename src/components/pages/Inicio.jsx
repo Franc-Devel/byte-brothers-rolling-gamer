@@ -7,6 +7,8 @@ import { useProductos } from "../../context/ProductosContext.jsx";
 const formatoMoneda = (n) => `$${Number(n || 0).toLocaleString("es-AR")} ARS`;
 const precioFinal = (p) => p.descuento ? Math.round(p.precio * (1 - p.descuento / 100)) : p.precio;
 const ratioResenas = (p) => p.resenas?.length ? p.resenas.filter((r) => r.voto === "positivo" || r.voto === "positiva").length / p.resenas.length : 0;
+const FALLBACK_IMG = "/images/games/07-counter-strike-2/header.jpg";
+const imagenJuego = (j) => j?.portada || j?.imagen || FALLBACK_IMG;
 
 const Inicio = () => {
   const { productos = [] } = useProductos();
@@ -51,11 +53,16 @@ const Inicio = () => {
         <section className="epic-hero-container mb-4">
           <Row className="g-0">
             <Col lg={8} className="epic-hero-main">
-              <img className="epic-hero-image" src={destacado.imagen} alt={destacado.nombre} />
+              <img
+                className="epic-hero-image"
+                src={imagenJuego(destacado)}
+                alt={destacado.nombre}
+                onError={(e) => { e.currentTarget.src = FALLBACK_IMG; }}
+              />
               <div className="epic-hero-overlay">
                 <Badge bg="primary" className="align-self-start mb-2">DESTACADO</Badge>
-                <h1 className="epic-heading display-5 mb-2">{destacado.nombre}</h1>
-                <p className="text-secondary col-lg-9 mb-3 text-truncate-2">{destacado.resumen || destacado.descripcion}</p>
+                <h1 className="epic-heading epic-hero-title display-5 mb-2">{destacado.nombre}</h1>
+                <p className="text-secondary col-lg-9 mb-3 text-truncate-2 small">{destacado.resumen || destacado.descripcion}</p>
                 <div className="d-flex flex-wrap gap-3 align-items-center">
                   <div className="d-flex flex-column">
                     {destacado.descuento > 0 && <span className="text-muted small text-decoration-line-through">{formatoMoneda(destacado.precio)}</span>}
@@ -68,7 +75,12 @@ const Inicio = () => {
             <Col lg={4} className="p-2 d-none d-lg-flex flex-column justify-content-between">
               {destacados5.map((j) => (
                 <div key={j.id} className={`epic-hero-sidebar-item ${destacado.id === j.id ? "active" : ""}`} onClick={() => setDestacadoId(j.id)}>
-                  <img src={j.imagen} alt={j.nombre} className="epic-thumb" />
+                  <img
+                    src={imagenJuego(j)}
+                    alt={j.nombre}
+                    className="epic-thumb"
+                    onError={(e) => { e.currentTarget.src = FALLBACK_IMG; }}
+                  />
                   <div className="text-truncate">
                     <div className="text-light fw-bold small text-truncate">{j.nombre}</div>
                     <span className="text-muted small">{formatoMoneda(precioFinal(j))}</span>
@@ -119,7 +131,12 @@ const Inicio = () => {
             <Col key={j.id}>
               <article className="epic-card h-100">
                 <div className="epic-card-media">
-                  <img src={j.imagen} alt={j.nombre} loading="lazy" />
+                  <img
+                    src={imagenJuego(j)}
+                    alt={j.nombre}
+                    loading="lazy"
+                    onError={(e) => { e.currentTarget.src = FALLBACK_IMG; }}
+                  />
                   {j.descuento > 0 && <span className="epic-badge-discount position-absolute start-0 top-0 m-2">-{j.descuento}%</span>}
                   <button className={`epic-wishlist-btn ${isWishlisted(j.id) ? "active" : ""}`} onClick={() => alternarDeseo(j.id)} aria-label="Alternar deseo">
                     <i className={`bi ${isWishlisted(j.id) ? "bi-heart-fill" : "bi-heart"}`} />
