@@ -60,13 +60,13 @@ Para facilitar la revisión por parte del equipo docente y evaluadores, en la pa
 ### 👑 Perfil Administrador (Acceso completo a `/admin`)
 - **Titular:** Francisco Delgado (Team Leader)
 - **Correo Electrónico:** `admin@rollinggames.com`
-- **Contraseña:** `admin123`
+- **Contraseña:** `Admin123!`
 - **Permisos:** Gestión de inventario (CRUD videojuegos), recarga de datos de fábrica y eliminación de usuarios.
 
 ### 👤 Perfil Usuario Gamer (Cliente estándar)
 - **Titular:** Franco Triviño (Scrum Master)
 - **Correo Electrónico:** `user@rollinggames.com`
-- **Contraseña:** `user123`
+- **Contraseña:** `User123!`
 - **Permisos:** Navegación, guardado en lista de deseos y publicación de reseñas comunitarias.
 
 > *Nota: También es posible registrar nuevos usuarios desde la pestaña "Crear Cuenta".*
@@ -128,7 +128,7 @@ Rolling-Gamer/
 │   ├── context/
 │   │   └── AuthContext.jsx     # Contexto global de sesión, usuarios y wishlist
 │   ├── data/
-│   │   ├── juegosIniciales.js  # Dataset de 22 videojuegos reales con especificaciones
+│   │   ├── juegosIniciales.js  # Dataset de 19 videojuegos reales con especificaciones y assets locales
 │   │   └── usuariosIniciales.js # Cuentas predeterminadas (Admin y Usuario)
 │   ├── App.jsx                 # Configuración de rutas y estado de inventario
 │   ├── index.css               # Sistema de diseño gamer con CSS variables
@@ -139,11 +139,15 @@ Rolling-Gamer/
 
 ---
 
-## 👥 Equipo de Desarrollo
+## 👥 Equipo de Desarrollo y Metodología
 
 El proyecto fue concebido, diseñado e implementado por:
 - **[Francisco Delgado (Franc-Devel)](https://github.com/Franc-Devel)**: *Team Leader & Full Stack Developer* — Arquitectura general con React 19, persistencia de catálogo en `LocalStorage`, enrutamiento con React Router, seguridad y panel de administración.
 - **[Franco Triviño (francotrivio321)](https://github.com/francotrivio321)**: *Scrum Master & Frontend Developer* — Organización ágil y gestión de sprints en Trello, diseño temático inspirado en Epic Games Store, validaciones de formularios y experiencia de usuario.
+
+### 📋 Gestión del Proyecto y Código Fuente
+- **Tablero Ágil Oficial (Trello):** [https://trello.com/b/qyopevQH/rolling-gamer](https://trello.com/b/qyopevQH/rolling-gamer)
+- **Repositorio Oficial (GitHub):** [https://github.com/Franc-Devel/byte-brothers-rolling-gamer](https://github.com/Franc-Devel/byte-brothers-rolling-gamer)
 
 ---
 

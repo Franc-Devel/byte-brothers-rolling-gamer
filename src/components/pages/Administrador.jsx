@@ -5,7 +5,6 @@ import Swal from "sweetalert2";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
 import ItemProducto from "./producto/ItemProducto.jsx";
-
 const Administrador = () => {
   const { productos, borrarProducto, recargarCatalogo } = useProductos();
   const { usuarios, usuarioActual, borrarUsuario } = useAuth();
@@ -13,19 +12,16 @@ const Administrador = () => {
   const [query, setQuery] = useState("");
   const [categoria, setCategoria] = useState("");
   const [modalReset, setModalReset] = useState(false);
-
   const categorias = useMemo(
     () => Array.from(new Set(productos.map((p) => p.categoria).filter(Boolean))).sort(),
     [productos]
   );
-
   const metricas = useMemo(() => ({
     juegos: productos.length,
     usuarios: usuarios.length,
     categorias: categorias.length,
     valorBase: `$${productos.reduce((acc, p) => acc + (Number(p.precio) || 0), 0).toLocaleString("es-AR")}`,
   }), [productos, usuarios, categorias]);
-
   const filtrados = useMemo(() => {
     const q = query.trim().toLowerCase();
     return productos.filter((p) => {
@@ -34,7 +30,6 @@ const Administrador = () => {
       return matchQ && matchC;
     });
   }, [productos, query, categoria]);
-
   const confirmarReset = () => {
     setModalReset(false);
     recargarCatalogo();
@@ -49,7 +44,6 @@ const Administrador = () => {
       showConfirmButton: false,
     });
   };
-
   const bajaUsuario = (u) => {
     if (String(u.id) === String(usuarioActual?.id)) {
       Swal.fire({
@@ -73,7 +67,6 @@ const Administrador = () => {
       });
       return;
     }
-
     Swal.fire({
       title: "¿Confirmas la baja?",
       text: `¿Estás seguro de que deseas eliminar al usuario "${u.nombre}" (${u.email || u.correo})?`,
@@ -101,7 +94,6 @@ const Administrador = () => {
       }
     });
   };
-
   return (
     <>
       <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
@@ -118,8 +110,6 @@ const Administrador = () => {
           </Button>
         </div>
       </div>
-
-      {/* Métricas del ecosistema */}
       <Row className="g-2 g-md-3 mb-4">
         {[
           { label: "Catálogo", valor: metricas.juegos, desc: "Títulos totales", color: "text-light" },
@@ -136,8 +126,6 @@ const Administrador = () => {
           </Col>
         ))}
       </Row>
-
-      {/* Navegación por pestañas */}
       <Nav variant="pills" className="bg-black rounded p-1 mb-3">
         <Nav.Item>
           <Nav.Link active={tab === "catalogo"} onClick={() => setTab("catalogo")}>
@@ -150,10 +138,8 @@ const Administrador = () => {
           </Nav.Link>
         </Nav.Item>
       </Nav>
-
       {tab === "catalogo" ? (
         <Card className="epic-box p-3 mb-4 text-light">
-          {/* Controles de búsqueda y filtros */}
           <div className="row g-2 mb-3 align-items-center">
             <div className="col-12 col-md-6">
               <InputGroup size="sm">
@@ -165,6 +151,7 @@ const Administrador = () => {
                   placeholder="Buscar por título o desarrollador..."
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
+                  maxLength={60}
                 />
                 {query && (
                   <Button variant="outline-secondary" onClick={() => setQuery("")}>
@@ -194,7 +181,6 @@ const Administrador = () => {
               )}
             </div>
           </div>
-
           <Table responsive hover variant="dark" className="epic-table mb-0 align-middle">
             <thead>
               <tr>
@@ -295,8 +281,6 @@ const Administrador = () => {
           </Table>
         </Card>
       )}
-
-      {/* Modal de confirmación para restablecer datos */}
       <Modal show={modalReset} onHide={() => setModalReset(false)} centered size="sm" contentClassName="bg-dark text-light border-secondary">
         <Modal.Header closeButton closeVariant="white">
           <Modal.Title className="h6 mb-0">¿Restaurar catálogo?</Modal.Title>
@@ -316,5 +300,4 @@ const Administrador = () => {
     </>
   );
 };
-
 export default Administrador;

@@ -3,7 +3,6 @@ import { Alert, Badge, Button, Container, Modal, Nav, Navbar } from "react-boots
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useUIModal } from "../../context/UIModalContext.jsx";
-
 const Menu = () => {
   const { usuarioActual, esAdmin, logout, wishlistIds } = useAuth();
   const { abrirModal } = useUIModal();
@@ -11,21 +10,17 @@ const Menu = () => {
   const [expandido, setExpandido] = useState(false);
   const [avisoIdioma, setAvisoIdioma] = useState(false);
   const [confirmarSalir, setConfirmarSalir] = useState(false);
-
   const cerrarMenu = () => setExpandido(false);
-
   const ejecutarSalir = () => {
     setConfirmarSalir(false);
     cerrarMenu();
     logout();
     navigate("/");
   };
-
   const alternarIdioma = () => {
     setAvisoIdioma(true);
     setTimeout(() => setAvisoIdioma(false), 3000);
   };
-
   return (
     <header className="sticky-top">
       <div className="epic-topbar d-none d-md-block">
@@ -47,22 +42,18 @@ const Menu = () => {
           </div>
         </Container>
       </div>
-
       {avisoIdioma && (
         <Alert variant="info" className="py-1 px-3 mb-0 text-center small rounded-0 border-0 bg-dark text-info">
           <i className="bi bi-info-circle me-1" />Plataforma configurada en Español (Latinoamérica). Interfaz localizada.
         </Alert>
       )}
-
       <Navbar expand="lg" variant="dark" className="epic-navbar" expanded={expandido} onToggle={setExpandido}>
         <Container>
           <Navbar.Brand as={Link} to="/" onClick={cerrarMenu} className="d-flex align-items-center gap-2">
             <span className="epic-logo-badge">R</span>
             <span className="epic-heading h5 mb-0">ROLLING<span className="text-primary">GAMER</span></span>
           </Navbar.Brand>
-
           <Navbar.Toggle aria-controls="nav-gamer" />
-
           <Navbar.Collapse id="nav-gamer">
             <Nav className="me-auto ms-lg-3 py-2 py-lg-0">
               <Nav.Link as={NavLink} to="/" end onClick={cerrarMenu} className="epic-nav-link">
@@ -80,7 +71,6 @@ const Menu = () => {
                 </Nav.Link>
               )}
             </Nav>
-
             {usuarioActual ? (
               <div className="d-flex align-items-center gap-2 pt-2 pt-lg-0 border-top border-lg-0 border-secondary border-opacity-25">
                 <div className="d-flex flex-column text-lg-end">
@@ -106,7 +96,6 @@ const Menu = () => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-
       <Modal show={confirmarSalir} onHide={() => setConfirmarSalir(false)} centered size="sm" contentClassName="bg-dark text-light border-secondary">
         <Modal.Header closeButton closeVariant="white">
           <Modal.Title className="h6 mb-0">¿Cerrar sesión?</Modal.Title>
@@ -126,5 +115,4 @@ const Menu = () => {
     </header>
   );
 };
-
 export default Menu;

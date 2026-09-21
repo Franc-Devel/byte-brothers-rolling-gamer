@@ -3,38 +3,29 @@ import { Alert, Badge, Button, Card, Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
-
 const FALLBACK_IMG = "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80";
-
 const formatoMoneda = (val) => `$${Number(val || 0).toLocaleString("es-AR")} ARS`;
-
 const calcularPrecioFinal = (p) => {
   const desc = Number(p.descuento) || 0;
   const prec = Number(p.precio) || 0;
   return desc > 0 ? Math.round(prec * (1 - desc / 100)) : prec;
 };
-
 const Wishlist = ({ juegos: juegosProp }) => {
   const { usuarioActual, getWishlistJuegos, toggleWishlist } = useAuth();
   const { productos } = useProductos();
   const [aviso, setAviso] = useState(null);
-
   const listaDisponible = Array.isArray(juegosProp) && juegosProp.length > 0 ? juegosProp : (productos || []);
   const juegos = usuarioActual && getWishlistJuegos ? getWishlistJuegos(listaDisponible) : [];
-
-  // Cálculos de Resumen
   const totalJuegos = juegos.length;
   const sumaPreciosOriginales = juegos.reduce((acc, j) => acc + (Number(j.precio) || 0), 0);
   const sumaPreciosFinales = juegos.reduce((acc, j) => acc + calcularPrecioFinal(j), 0);
   const ahorroTotal = sumaPreciosOriginales - sumaPreciosFinales;
-
   const handleQuitar = (juego) => {
     const nombre = juego.nombre || juego.titulo || "Videojuego";
     toggleWishlist?.(juego.id);
     setAviso(`"${nombre}" fue eliminado de tu lista de deseos.`);
     setTimeout(() => setAviso(null), 3500);
   };
-
   if (!usuarioActual) {
     return (
       <div className="epic-box p-5 text-center shadow">
@@ -49,7 +40,6 @@ const Wishlist = ({ juegos: juegosProp }) => {
       </div>
     );
   }
-
   return (
     <div className="wishlist-page-container py-3 py-md-4 px-1 px-sm-0">
       <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
@@ -60,14 +50,11 @@ const Wishlist = ({ juegos: juegosProp }) => {
           </Badge>
         )}
       </div>
-
       {aviso && (
         <Alert variant="info" className="py-2 small text-center mb-3">
           <i className="bi bi-info-circle me-1" />{aviso}
         </Alert>
       )}
-
-      {/* Resumen de Selección en Pesos Argentinos */}
       {totalJuegos > 0 && (
         <Card className="epic-box p-3 mb-4 text-light shadow-sm">
           <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
@@ -98,7 +85,6 @@ const Wishlist = ({ juegos: juegosProp }) => {
           const descuento = Number(j.descuento) || 0;
           const precioFinal = calcularPrecioFinal(j);
           const tieneDescuento = descuento > 0;
-
           return (
             <Col key={j.id}>
               <article className="epic-box p-3 h-100 d-flex flex-column justify-content-between shadow-sm">
@@ -117,7 +103,6 @@ const Wishlist = ({ juegos: juegosProp }) => {
                       </Badge>
                     )}
                   </div>
-
                   <div className="d-flex align-items-center gap-2 mb-2">
                     <Badge bg="primary" className="text-uppercase" style={{ fontSize: "0.72rem" }}>
                       {j.genero || j.categoria || "Juego"}
@@ -126,13 +111,11 @@ const Wishlist = ({ juegos: juegosProp }) => {
                       {j.desarrollador || j.estudio || "Estudio"}
                     </small>
                   </div>
-
                   <h2 className="h5 text-light text-truncate mb-1">{j.nombre || j.titulo}</h2>
                   <p className="text-secondary small line-clamp-2 mb-3">
                     {j.resumen || j.descripcionCorta || "Sin descripción disponible."}
                   </p>
                 </div>
-
                 <div className="border-top border-secondary border-opacity-25 pt-3 mt-auto">
                   <div className="d-flex align-items-baseline gap-2 mb-3">
                     <span className="fs-5 fw-bold text-light">{formatoMoneda(precioFinal)}</span>
@@ -142,7 +125,6 @@ const Wishlist = ({ juegos: juegosProp }) => {
                       </span>
                     )}
                   </div>
-
                   <div className="d-flex gap-2">
                     <Button as={Link} to={`/detalle/${j.id}`} size="sm" className="btn-epic-primary w-50">
                       <i className="bi bi-eye me-1" />Detalle
@@ -157,7 +139,6 @@ const Wishlist = ({ juegos: juegosProp }) => {
           );
         })}
       </Row>
-
       {juegos.length === 0 && (
         <Card className="epic-box p-5 text-center text-secondary border-dashed my-4 shadow-sm">
           <i className="bi bi-heartbreak display-4 text-secondary opacity-50 d-block mb-3" />
@@ -175,5 +156,4 @@ const Wishlist = ({ juegos: juegosProp }) => {
     </div>
   );
 };
-
 export default Wishlist;

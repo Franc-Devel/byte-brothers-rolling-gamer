@@ -1,13 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Alert, Badge, Button, Card, Col, Form, Modal, Row } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
-
-const FALLBACK_IMG = "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80";
-
+const FALLBACK_IMG = "/images/games/07-counter-strike-2/header.jpg";
 const formatoMoneda = (val) => `$${Number(val || 0).toLocaleString("es-AR")} ARS`;
-
 const specs = (r = {}) => [
   ["SO", r.so || "Windows 10 64-bit"],
   ["CPU", r.cpu || r.procesador || "Intel Core i5 / AMD Ryzen 3"],
@@ -15,7 +12,6 @@ const specs = (r = {}) => [
   ["GPU", r.gpu || r.graficos || "GeForce GTX 960 / Radeon RX 470"],
   ["Almacenamiento", r.almacenamiento || r.disco || "50 GB de espacio disponible"],
 ];
-
 const crearPayloadResena = ({ usuario, texto, esPositiva }) => ({
   id: `resena-${Date.now()}`,
   autor: usuario?.nombre || "Gamer",
@@ -25,7 +21,6 @@ const crearPayloadResena = ({ usuario, texto, esPositiva }) => ({
   esPositiva,
   comentario: texto,
 });
-
 const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -34,20 +29,16 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showCompraModal, setShowCompraModal] = useState(false);
   const [compraExitosa, setCompraExitosa] = useState(false);
-
-  // Formulario de Reseñas
   const [comentario, setComentario] = useState("");
   const [votoPositivo, setVotoPositivo] = useState(true);
   const [alertaResena, setAlertaResena] = useState(null);
-
-  // Galería interactiva (declarada incondicionalmente antes de cualquier retorno)
   const [imgSeleccionada, setImgSeleccionada] = useState(null);
-
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [id]);
   const buscar = buscarProducto || productosCtx?.buscarProducto;
   const agregar = agregarResena || productosCtx?.agregarResena;
-
   const juego = buscar ? buscar(id) : null;
-
   if (!juego) {
     return (
       <div className="text-center py-5">
@@ -64,7 +55,6 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
       </div>
     );
   }
-
   const titulo = juego.nombre || juego.titulo || "Videojuego sin título";
   const genero = juego.genero || juego.categoria || "General";
   const estudio = juego.estudio || juego.desarrollador || "Estudio no especificado";
@@ -73,23 +63,17 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
   const plataforma = juego.plataforma || "PC / Windows";
   const descripcionCorta = juego.resumen || juego.descripcionCorta || "Sin sinopsis disponible.";
   const descripcionLarga = juego.descripcion || juego.descripcionDetallada || descripcionCorta;
-
-  // Lógica de Galería interactiva sin duplicados
-  const portada = juego.imagen || juego.portada || FALLBACK_IMG;
+  const portada = juego.portada || juego.imagen || FALLBACK_IMG;
   const imagenesGaleria = Array.from(
     new Set([portada, ...(Array.isArray(juego.galeria) ? juego.galeria : [])].filter(Boolean))
   );
   const imgActiva = imgSeleccionada || portada;
-
-  // Lógica de Precios coherente con CardJuego e Inicio
   const precioOriginal = Number(juego.precio) || 0;
   const descuento = Number(juego.descuento) || 0;
   const tieneDescuento = descuento > 0;
   const precioCalculado = tieneDescuento
     ? Math.round(precioOriginal * (1 - descuento / 100))
     : precioOriginal;
-
-  // Control de Lista de Deseos
   const deseado = isWishlisted ? isWishlisted(juego.id) : false;
   const handleDeseos = () => {
     if (!usuarioActual) {
@@ -98,8 +82,6 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
     }
     toggleWishlist?.(juego.id);
   };
-
-  // Manejo y Estadísticas de Reseñas
   const resenas = Array.isArray(juego.resenas) ? juego.resenas : [];
   const esPositiva = (r) => r.esPositiva ?? r.voto === "positivo";
   const totalResenas = resenas.length;
@@ -111,42 +93,55 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
     clasificacion: porcentajeAprobacion === null ? "Pendiente" : porcentajeAprobacion >= 70 ? "Mayormente positivas" : porcentajeAprobacion >= 40 ? "Mixtas" : "Mayormente negativas",
     variant: porcentajeAprobacion === null ? "secondary" : porcentajeAprobacion >= 70 ? "success" : porcentajeAprobacion >= 40 ? "warning" : "danger",
   };
-
   const handleEnviarResena = (e) => {
     e.preventDefault();
-    setAlertaResena(null);
     if (!usuarioActual) {
-      setAlertaResena({ variant: "warning", texto: "Debes iniciar sesión para publicar una reseña." });
+      setAlertaResena({
+        variant: "warning",
+        texto: "Debes iniciar sesión para publicar tu opinión sobre este juego.",
+      });
       return;
     }
     const texto = comentario.trim();
     if (texto.length < 5) {
-      setAlertaResena({ variant: "warning", texto: "La opinión debe contener al menos 5 caracteres." });
+      setAlertaResena({
+        variant: "danger",
+        texto: "El comentario debe contener al menos 5 caracteres descriptivos.",
+      });
       return;
     }
-    const nueva = crearPayloadResena({
+    if (texto.length > 500) {
+      setAlertaResena({
+        variant: "danger",
+        texto: "El comentario supera el máximo permitido de 500 caracteres.",
+      });
+      return;
+    }
+    const payload = crearPayloadResena({
       usuario: usuarioActual,
       texto,
       esPositiva: votoPositivo,
     });
-    agregar?.(juego.id, nueva);
-    setComentario("");
-    setAlertaResena({ variant: "success", texto: "¡Tu reseña ha sido publicada y agregada a las estadísticas!" });
-    setTimeout(() => setAlertaResena(null), 3500);
+    const resultado = agregar?.(juego.id, payload);
+    if (resultado?.success) {
+      setComentario("");
+      setAlertaResena({
+        variant: "success",
+        texto: "¡Tu reseña fue publicada con éxito!",
+      });
+    } else {
+      setAlertaResena({
+        variant: "danger",
+        texto: resultado?.mensaje || "Ocurrió un error al intentar registrar tu reseña.",
+      });
+    }
   };
-
   return (
-    <div className="detalle-producto-container py-3 py-md-4 px-1 px-sm-0">
-      <Link
-        to="/"
-        className="text-secondary text-decoration-none small d-inline-flex align-items-center mb-3"
-        title="Regresar al catálogo principal"
-      >
-        <i className="bi bi-arrow-left me-1" />Volver al catálogo
+    <div className="py-3">
+      <Link to="/" className="btn btn-link text-secondary text-decoration-none p-0 mb-3 d-inline-flex align-items-center">
+        <i className="bi bi-arrow-left me-2" />Volver a la tienda
       </Link>
-
       <Row className="g-4">
-        {/* Columna Multimedia Principal con Galería */}
         <Col lg={7} xl={8}>
           <div className="epic-box p-2 text-center shadow">
             <img
@@ -159,8 +154,6 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
               }}
             />
           </div>
-
-          {/* Miniaturas de la Galería */}
           {imagenesGaleria.length > 1 && (
             <div className="d-flex gap-2 mt-3 overflow-x-auto pb-2" role="region" aria-label="Galería de imágenes">
               {imagenesGaleria.map((img, idx) => (
@@ -188,8 +181,6 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
             </div>
           )}
         </Col>
-
-        {/* Columna Información Lateral */}
         <Col lg={5} xl={4}>
           <div className="epic-box p-4 h-100 d-flex flex-column justify-content-between">
             <div>
@@ -201,10 +192,8 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
                   <i className="bi bi-display me-1" />{plataforma}
                 </Badge>
               </div>
-
               <h1 className="epic-heading h3 text-light mb-2">{titulo}</h1>
               <p className="text-secondary small mb-3">{descripcionCorta}</p>
-
               <div className="small text-secondary border-top border-secondary border-opacity-25 pt-3 mb-3">
                 <div className="d-flex justify-content-between py-1">
                   <span>Desarrollador:</span>
@@ -226,8 +215,6 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
                 </div>
               </div>
             </div>
-
-            {/* Bloque de Precios y Oferta */}
             <div className="border-top border-secondary border-opacity-25 pt-3">
               <div className="d-flex align-items-center gap-2 mb-1 flex-wrap">
                 {tieneDescuento && (
@@ -244,8 +231,6 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
               <div className="fs-3 fw-bold text-light mb-3">
                 {formatoMoneda(precioCalculado)}
               </div>
-
-              {/* Acciones principales */}
               <div className="d-grid gap-2">
                 <Button
                   className="btn-epic-primary py-2 fw-semibold"
@@ -269,8 +254,6 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
           </div>
         </Col>
       </Row>
-
-      {/* Sección Descripción General Extensa */}
       <Row className="mt-4">
         <Col lg={8}>
           <Card className="epic-box p-4 text-light shadow-sm">
@@ -283,8 +266,6 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
           </Card>
         </Col>
       </Row>
-
-      {/* Sección Requisitos de Sistema */}
       <Row className="g-3 my-4">
         {["minimos", "recomendados"].map((tipo) => (
           <Col md={6} key={tipo}>
@@ -303,8 +284,6 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
           </Col>
         ))}
       </Row>
-
-      {/* Sección Reseñas Comunitarias */}
       <section className="mt-5">
         <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
           <h2 className="epic-heading h4 mb-0 d-flex align-items-center gap-2">
@@ -315,9 +294,7 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
             {metricasResenas.detalle} {totalResenas > 0 && `• ${metricasResenas.clasificacion}`}
           </Badge>
         </div>
-
         <Row className="g-4">
-          {/* Listado de Opiniones */}
           <Col lg={7}>
             {resenas.length === 0 ? (
               <Card className="epic-box p-4 text-center text-secondary border-dashed">
@@ -355,21 +332,17 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
               </div>
             )}
           </Col>
-
-          {/* Formulario de Publicación Protegido */}
           <Col lg={5}>
             <Card className="epic-box p-4 text-light shadow-sm sticky-lg-top" style={{ top: "90px" }}>
               <h3 className="epic-heading h5 mb-3 d-flex align-items-center gap-2">
                 <i className="bi bi-pencil-square text-primary" />
                 <span>Publicar opinión</span>
               </h3>
-
               {alertaResena && (
                 <Alert variant={alertaResena.variant} className="py-2 small">
                   {alertaResena.texto}
                 </Alert>
               )}
-
               {usuarioActual ? (
                 <Form onSubmit={handleEnviarResena}>
                   <div className="mb-3">
@@ -399,10 +372,9 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
                       </Button>
                     </div>
                   </div>
-
                   <Form.Group className="mb-3">
                     <Form.Label className="small text-secondary fw-semibold">
-                      Tu comentario (mínimo 5 caracteres)
+                      Tu comentario (5 a 500 caracteres)
                     </Form.Label>
                     <Form.Control
                       as="textarea"
@@ -413,14 +385,14 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
                       onChange={(e) => setComentario(e.target.value)}
                       required
                       minLength={5}
+                      maxLength={500}
                     />
                     <div className="text-end mt-1">
                       <small className={`small ${comentario.trim().length >= 5 ? "text-secondary" : "text-muted"}`}>
-                        {comentario.trim().length} / 5 mín.
+                        {comentario.length} / 500 (mín. 5)
                       </small>
                     </div>
                   </Form.Group>
-
                   <Button type="submit" className="btn-epic-primary w-100 py-2">
                     <i className="bi bi-send me-1" />Publicar reseña
                   </Button>
@@ -446,7 +418,6 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
           </Col>
         </Row>
       </section>
-      {/* Modal de Autenticación Requerida para Deseos */}
       <Modal
         show={showAuthModal}
         onHide={() => setShowAuthModal(false)}
@@ -478,8 +449,6 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
           </Button>
         </Modal.Footer>
       </Modal>
-
-      {/* Modal de Compra Simulada */}
       <Modal
         show={showCompraModal}
         onHide={() => setShowCompraModal(false)}
@@ -507,7 +476,6 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
               <span className="text-primary fw-bold">{formatoMoneda(precioCalculado)}</span>
             </div>
           </div>
-
           {compraExitosa ? (
             <Alert variant="success" className="py-2 mb-0 text-center">
               <i className="bi bi-check-circle-fill me-2" />
@@ -540,5 +508,4 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
     </div>
   );
 };
-
 export default DetalleDeProducto;

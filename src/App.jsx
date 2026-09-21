@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Footer from "./components/common/Footer.jsx";
 import Menu from "./components/common/Menu.jsx";
+import ScrollToTop from "./components/common/ScrollToTop.jsx";
 import About from "./components/pages/About.jsx";
 import Administrador from "./components/pages/Administrador.jsx";
 import DetalleDeProducto from "./components/pages/DetalleDeProducto.jsx";
@@ -13,10 +14,10 @@ import RutaProtegida from "./components/common/RutaProtegida.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { ProductosProvider } from "./context/ProductosContext.jsx";
 import { UIModalProvider } from "./context/UIModalContext.jsx";
-
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AuthProvider>
         <UIModalProvider>
           <ProductosProvider>
@@ -44,5 +45,4 @@ function App() {
     </BrowserRouter>
   );
 }
-
 export default App;

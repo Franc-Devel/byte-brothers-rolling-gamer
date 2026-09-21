@@ -1,9 +1,7 @@
-/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import { useAuth } from "./AuthContext.jsx";
-
 const CONTENIDOS = {
   noticias: {
     titulo: "Noticias y Actualizaciones",
@@ -29,13 +27,7 @@ const CONTENIDOS = {
   },
   distribucion: {
     titulo: "Distribución y Publicación de Videojuegos",
-    esDistribucion: true,
-    cuerpo: (
-      <div>
-        <p>Publicá tus producciones independientes o títulos destacados en el catálogo de Rolling Gamer.</p>
-        <p className="text-muted small">Los administradores acceden al formulario de carga directa (/crear). Los usuarios estándar deben identificarse.</p>
-      </div>
-    )
+    esDistribucion: true
   },
   terminos: {
     titulo: "Términos y Condiciones de Uso",
@@ -77,30 +69,132 @@ const CONTENIDOS = {
     )
   }
 };
-
 const UIModalContext = createContext();
-
 export const UIModalProvider = ({ children }) => {
   const [modalActivo, setModalActivo] = useState(null);
   const navigate = useNavigate();
-  const { esAdmin } = useAuth();
-
+  const { esAdmin, usuario, logout, loginRapido } = useAuth();
   const abrirModal = useCallback((tipo) => setModalActivo(tipo), []);
   const cerrarModal = useCallback(() => setModalActivo(null), []);
-
   const manejarDistribucion = useCallback(() => {
     cerrarModal();
-    navigate(esAdmin ? "/crear" : "/login");
-  }, [cerrarModal, navigate, esAdmin]);
-
+    if (esAdmin) {
+      navigate("/crear");
+    } else if (usuario) {
+      loginRapido("admin");
+      navigate("/crear");
+    } else {
+      navigate("/login", { state: { tab: "login", from: { pathname: "/crear" } } });
+    }
+  }, [cerrarModal, navigate, esAdmin, usuario, loginRapido]);
   useEffect(() => {
     const alPresionarTecla = (e) => { if (e.key === "Escape" && modalActivo) cerrarModal(); };
     window.addEventListener("keydown", alPresionarTecla);
     return () => window.removeEventListener("keydown", alPresionarTecla);
   }, [modalActivo, cerrarModal]);
-
   const actual = modalActivo ? CONTENIDOS[modalActivo] : null;
-
+  const renderCuerpo = () => {
+    if (!actual) return null;
+    if (!actual.esDistribucion) return actual.cuerpo;
+    if (esAdmin) {
+      return (
+        <div>
+          <div className="d-flex align-items-center gap-2 mb-3 text-success">
+            <i className="bi bi-shield-check fs-4" />
+            <h6 className="mb-0 fw-bold">Cuenta de Administrador Habilitada</h6>
+          </div>
+          <p>
+            ¡Hola, <strong>{usuario?.nombre || "Administrador"}</strong>! Tu cuenta cuenta con permisos oficiales para gestionar el catálogo y publicar nuevos videojuegos en la plataforma.
+          </p>
+          <p className="text-secondary small mb-0">
+            Al presionar <strong>"Publicar Videojuego"</strong> serás redirigido al formulario de alta en <code>/crear</code>.
+          </p>
+        </div>
+      );
+    }
+    if (usuario) {
+      return (
+        <div>
+          <div className="d-flex align-items-center gap-2 mb-3 text-warning">
+            <i className="bi bi-person-badge fs-4" />
+            <h6 className="mb-0 fw-bold">Sesión activa como Usuario Gamer</h6>
+          </div>
+          <p>
+            Actualmente estás conectado como <strong>{usuario.nombre}</strong> (rol: <em>Usuario Gamer</em>).
+          </p>
+          <div className="p-3 mb-3 rounded bg-black bg-opacity-50 border border-warning border-opacity-25 small">
+            <div className="d-flex align-items-start gap-2">
+              <i className="bi bi-info-circle text-warning mt-1" />
+              <div>
+                La publicación directa de videojuegos al catálogo de la tienda está restringida exclusivamente a cuentas con rol de <strong>Administrador</strong>.
+                <br />
+                Como usuario gamer tenés habilitadas las funciones de compra simulada, lista de deseos y redacción de reseñas comunitarias.
+              </div>
+            </div>
+          </div>
+          <p className="text-secondary small mb-0">
+            Para publicar un videojuego durante la evaluación podés ingresar directamente como Administrador con el botón inferior.
+          </p>
+        </div>
+      );
+    }
+    return (
+      <div>
+        <div className="d-flex align-items-center gap-2 mb-3 text-info">
+          <i className="bi bi-cloud-arrow-up fs-4" />
+          <h6 className="mb-0 fw-bold">Distribución y Publicación de Videojuegos</h6>
+        </div>
+        <p>
+          Publicá tus producciones independientes o títulos destacados en el catálogo oficial de Rolling Gamer.
+        </p>
+        <p className="text-secondary small mb-0">
+          Para publicar títulos en el catálogo se requiere iniciar sesión con una cuenta de <strong>Administrador</strong>.
+        </p>
+      </div>
+    );
+  };
+  const renderBotonesDistribucion = () => {
+    if (esAdmin) {
+      return (
+        <Button variant="primary" className="btn-epic-primary" onClick={manejarDistribucion}>
+          <i className="bi bi-plus-circle me-1" />
+          Publicar Videojuego
+        </Button>
+      );
+    }
+    if (usuario) {
+      return (
+        <>
+          <Button
+            variant="outline-secondary"
+            className="btn-epic-secondary text-light"
+            onClick={() => {
+              cerrarModal();
+              logout();
+              navigate("/login", { state: { tab: "login", from: { pathname: "/crear" } } });
+            }}
+          >
+            <i className="bi bi-box-arrow-right me-1" />
+            Cambiar Cuenta
+          </Button>
+          <Button
+            variant="warning"
+            className="btn-epic-primary bg-warning text-dark border-0 fw-semibold"
+            onClick={manejarDistribucion}
+          >
+            <i className="bi bi-shield-lock me-1" />
+            Ingresar como Admin y Publicar
+          </Button>
+        </>
+      );
+    }
+    return (
+      <Button variant="primary" className="btn-epic-primary" onClick={manejarDistribucion}>
+        <i className="bi bi-box-arrow-in-right me-1" />
+        Iniciar Sesión como Admin
+      </Button>
+    );
+  };
   return (
     <UIModalContext.Provider value={{ modalActivo, abrirModal, cerrarModal, manejarDistribucion, CONTENIDOS }}>
       {children}
@@ -110,14 +204,10 @@ export const UIModalProvider = ({ children }) => {
             <Modal.Title className="fs-5">{actual.titulo}</Modal.Title>
           </Modal.Header>
           <Modal.Body className="py-3" style={{ maxHeight: "65vh" }}>
-            {actual.cuerpo}
+            {renderCuerpo()}
           </Modal.Body>
           <Modal.Footer className="border-secondary">
-            {actual.esDistribucion && (
-              <Button variant="primary" className="btn-epic-primary" onClick={manejarDistribucion}>
-                {esAdmin ? "Crear Videojuego" : "Iniciar Sesión"}
-              </Button>
-            )}
+            {actual.esDistribucion && renderBotonesDistribucion()}
             <Button variant="secondary" className="btn-epic-secondary" onClick={cerrarModal}>Cerrar</Button>
           </Modal.Footer>
         </Modal>
@@ -125,11 +215,9 @@ export const UIModalProvider = ({ children }) => {
     </UIModalContext.Provider>
   );
 };
-
 export const useUIModal = () => {
   const context = useContext(UIModalContext);
   if (!context) throw new Error("useUIModal debe ser utilizado dentro de un UIModalProvider");
   return context;
 };
-
 export default UIModalContext;

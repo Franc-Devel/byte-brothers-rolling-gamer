@@ -1,16 +1,12 @@
 import { Badge, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-
-const FALLBACK_IMG = "https://placehold.co/100x60/1a1a1a/cccccc?text=Gamer";
-
+const FALLBACK_IMG = "/images/games/07-counter-strike-2/header.jpg";
 const ItemProducto = ({ itemProducto, producto, fila, borrarProducto, onDelete }) => {
   const item = itemProducto || producto || {};
-  const { id, nombre, desarrollador, categoria, precio, imagen, resenas = [] } = item;
+  const { id, nombre, desarrollador, categoria, precio, imagen, portada, resenas = [] } = item;
   const eliminarFn = borrarProducto || onDelete;
-
   const precioFormat = `$${Number(precio || 0).toLocaleString("es-AR")}`;
-
   const calcAprobacion = () => {
     if (!Array.isArray(resenas) || resenas.length === 0) return { texto: "Sin reseñas", variant: "secondary", pct: null };
     const pos = resenas.filter((r) => r.voto === "positivo" || r.positiva === true).length;
@@ -22,9 +18,7 @@ const ItemProducto = ({ itemProducto, producto, fila, borrarProducto, onDelete }
       pct,
     };
   };
-
   const aprob = calcAprobacion();
-
   const handleEliminar = () => {
     Swal.fire({
       title: "¿Eliminar videojuego?",
@@ -55,14 +49,13 @@ const ItemProducto = ({ itemProducto, producto, fila, borrarProducto, onDelete }
       }
     });
   };
-
   return (
     <tr className="align-middle">
       {fila !== undefined && <td className="text-secondary small fw-bold">#{fila}</td>}
       <td>
         <div className="d-flex align-items-center gap-2">
           <img
-            src={imagen || FALLBACK_IMG}
+            src={portada || imagen || FALLBACK_IMG}
             alt={nombre || "Portada"}
             className="rounded object-fit-cover"
             style={{ width: 52, height: 36 }}
@@ -107,5 +100,4 @@ const ItemProducto = ({ itemProducto, producto, fila, borrarProducto, onDelete }
     </tr>
   );
 };
-
 export default ItemProducto;

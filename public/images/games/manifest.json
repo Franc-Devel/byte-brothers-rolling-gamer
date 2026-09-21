@@ -1,0 +1,230 @@
+[
+  {
+    "id": "1",
+    "nombre": "Age of Empires III: Definitive Edition",
+    "appId": "933110",
+    "slug": "01-age-of-empires-iii-definitive-edition",
+    "imagen": "/images/games/01-age-of-empires-iii-definitive-edition/cover.jpg",
+    "portada": "/images/games/01-age-of-empires-iii-definitive-edition/header.jpg",
+    "galeria": [
+      "/images/games/01-age-of-empires-iii-definitive-edition/screenshot-1.jpg",
+      "/images/games/01-age-of-empires-iii-definitive-edition/screenshot-2.jpg"
+    ]
+  },
+  {
+    "id": "2",
+    "nombre": "Asphalt Legends",
+    "appId": "1815780",
+    "slug": "02-asphalt-legends",
+    "imagen": "/images/games/02-asphalt-legends/cover.jpg",
+    "portada": "/images/games/02-asphalt-legends/header.jpg",
+    "galeria": [
+      "/images/games/02-asphalt-legends/screenshot-1.jpg",
+      "/images/games/02-asphalt-legends/screenshot-2.jpg"
+    ]
+  },
+  {
+    "id": "3",
+    "nombre": "Assassin's Creed Unity",
+    "appId": "289650",
+    "slug": "03-assassin-s-creed-unity",
+    "imagen": "/images/games/03-assassin-s-creed-unity/cover.jpg",
+    "portada": "/images/games/03-assassin-s-creed-unity/header.jpg",
+    "galeria": [
+      "/images/games/03-assassin-s-creed-unity/screenshot-1.jpg",
+      "/images/games/03-assassin-s-creed-unity/screenshot-2.jpg"
+    ]
+  },
+  {
+    "id": "4",
+    "nombre": "Battlefield™ 6",
+    "appId": "1517290",
+    "slug": "04-battlefield-6",
+    "imagen": "/images/games/04-battlefield-6/cover.jpg",
+    "portada": "/images/games/04-battlefield-6/header.jpg",
+    "galeria": [
+      "/images/games/04-battlefield-6/screenshot-1.jpg",
+      "/images/games/04-battlefield-6/screenshot-2.jpg"
+    ]
+  },
+  {
+    "id": "5",
+    "nombre": "Call of Duty®",
+    "appId": "1938090",
+    "slug": "05-call-of-duty",
+    "imagen": "/images/games/05-call-of-duty/cover.jpg",
+    "portada": "/images/games/05-call-of-duty/header.jpg",
+    "galeria": [
+      "/images/games/05-call-of-duty/screenshot-1.jpg",
+      "/images/games/05-call-of-duty/screenshot-2.jpg"
+    ]
+  },
+  {
+    "id": "7",
+    "nombre": "Counter-Strike 2",
+    "appId": "730",
+    "slug": "07-counter-strike-2",
+    "imagen": "/images/games/07-counter-strike-2/cover.jpg",
+    "portada": "/images/games/07-counter-strike-2/header.jpg",
+    "galeria": [
+      "/images/games/07-counter-strike-2/screenshot-1.jpg",
+      "/images/games/07-counter-strike-2/screenshot-2.jpg"
+    ]
+  },
+  {
+    "id": "8",
+    "nombre": "Drift Legends 2",
+    "appId": "3664010",
+    "slug": "08-drift-legends-2",
+    "imagen": "/images/games/08-drift-legends-2/cover.jpg",
+    "portada": "/images/games/08-drift-legends-2/header.jpg",
+    "galeria": [
+      "/images/games/08-drift-legends-2/screenshot-1.jpg",
+      "/images/games/08-drift-legends-2/screenshot-2.jpg"
+    ]
+  },
+  {
+    "id": "9",
+    "nombre": "Game of Thrones: Kingsroad",
+    "appId": "3183280",
+    "slug": "09-game-of-thrones-kingsroad",
+    "imagen": "/images/games/09-game-of-thrones-kingsroad/cover.jpg",
+    "portada": "/images/games/09-game-of-thrones-kingsroad/header.jpg",
+    "galeria": [
+      "/images/games/09-game-of-thrones-kingsroad/screenshot-1.jpg",
+      "/images/games/09-game-of-thrones-kingsroad/screenshot-2.jpg"
+    ]
+  },
+  {
+    "id": "10",
+    "nombre": "Grand Theft Auto V Enhanced",
+    "appId": "271590",
+    "slug": "10-grand-theft-auto-v-enhanced",
+    "imagen": "/images/games/10-grand-theft-auto-v-enhanced/cover.jpg",
+    "portada": "/images/games/10-grand-theft-auto-v-enhanced/header.jpg",
+    "galeria": [
+      "/images/games/10-grand-theft-auto-v-enhanced/screenshot-1.jpg",
+      "/images/games/10-grand-theft-auto-v-enhanced/screenshot-2.jpg"
+    ]
+  },
+  {
+    "id": "12",
+    "nombre": "Halo Infinite",
+    "appId": "1240440",
+    "slug": "12-halo-infinite",
+    "imagen": "/images/games/12-halo-infinite/cover.jpg",
+    "portada": "/images/games/12-halo-infinite/header.jpg",
+    "galeria": [
+      "/images/games/12-halo-infinite/screenshot-1.jpg",
+      "/images/games/12-halo-infinite/screenshot-2.jpg"
+    ]
+  },
+  {
+    "id": "13",
+    "nombre": "My Sudoku",
+    "appId": "3033660",
+    "slug": "13-my-sudoku",
+    "imagen": "/images/games/13-my-sudoku/cover.jpg",
+    "portada": "/images/games/13-my-sudoku/header.jpg",
+    "galeria": [
+      "/images/games/13-my-sudoku/screenshot-1.jpg",
+      "/images/games/13-my-sudoku/screenshot-2.jpg"
+    ]
+  },
+  {
+    "id": "14",
+    "nombre": "Need for Speed™",
+    "appId": "1262580",
+    "slug": "14-need-for-speed",
+    "imagen": "/images/games/14-need-for-speed/cover.jpg",
+    "portada": "/images/games/14-need-for-speed/header.jpg",
+    "galeria": [
+      "/images/games/14-need-for-speed/screenshot-1.jpg",
+      "/images/games/14-need-for-speed/screenshot-2.jpg"
+    ]
+  },
+  {
+    "id": "15",
+    "nombre": "Need for Speed™ Most Wanted",
+    "appId": "1262560",
+    "slug": "15-need-for-speed-most-wanted",
+    "imagen": "/images/games/15-need-for-speed-most-wanted/cover.jpg",
+    "portada": "/images/games/15-need-for-speed-most-wanted/header.jpg",
+    "galeria": [
+      "/images/games/15-need-for-speed-most-wanted/screenshot-1.jpg",
+      "/images/games/15-need-for-speed-most-wanted/screenshot-2.jpg"
+    ]
+  },
+  {
+    "id": "16",
+    "nombre": "Once Human",
+    "appId": "2139460",
+    "slug": "16-once-human",
+    "imagen": "/images/games/16-once-human/cover.jpg",
+    "portada": "/images/games/16-once-human/header.jpg",
+    "galeria": [
+      "/images/games/16-once-human/screenshot-1.jpg",
+      "/images/games/16-once-human/screenshot-2.jpg"
+    ]
+  },
+  {
+    "id": "17",
+    "nombre": "PUBG: BATTLEGROUNDS",
+    "appId": "578080",
+    "slug": "17-pubg-battlegrounds",
+    "imagen": "/images/games/17-pubg-battlegrounds/cover.jpg",
+    "portada": "/images/games/17-pubg-battlegrounds/header.jpg",
+    "galeria": [
+      "/images/games/17-pubg-battlegrounds/screenshot-1.jpg",
+      "/images/games/17-pubg-battlegrounds/screenshot-2.jpg"
+    ]
+  },
+  {
+    "id": "20",
+    "nombre": "Race Max Pro",
+    "appId": "3042650",
+    "slug": "20-race-max-pro",
+    "imagen": "/images/games/20-race-max-pro/cover.jpg",
+    "portada": "/images/games/20-race-max-pro/header.jpg",
+    "galeria": [
+      "/images/games/20-race-max-pro/screenshot-1.jpg",
+      "/images/games/20-race-max-pro/screenshot-2.jpg"
+    ]
+  },
+  {
+    "id": "21",
+    "nombre": "RaceRoom Racing Experience",
+    "appId": "211500",
+    "slug": "21-raceroom-racing-experience",
+    "imagen": "/images/games/21-raceroom-racing-experience/cover.jpg",
+    "portada": "/images/games/21-raceroom-racing-experience/header.jpg",
+    "galeria": [
+      "/images/games/21-raceroom-racing-experience/screenshot-1.jpg",
+      "/images/games/21-raceroom-racing-experience/screenshot-2.jpg"
+    ]
+  },
+  {
+    "id": "22",
+    "nombre": "Real Pool 3D - Poolians",
+    "appId": "670290",
+    "slug": "22-real-pool-3d-poolians",
+    "imagen": "/images/games/22-real-pool-3d-poolians/cover.jpg",
+    "portada": "/images/games/22-real-pool-3d-poolians/header.jpg",
+    "galeria": [
+      "/images/games/22-real-pool-3d-poolians/screenshot-1.jpg",
+      "/images/games/22-real-pool-3d-poolians/screenshot-2.jpg"
+    ]
+  },
+  {
+    "id": "23",
+    "nombre": "Wallpaper Engine",
+    "appId": "431960",
+    "slug": "23-wallpaper-engine",
+    "imagen": "/images/games/23-wallpaper-engine/cover.jpg",
+    "portada": "/images/games/23-wallpaper-engine/header.jpg",
+    "galeria": [
+      "/images/games/23-wallpaper-engine/screenshot-1.jpg",
+      "/images/games/23-wallpaper-engine/screenshot-2.jpg"
+    ]
+  }
+]
