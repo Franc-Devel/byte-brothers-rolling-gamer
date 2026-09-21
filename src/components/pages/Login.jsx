@@ -9,6 +9,10 @@ const DEMOS = {
 };
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const tieneLongitud = (p = "") => p.length >= 6 && p.length <= 20;
+const tieneMin = (p = "") => /[a-z]/.test(p);
+const tieneMay = (p = "") => /[A-Z]/.test(p);
+const tieneNumOSimbolo = (p = "") => /[\d!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(p);
 
 const Login = () => {
   const { login, register } = useAuth();
@@ -35,7 +39,10 @@ const Login = () => {
   const validarRegistro = () => {
     if (form.nombre.trim().length < 3) return "El nombre debe contener al menos 3 caracteres.";
     if (!EMAIL_REGEX.test(form.email.trim())) return "Ingresa un correo electrónico con formato válido.";
-    if (form.password.length < 6 || form.password.length > 20) return "La contraseña debe tener entre 6 y 20 caracteres.";
+    if (!tieneLongitud(form.password)) return "La contraseña debe tener entre 6 y 20 caracteres.";
+    if (!tieneMin(form.password)) return "La contraseña debe incluir al menos una letra minúscula (a-z).";
+    if (!tieneMay(form.password)) return "La contraseña debe incluir al menos una letra mayúscula (A-Z).";
+    if (!tieneNumOSimbolo(form.password)) return "La contraseña debe incluir al menos un número o símbolo especial (0-9, #, $, etc.).";
     if (form.password !== form.repetir) return "Las contraseñas no coinciden.";
     return null;
   };
@@ -103,7 +110,7 @@ const Login = () => {
               required
               maxLength={60}
             />
-            <InputGroup className="mb-3">
+            <InputGroup className="mb-2">
               <Form.Control
                 name="password"
                 type={verPass ? "text" : "password"}
@@ -125,6 +132,32 @@ const Login = () => {
                 <i className={`bi ${verPass ? "bi-eye-slash" : "bi-eye"}`} />
               </Button>
             </InputGroup>
+
+            {modo === "registro" && form.password.length > 0 && (
+              <div className="p-2 mb-3 rounded bg-black bg-opacity-50 border border-secondary border-opacity-25">
+                <div className="text-secondary fw-semibold mb-1" style={{ fontSize: "0.75rem" }}>
+                  Requisitos de seguridad de la contraseña:
+                </div>
+                <ul className="list-unstyled mb-0 d-flex flex-column gap-1" style={{ fontSize: "0.75rem" }}>
+                  <li className={tieneLongitud(form.password) ? "text-success" : "text-secondary"}>
+                    <i className={`bi ${tieneLongitud(form.password) ? "bi-check-circle-fill text-success" : "bi-circle"} me-1`} />
+                    Entre 6 y 20 caracteres
+                  </li>
+                  <li className={tieneMin(form.password) ? "text-success" : "text-secondary"}>
+                    <i className={`bi ${tieneMin(form.password) ? "bi-check-circle-fill text-success" : "bi-circle"} me-1`} />
+                    Al menos una letra minúscula (a-z)
+                  </li>
+                  <li className={tieneMay(form.password) ? "text-success" : "text-secondary"}>
+                    <i className={`bi ${tieneMay(form.password) ? "bi-check-circle-fill text-success" : "bi-circle"} me-1`} />
+                    Al menos una letra mayúscula (A-Z)
+                  </li>
+                  <li className={tieneNumOSimbolo(form.password) ? "text-success" : "text-secondary"}>
+                    <i className={`bi ${tieneNumOSimbolo(form.password) ? "bi-check-circle-fill text-success" : "bi-circle"} me-1`} />
+                    Al menos un número o símbolo (0-9, #, $, etc.)
+                  </li>
+                </ul>
+              </div>
+            )}
             {modo === "registro" && (
               <InputGroup className="mb-3">
                 <Form.Control
