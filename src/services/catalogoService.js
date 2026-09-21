@@ -1,37 +1,81 @@
-import juegosIniciales from "../data/juegosIniciales.js";
+import juegosIniciales, { IDS_VARIANTES_RETIRADAS } from "../data/juegosIniciales.js";
 
 export const PRODUCTOS_KEY = "productosKey";
+const CATALOGO_VERSION_KEY = "productosCatalogoVersion";
+const CATALOGO_VERSION = "steam-19-oficial-v1";
+
+const catalogoInicialPorId = new Map(juegosIniciales.map((item) => [String(item.id), item]));
+const esAssetLocal = (url) => typeof url === "string" && url.startsWith("/images/games/");
+
+const guardarVersionCatalogo = () => localStorage.setItem(CATALOGO_VERSION_KEY, CATALOGO_VERSION);
+
+const sincronizarAssetsLocales = (productos) => {
+  const productosVigentes = productos.filter(
+    (producto) => !IDS_VARIANTES_RETIRADAS.includes(String(producto?.id)),
+  );
+  let huboCambios = productosVigentes.length !== productos.length;
+  const productosSincronizados = productosVigentes.map((producto) => {
+    const base = catalogoInicialPorId.get(String(producto?.id));
+    if (!base) return producto;
+
+    const necesitaActualizar =
+      !esAssetLocal(producto.imagen) ||
+      !esAssetLocal(producto.portada) ||
+      !Array.isArray(producto.galeria) ||
+      producto.galeria.some((img) => !esAssetLocal(img));
+
+    if (!necesitaActualizar) return producto;
+    huboCambios = true;
+    return {
+      ...producto,
+      imagen: base.imagen,
+      portada: base.portada,
+      galeria: base.galeria,
+    };
+  });
+
+  if (huboCambios) {
+    guardarProductos(productosSincronizados);
+  }
+
+  return productosSincronizados;
+};
 
 /**
  * Recupera el catálogo de videojuegos desde localStorage.
  * Garantiza que:
- * 1. Si no existe la clave, se inicializa con los juegos iniciales predeterminados.
- * 2. Si ya existen datos (incluso si quedan menos de 10 juegos por eliminaciones), se conservan los cambios.
- * 3. Si los datos almacenados están corruptos o son inválidos, se recupera sin bloquear la aplicación.
+ * 1. Si no existe la clave o la versión del catálogo es anterior, se inicializa con los 19 juegos oficiales de Steam.
+ * 2. Si ya existen datos bajo la versión vigente, se conservan las operaciones CRUD del administrador.
+ * 3. Si los datos almacenados están corruptos, se recupera el catálogo base sin bloquear la aplicación.
  *
  * @returns {Array<Object>} Lista de videojuegos válidos
  */
 export const obtenerProductos = () => {
   try {
+    const versionGuardada = localStorage.getItem(CATALOGO_VERSION_KEY);
     const datosAlmacenados = localStorage.getItem(PRODUCTOS_KEY);
 
-    if (datosAlmacenados === null || datosAlmacenados === undefined) {
+    // Si es primera carga o si el catálogo pertenece a una versión previa, se migra al dataset oficial de 19 juegos
+    if (versionGuardada !== CATALOGO_VERSION || datosAlmacenados === null || datosAlmacenados === undefined) {
       guardarProductos(juegosIniciales);
+      guardarVersionCatalogo();
       return [...juegosIniciales];
     }
 
     const productosParseados = JSON.parse(datosAlmacenados);
 
     if (Array.isArray(productosParseados)) {
-      return productosParseados;
+      return sincronizarAssetsLocales(productosParseados);
     }
 
-    console.warn("Los datos de productosKey no son un arreglo válido. Restaurando catálogo base.");
+    console.warn("Los datos de productosKey no son un arreglo válido. Restaurando catálogo base de 19 juegos.");
     guardarProductos(juegosIniciales);
+    guardarVersionCatalogo();
     return [...juegosIniciales];
   } catch (error) {
     console.error("Error al parsear productosKey desde localStorage. Recuperando datos base sin bloquearse:", error);
     guardarProductos(juegosIniciales);
+    guardarVersionCatalogo();
     return [...juegosIniciales];
   }
 };
@@ -204,8 +248,6 @@ export const agregarResena = (idJuego, nuevaResena) => {
  */
 export const recargarCatalogoInicial = () => {
   guardarProductos(juegosIniciales);
+  guardarVersionCatalogo();
   return [...juegosIniciales];
 };
-
-
-

@@ -128,7 +128,7 @@ Rolling-Gamer/
 │   ├── context/
 │   │   └── AuthContext.jsx     # Contexto global de sesión, usuarios y wishlist
 │   ├── data/
-│   │   ├── juegosIniciales.js  # Dataset de 22 videojuegos reales con especificaciones
+│   │   ├── juegosIniciales.js  # Dataset de 19 videojuegos reales con especificaciones y assets locales
 │   │   └── usuariosIniciales.js # Cuentas predeterminadas (Admin y Usuario)
 │   ├── App.jsx                 # Configuración de rutas y estado de inventario
 │   ├── index.css               # Sistema de diseño gamer con CSS variables
