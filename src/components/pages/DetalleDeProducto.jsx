@@ -27,6 +27,11 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
   const productosCtx = useProductos();
   const { usuarioActual, isWishlisted, toggleWishlist } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authModalConfig, setAuthModalConfig] = useState({
+    titulo: "Lista de Deseos",
+    icono: "bi-heart text-danger",
+    mensaje: "",
+  });
   const [showCompraModal, setShowCompraModal] = useState(false);
   const [compraExitosa, setCompraExitosa] = useState(false);
   const [comentario, setComentario] = useState("");
@@ -77,10 +82,28 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
   const deseado = isWishlisted ? isWishlisted(juego.id) : false;
   const handleDeseos = () => {
     if (!usuarioActual) {
+      setAuthModalConfig({
+        titulo: "Lista de Deseos",
+        icono: "bi-heart text-danger",
+        mensaje: `Debes iniciar sesión con tu cuenta para guardar ${titulo} en tu lista personalizada de deseos.`,
+      });
       setShowAuthModal(true);
       return;
     }
     toggleWishlist?.(juego.id);
+  };
+  const handleComprar = () => {
+    if (!usuarioActual) {
+      setAuthModalConfig({
+        titulo: "Iniciar sesión para comprar",
+        icono: "bi-bag-check text-primary",
+        mensaje: `Debes iniciar sesión con tu cuenta de Rolling Gamer para poder comprar o simular la adquisición de ${titulo}.`,
+      });
+      setShowAuthModal(true);
+      return;
+    }
+    setCompraExitosa(false);
+    setShowCompraModal(true);
   };
   const resenas = Array.isArray(juego.resenas) ? juego.resenas : [];
   const esPositiva = (r) => r.esPositiva ?? r.voto === "positivo";
@@ -234,10 +257,7 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
               <div className="d-grid gap-2">
                 <Button
                   className="btn-epic-primary py-2 fw-semibold"
-                  onClick={() => {
-                    setCompraExitosa(false);
-                    setShowCompraModal(true);
-                  }}
+                  onClick={handleComprar}
                 >
                   <i className="bi bi-bag-check me-2" />Comprar ahora
                 </Button>
@@ -427,11 +447,11 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
       >
         <Modal.Header closeButton closeVariant="white">
           <Modal.Title className="h6 mb-0">
-            <i className="bi bi-heart text-danger me-2" />Lista de Deseos
+            <i className={`bi ${authModalConfig.icono} me-2`} />{authModalConfig.titulo}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body className="small text-secondary">
-          Debes iniciar sesión con tu cuenta para guardar <strong>{titulo}</strong> en tu lista personalizada de deseos.
+          {authModalConfig.mensaje}
         </Modal.Body>
         <Modal.Footer className="border-0 pt-0">
           <Button size="sm" variant="secondary" onClick={() => setShowAuthModal(false)}>
@@ -474,6 +494,7 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
             <div>
               <strong className="d-block text-light text-truncate" style={{ maxWidth: 260 }}>{titulo}</strong>
               <span className="text-primary fw-bold">{formatoMoneda(precioCalculado)}</span>
+              <span className="d-block text-muted small mt-1">Usuario: {usuarioActual?.nombre || usuarioActual?.email}</span>
             </div>
           </div>
           {compraExitosa ? (
