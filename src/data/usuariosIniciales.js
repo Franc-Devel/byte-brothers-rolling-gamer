@@ -1,5 +1,5 @@
 const ADMIN_EMAIL = import.meta.env?.VITE_ADMIN_EMAIL || "admin@rollinggames.com";
-const ADMIN_PASSWORD = import.meta.env?.VITE_ADMIN_PASSWORD || "admin123";
+const ADMIN_PASSWORD = import.meta.env?.VITE_ADMIN_PASSWORD || "Admin123!";
 
 export const usuariosIniciales = [
   {
@@ -19,8 +19,8 @@ export const usuariosIniciales = [
     nombre: "Franco Triviño",
     email: "user@rollinggames.com",
     correo: "user@rollinggames.com",
-    password: "user123",
-    contrasenia: "user123",
+    password: "User123!",
+    contrasenia: "User123!",
     rol: "usuario",
     fechaRegistro: "2024-02-15",
     fecha: "2024-02-15",

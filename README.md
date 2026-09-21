@@ -60,13 +60,13 @@ Para facilitar la revisión por parte del equipo docente y evaluadores, en la pa
 ### 👑 Perfil Administrador (Acceso completo a `/admin`)
 - **Titular:** Francisco Delgado (Team Leader)
 - **Correo Electrónico:** `admin@rollinggames.com`
-- **Contraseña:** `admin123`
+- **Contraseña:** `Admin123!`
 - **Permisos:** Gestión de inventario (CRUD videojuegos), recarga de datos de fábrica y eliminación de usuarios.
 
 ### 👤 Perfil Usuario Gamer (Cliente estándar)
 - **Titular:** Franco Triviño (Scrum Master)
 - **Correo Electrónico:** `user@rollinggames.com`
-- **Contraseña:** `user123`
+- **Contraseña:** `User123!`
 - **Permisos:** Navegación, guardado en lista de deseos y publicación de reseñas comunitarias.
 
 > *Nota: También es posible registrar nuevos usuarios desde la pestaña "Crear Cuenta".*

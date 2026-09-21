@@ -4,15 +4,16 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 
 const DEMOS = {
-  admin: { email: "admin@rollinggames.com", password: "admin123", label: "Administrador" },
-  usuario: { email: "user@rollinggames.com", password: "user123", label: "Usuario Gamer" },
+  admin: { email: "admin@rollinggames.com", password: "Admin123!", label: "Administrador" },
+  usuario: { email: "user@rollinggames.com", password: "User123!", label: "Usuario Gamer" },
 };
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const tieneLongitud = (p = "") => p.length >= 6 && p.length <= 20;
 const tieneMin = (p = "") => /[a-z]/.test(p);
 const tieneMay = (p = "") => /[A-Z]/.test(p);
-const tieneNumOSimbolo = (p = "") => /[\d!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(p);
+const tieneNum = (p = "") => /\d/.test(p);
+const tieneEspecial = (p = "") => /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(p);
 
 const Login = () => {
   const { login, register } = useAuth();
@@ -42,7 +43,8 @@ const Login = () => {
     if (!tieneLongitud(form.password)) return "La contraseña debe tener entre 6 y 20 caracteres.";
     if (!tieneMin(form.password)) return "La contraseña debe incluir al menos una letra minúscula (a-z).";
     if (!tieneMay(form.password)) return "La contraseña debe incluir al menos una letra mayúscula (A-Z).";
-    if (!tieneNumOSimbolo(form.password)) return "La contraseña debe incluir al menos un número o símbolo especial (0-9, #, $, etc.).";
+    if (!tieneNum(form.password)) return "La contraseña debe incluir al menos un número (0-9).";
+    if (!tieneEspecial(form.password)) return "La contraseña debe incluir al menos un caracter especial (!, @, #, $, etc.).";
     if (form.password !== form.repetir) return "Las contraseñas no coinciden.";
     return null;
   };
@@ -151,9 +153,13 @@ const Login = () => {
                     <i className={`bi ${tieneMay(form.password) ? "bi-check-circle-fill text-success" : "bi-circle"} me-1`} />
                     Al menos una letra mayúscula (A-Z)
                   </li>
-                  <li className={tieneNumOSimbolo(form.password) ? "text-success" : "text-secondary"}>
-                    <i className={`bi ${tieneNumOSimbolo(form.password) ? "bi-check-circle-fill text-success" : "bi-circle"} me-1`} />
-                    Al menos un número o símbolo (0-9, #, $, etc.)
+                  <li className={tieneNum(form.password) ? "text-success" : "text-secondary"}>
+                    <i className={`bi ${tieneNum(form.password) ? "bi-check-circle-fill text-success" : "bi-circle"} me-1`} />
+                    Al menos un número (0-9)
+                  </li>
+                  <li className={tieneEspecial(form.password) ? "text-success" : "text-secondary"}>
+                    <i className={`bi ${tieneEspecial(form.password) ? "bi-check-circle-fill text-success" : "bi-circle"} me-1`} />
+                    Al menos un caracter especial (!, @, #, $, etc.)
                   </li>
                 </ul>
               </div>
