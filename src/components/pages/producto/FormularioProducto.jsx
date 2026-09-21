@@ -5,15 +5,10 @@ import { useProductos } from "../../../context/ProductosContext.jsx";
 
 const CATEGORIAS = [
   "Acción",
-  "Aventura",
-  "RPG",
-  "Estrategia",
-  "Deportes",
-  "Simulación",
-  "Indie",
-  "Carreras",
-  "Terror",
   "Disparos",
+  "Carreras",
+  "Estrategia",
+  "Simulación",
 ];
 
 const base = {

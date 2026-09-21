@@ -2,7 +2,7 @@ import juegosIniciales, { IDS_VARIANTES_RETIRADAS } from "../data/juegosIniciale
 
 export const PRODUCTOS_KEY = "productosKey";
 const CATALOGO_VERSION_KEY = "productosCatalogoVersion";
-const CATALOGO_VERSION = "steam-19-oficial-v1";
+const CATALOGO_VERSION = "steam-19-categorias-v2";
 
 const catalogoInicialPorId = new Map(juegosIniciales.map((item) => [String(item.id), item]));
 const esAssetLocal = (url) => typeof url === "string" && url.startsWith("/images/games/");
@@ -22,12 +22,16 @@ const sincronizarAssetsLocales = (productos) => {
       !esAssetLocal(producto.imagen) ||
       !esAssetLocal(producto.portada) ||
       !Array.isArray(producto.galeria) ||
-      producto.galeria.some((img) => !esAssetLocal(img));
+      producto.galeria.some((img) => !esAssetLocal(img)) ||
+      producto.categoria !== base.categoria ||
+      producto.genero !== base.genero;
 
     if (!necesitaActualizar) return producto;
     huboCambios = true;
     return {
       ...producto,
+      categoria: base.categoria,
+      genero: base.genero,
       imagen: base.imagen,
       portada: base.portada,
       galeria: base.galeria,
