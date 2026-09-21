@@ -2,19 +2,16 @@ import { useState } from "react";
 import { Alert, Button, Card, Form, InputGroup, Nav } from "react-bootstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
-
 const DEMOS = {
   admin: { email: "admin@rollinggames.com", password: "Admin123!", label: "Administrador" },
   usuario: { email: "user@rollinggames.com", password: "User123!", label: "Usuario Gamer" },
 };
-
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const tieneLongitud = (p = "") => p.length >= 6 && p.length <= 20;
 const tieneMin = (p = "") => /[a-z]/.test(p);
 const tieneMay = (p = "") => /[A-Z]/.test(p);
 const tieneNum = (p = "") => /\d/.test(p);
 const tieneEspecial = (p = "") => /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(p);
-
 const Login = () => {
   const { login, register } = useAuth();
   const navigate = useNavigate(), location = useLocation();
@@ -24,11 +21,9 @@ const Login = () => {
   const [verPass, setVerPass] = useState(false);
   const [verRepetir, setVerRepetir] = useState(false);
   const [form, setForm] = useState({ nombre: "", email: "", password: "", repetir: "" });
-
   const set = (e) => setForm({ ...form, [e.target.name]: e.target.value });
   const entrar = (u) => navigate(u?.rol === "admin" && destino === "/" ? "/admin" : destino, { replace: true });
   const cambiarModo = (m) => { setModo(m); setAlerta(null); };
-
   const cargarDemo = (tipo) => {
     const cred = DEMOS[tipo];
     if (!cred) return;
@@ -36,7 +31,6 @@ const Login = () => {
     setForm((prev) => ({ ...prev, email: cred.email, password: cred.password }));
     setAlerta({ variant: "info", texto: `Credenciales de ${cred.label} cargadas. Presiona "Entrar" para continuar.` });
   };
-
   const validarRegistro = () => {
     if (form.nombre.trim().length < 3) return "El nombre debe contener al menos 3 caracteres.";
     if (!EMAIL_REGEX.test(form.email.trim())) return "Ingresa un correo electrónico con formato válido.";
@@ -48,7 +42,6 @@ const Login = () => {
     if (form.password !== form.repetir) return "Las contraseñas no coinciden.";
     return null;
   };
-
   const enviar = (e) => {
     e.preventDefault();
     setAlerta(null);
@@ -71,7 +64,6 @@ const Login = () => {
       setAlerta({ variant: "danger", texto: r.mensaje || "No fue posible registrar la cuenta." });
     }
   };
-
   return (
     <div className="row justify-content-center py-4 py-md-5 px-2 px-sm-0">
       <div className="col-12 col-sm-10 col-md-8 col-lg-5">
@@ -86,9 +78,7 @@ const Login = () => {
               </Nav.Item>
             ))}
           </Nav>
-
           {alerta && <Alert variant={alerta.variant} className="py-2 small text-center">{alerta.texto}</Alert>}
-
           <Form onSubmit={enviar}>
             {modo === "registro" && (
               <Form.Control
@@ -134,7 +124,6 @@ const Login = () => {
                 <i className={`bi ${verPass ? "bi-eye-slash" : "bi-eye"}`} />
               </Button>
             </InputGroup>
-
             {modo === "registro" && form.password.length > 0 && (
               <div className="p-2 mb-3 rounded bg-black bg-opacity-50 border border-secondary border-opacity-25">
                 <div className="text-secondary fw-semibold mb-1" style={{ fontSize: "0.75rem" }}>
@@ -192,7 +181,6 @@ const Login = () => {
               {modo === "login" ? "Entrar" : "Registrarme"}
             </Button>
           </Form>
-
           <div className="d-grid gap-2 mt-3 pt-2 border-top border-secondary border-opacity-25">
             <div className="d-flex gap-2">
               <Button variant="outline-warning" size="sm" className="w-50" onClick={() => cargarDemo("admin")}>
@@ -203,7 +191,6 @@ const Login = () => {
               </Button>
             </div>
           </div>
-
           <Link to="/" className="text-secondary small text-center mt-3 text-decoration-none">
             <i className="bi bi-arrow-left me-1" />Volver al catálogo
           </Link>
@@ -212,5 +199,4 @@ const Login = () => {
     </div>
   );
 };
-
 export default Login;

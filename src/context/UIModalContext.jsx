@@ -2,7 +2,6 @@ import { createContext, useContext, useState, useCallback, useEffect } from "rea
 import { useNavigate } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import { useAuth } from "./AuthContext.jsx";
-
 const CONTENIDOS = {
   noticias: {
     titulo: "Noticias y Actualizaciones",
@@ -70,17 +69,13 @@ const CONTENIDOS = {
     )
   }
 };
-
 const UIModalContext = createContext();
-
 export const UIModalProvider = ({ children }) => {
   const [modalActivo, setModalActivo] = useState(null);
   const navigate = useNavigate();
   const { esAdmin, usuario, logout, loginRapido } = useAuth();
-
   const abrirModal = useCallback((tipo) => setModalActivo(tipo), []);
   const cerrarModal = useCallback(() => setModalActivo(null), []);
-
   const manejarDistribucion = useCallback(() => {
     cerrarModal();
     if (esAdmin) {
@@ -92,19 +87,15 @@ export const UIModalProvider = ({ children }) => {
       navigate("/login", { state: { tab: "login", from: { pathname: "/crear" } } });
     }
   }, [cerrarModal, navigate, esAdmin, usuario, loginRapido]);
-
   useEffect(() => {
     const alPresionarTecla = (e) => { if (e.key === "Escape" && modalActivo) cerrarModal(); };
     window.addEventListener("keydown", alPresionarTecla);
     return () => window.removeEventListener("keydown", alPresionarTecla);
   }, [modalActivo, cerrarModal]);
-
   const actual = modalActivo ? CONTENIDOS[modalActivo] : null;
-
   const renderCuerpo = () => {
     if (!actual) return null;
     if (!actual.esDistribucion) return actual.cuerpo;
-
     if (esAdmin) {
       return (
         <div>
@@ -121,7 +112,6 @@ export const UIModalProvider = ({ children }) => {
         </div>
       );
     }
-
     if (usuario) {
       return (
         <div>
@@ -148,7 +138,6 @@ export const UIModalProvider = ({ children }) => {
         </div>
       );
     }
-
     return (
       <div>
         <div className="d-flex align-items-center gap-2 mb-3 text-info">
@@ -164,7 +153,6 @@ export const UIModalProvider = ({ children }) => {
       </div>
     );
   };
-
   const renderBotonesDistribucion = () => {
     if (esAdmin) {
       return (
@@ -174,7 +162,6 @@ export const UIModalProvider = ({ children }) => {
         </Button>
       );
     }
-
     if (usuario) {
       return (
         <>
@@ -201,7 +188,6 @@ export const UIModalProvider = ({ children }) => {
         </>
       );
     }
-
     return (
       <Button variant="primary" className="btn-epic-primary" onClick={manejarDistribucion}>
         <i className="bi bi-box-arrow-in-right me-1" />
@@ -209,7 +195,6 @@ export const UIModalProvider = ({ children }) => {
       </Button>
     );
   };
-
   return (
     <UIModalContext.Provider value={{ modalActivo, abrirModal, cerrarModal, manejarDistribucion, CONTENIDOS }}>
       {children}
@@ -230,11 +215,9 @@ export const UIModalProvider = ({ children }) => {
     </UIModalContext.Provider>
   );
 };
-
 export const useUIModal = () => {
   const context = useContext(UIModalContext);
   if (!context) throw new Error("useUIModal debe ser utilizado dentro de un UIModalProvider");
   return context;
 };
-
 export default UIModalContext;

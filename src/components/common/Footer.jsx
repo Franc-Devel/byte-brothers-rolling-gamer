@@ -2,16 +2,13 @@ import { Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useUIModal } from "../../context/UIModalContext.jsx";
-
 const Footer = () => {
   const { esAdmin } = useAuth();
   const { abrirModal } = useUIModal();
-
   const volverArriba = (e) => {
     e.preventDefault();
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
   return (
     <footer className="epic-footer pt-5 pb-4 mt-auto">
       <Container>
@@ -27,12 +24,10 @@ const Footer = () => {
               <i className="bi bi-youtube" aria-hidden="true"></i>
             </a>
           </div>
-
           <button onClick={volverArriba} className="btn btn-link text-secondary small text-decoration-none p-0 border-0" aria-label="Desplazar suavemente al inicio de la página">
             <i className="bi bi-chevron-up me-1" aria-hidden="true"></i> Volver arriba
           </button>
         </div>
-
         <Row className="gy-4 mb-4 small text-center text-md-start">
           <Col xs={12} sm={6} md={3}>
             <span className="epic-subheading d-block mb-3">Navegación</span>
@@ -43,7 +38,6 @@ const Footer = () => {
               {esAdmin && <li><Link to="/admin" className="text-secondary text-decoration-none">Panel de Administración</Link></li>}
             </ul>
           </Col>
-
           <Col xs={12} sm={6} md={3}>
             <span className="epic-subheading d-block mb-3">Recursos y Soporte</span>
             <ul className="list-unstyled d-flex flex-column align-items-center align-items-md-start gap-2 text-secondary mb-0">
@@ -52,7 +46,6 @@ const Footer = () => {
               <li><button type="button" className="btn btn-link p-0 text-secondary text-decoration-none small text-center text-md-start border-0" onClick={() => abrirModal("distribucion")}>Publicar Videojuegos</button></li>
             </ul>
           </Col>
-
           <Col xs={12} sm={6} md={3}>
             <span className="epic-subheading d-block mb-3">Términos y Políticas</span>
             <ul className="list-unstyled d-flex flex-column align-items-center align-items-md-start gap-2 text-secondary mb-0">
@@ -62,7 +55,6 @@ const Footer = () => {
               <li><button type="button" className="btn btn-link p-0 text-secondary text-decoration-none small text-center text-md-start border-0" onClick={() => abrirModal("seguridad")}>Consejos de Seguridad</button></li>
             </ul>
           </Col>
-
           <Col xs={12} sm={6} md={3}>
             <span className="epic-subheading d-block mb-3">Rolling Gamer</span>
             <p className="text-secondary mb-2">
@@ -71,9 +63,7 @@ const Footer = () => {
             <span className="text-muted small">Stack: React 19, React Router, Bootstrap 5.</span>
           </Col>
         </Row>
-
         <hr className="border-secondary border-opacity-25 my-4" />
-
         <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 small text-secondary text-center text-md-start">
           <div>
             &copy; {new Date().getFullYear()} Rolling Gamer. Proyecto educativo de RollingCode School.
@@ -88,5 +78,4 @@ const Footer = () => {
     </footer>
   );
 };
-
 export default Footer;

@@ -931,9 +931,6 @@ const catalogoCompleto = [
     ]
   }
 ];
-
 export const IDS_VARIANTES_RETIRADAS = ["6", "11", "18", "19"];
-
 export const juegosIniciales = catalogoCompleto;
-
 export default juegosIniciales;

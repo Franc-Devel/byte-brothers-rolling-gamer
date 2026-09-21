@@ -1,6 +1,5 @@
 const ADMIN_EMAIL = import.meta.env?.VITE_ADMIN_EMAIL || "admin@rollinggames.com";
 const ADMIN_PASSWORD = import.meta.env?.VITE_ADMIN_PASSWORD || "Admin123!";
-
 export const usuariosIniciales = [
   {
     id: "u-admin-1",
@@ -27,5 +26,4 @@ export const usuariosIniciales = [
     wishlist: ["3", "5"]
   }
 ];
-
 export default usuariosIniciales;

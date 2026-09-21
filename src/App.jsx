@@ -14,7 +14,6 @@ import RutaProtegida from "./components/common/RutaProtegida.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { ProductosProvider } from "./context/ProductosContext.jsx";
 import { UIModalProvider } from "./context/UIModalContext.jsx";
-
 function App() {
   return (
     <BrowserRouter>
@@ -46,5 +45,4 @@ function App() {
     </BrowserRouter>
   );
 }
-
 export default App;

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Alert, Badge, Button, Card, Form, Modal, Spinner } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useProductos } from "../../../context/ProductosContext.jsx";
-
 const CATEGORIAS = [
   "Acción",
   "Disparos",
@@ -10,7 +9,6 @@ const CATEGORIAS = [
   "Estrategia",
   "Simulación",
 ];
-
 const base = {
   nombre: "",
   categoria: "Acción",
@@ -34,7 +32,6 @@ const base = {
   req_rec_gpu: "",
   req_rec_disco: "",
 };
-
 const mapearJuegoAForm = (juego) => {
   if (!juego) return base;
   return {
@@ -63,7 +60,6 @@ const mapearJuegoAForm = (juego) => {
     req_rec_disco: juego.requisitos?.recomendados?.disco || juego.req_rec_disco || "",
   };
 };
-
 const FormularioProducto = ({
   titulo: tituloProp,
   crearProducto: crearProp,
@@ -73,39 +69,32 @@ const FormularioProducto = ({
   const { id } = useParams();
   const navigate = useNavigate();
   const productosCtx = useProductos();
-
   const buscar = buscarProp || productosCtx?.buscarProducto;
   const crear = crearProp || productosCtx?.crearProducto;
   const modificar = modProp || productosCtx?.modificarProducto;
-
   const editando = Boolean(id);
   const juegoExistente = editando && buscar ? buscar(id) : null;
   const idInvalido = editando && !juegoExistente;
-
   const [form, setForm] = useState(() => {
     if (editando && juegoExistente) {
       return mapearJuegoAForm(juegoExistente);
     }
     return base;
   });
-
   const [errores, setErrores] = useState({});
   const [alerta, setAlerta] = useState(null);
   const [guardando, setGuardando] = useState(false);
   const [mostrarModalCancelar, setMostrarModalCancelar] = useState(false);
   const [idPrevio, setIdPrevio] = useState(id);
-
   if (id !== idPrevio) {
     setIdPrevio(id);
     setForm(editando && juegoExistente ? mapearJuegoAForm(juegoExistente) : base);
     setErrores({});
   }
-
   const esFormularioModificado = () => {
     const inicial = editando && juegoExistente ? mapearJuegoAForm(juegoExistente) : base;
     return Object.keys(base).some((k) => String(form[k] ?? "") !== String(inicial[k] ?? ""));
   };
-
   const manejarCancelar = (e) => {
     if (e && typeof e.preventDefault === "function") {
       e.preventDefault();
@@ -116,9 +105,7 @@ const FormularioProducto = ({
       navigate("/admin");
     }
   };
-
   const tituloPagina = tituloProp || (editando ? "Editar videojuego" : "Crear videojuego");
-
   if (idInvalido) {
     return (
       <section className="epic-box p-5 text-center my-4 shadow">
@@ -133,7 +120,6 @@ const FormularioProducto = ({
       </section>
     );
   }
-
   const validarFormulario = () => {
     const err = {};
     const nombreLimpio = String(form.nombre || "").trim();
@@ -144,7 +130,6 @@ const FormularioProducto = ({
     } else if (nombreLimpio.length > 70) {
       err.nombre = "El título no puede superar los 70 caracteres.";
     }
-
     const desarrolladorLimpio = String(form.desarrollador || "").trim();
     if (!desarrolladorLimpio) {
       err.desarrollador = "El estudio o desarrollador es obligatorio.";
@@ -153,19 +138,16 @@ const FormularioProducto = ({
     } else if (desarrolladorLimpio.length > 60) {
       err.desarrollador = "El desarrollador no puede superar los 60 caracteres.";
     }
-
     const numPrecio = Number(form.precio);
     if (isNaN(numPrecio) || form.precio === "" || numPrecio < 50) {
       err.precio = "El precio debe ser un monto numérico mayor o igual a $50 ARS.";
     } else if (numPrecio > 9999999) {
       err.precio = "El precio no puede exceder los $9.999.999 ARS.";
     }
-
     const numDescuento = Number(form.descuento);
     if (isNaN(numDescuento) || numDescuento < 0 || numDescuento > 90) {
       err.descuento = "El porcentaje de descuento debe estar comprendido entre 0 y 90%.";
     }
-
     const imgLimpia = String(form.imagen || "").trim();
     if (!imgLimpia) {
       err.imagen = "La URL de la imagen de portada es obligatoria.";
@@ -174,7 +156,6 @@ const FormularioProducto = ({
     } else if (imgLimpia.length > 300) {
       err.imagen = "La URL no puede superar los 300 caracteres.";
     }
-
     const resumenLimpio = String(form.resumen || "").trim();
     if (!resumenLimpio) {
       err.resumen = "El resumen del videojuego es obligatorio.";
@@ -183,7 +164,6 @@ const FormularioProducto = ({
     } else if (resumenLimpio.length > 150) {
       err.resumen = "El resumen no puede superar los 150 caracteres.";
     }
-
     const descLimpia = String(form.descripcion || "").trim();
     if (!descLimpia) {
       err.descripcion = "La descripción detallada es obligatoria.";
@@ -192,10 +172,8 @@ const FormularioProducto = ({
     } else if (descLimpia.length > 1500) {
       err.descripcion = "La descripción no puede superar los 1500 caracteres.";
     }
-
     return err;
   };
-
   const set = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -207,7 +185,6 @@ const FormularioProducto = ({
       });
     }
   };
-
   const enviar = (e) => {
     e.preventDefault();
     const fallas = validarFormulario();
@@ -219,7 +196,6 @@ const FormularioProducto = ({
       });
       return;
     }
-
     setGuardando(true);
     const galeriaArray = typeof form.galeria === "string"
       ? form.galeria
@@ -227,7 +203,6 @@ const FormularioProducto = ({
           .map((url) => url.trim())
           .filter(Boolean)
       : (Array.isArray(form.galeria) ? form.galeria : []);
-
     const requisitosNormalizados = {
       minimos: {
         so: form.req_min_so?.trim() || "Windows 10 64-bit",
@@ -244,7 +219,6 @@ const FormularioProducto = ({
         disco: form.req_rec_disco?.trim() || "50 GB SSD",
       },
     };
-
     const productoListo = {
       ...(editando && juegoExistente ? juegoExistente : {}),
       id: editando && juegoExistente ? juegoExistente.id : Date.now().toString(),
@@ -266,14 +240,12 @@ const FormularioProducto = ({
       requisitos: requisitosNormalizados,
       resenas: editando && juegoExistente?.resenas ? juegoExistente.resenas : [],
     };
-
     setAlerta({
       tipo: "success",
       mensaje: editando
         ? "¡Videojuego modificado exitosamente! Redirigiendo al panel..."
         : "¡Videojuego registrado exitosamente! Redirigiendo al panel...",
     });
-
     setTimeout(() => {
       if (editando && modificar) {
         modificar(productoListo);
@@ -283,7 +255,6 @@ const FormularioProducto = ({
       navigate("/admin");
     }, 600);
   };
-
   return (
     <section className="epic-box p-3 p-sm-4 shadow-sm">
       <button
@@ -295,7 +266,6 @@ const FormularioProducto = ({
         <i className="bi bi-arrow-left me-1" />Volver al panel
       </button>
       <h1 className="epic-heading h3 mb-3">{tituloPagina}</h1>
-
       {alerta && (
         <Alert
           variant={alerta.tipo}
@@ -307,7 +277,6 @@ const FormularioProducto = ({
           <span>{alerta.mensaje}</span>
         </Alert>
       )}
-
       <Form onSubmit={enviar} noValidate className="row g-3">
         <Form.Group className="col-md-6" controlId="formTituloVideojuego">
           <Form.Label className="small text-secondary fw-semibold">Título del videojuego *</Form.Label>
@@ -324,7 +293,6 @@ const FormularioProducto = ({
           />
           <Form.Control.Feedback type="invalid">{errores.nombre}</Form.Control.Feedback>
         </Form.Group>
-
         <Form.Group className="col-md-6" controlId="formCategoriaVideojuego">
           <Form.Label className="small text-secondary fw-semibold">Categoría / Género *</Form.Label>
           <Form.Select
@@ -341,7 +309,6 @@ const FormularioProducto = ({
             ))}
           </Form.Select>
         </Form.Group>
-
         <Form.Group className="col-md-4" controlId="formDesarrollador">
           <Form.Label className="small text-secondary fw-semibold">Estudio / Desarrollador *</Form.Label>
           <Form.Control
@@ -357,7 +324,6 @@ const FormularioProducto = ({
           />
           <Form.Control.Feedback type="invalid">{errores.desarrollador}</Form.Control.Feedback>
         </Form.Group>
-
         <Form.Group className="col-md-4" controlId="formEditor">
           <Form.Label className="small text-secondary fw-semibold">Editor / Distribuidor</Form.Label>
           <Form.Control
@@ -369,7 +335,6 @@ const FormularioProducto = ({
             maxLength={60}
           />
         </Form.Group>
-
         <Form.Group className="col-md-4" controlId="formLanzamiento">
           <Form.Label className="small text-secondary fw-semibold">Fecha de lanzamiento</Form.Label>
           <Form.Control
@@ -380,7 +345,6 @@ const FormularioProducto = ({
             onChange={set}
           />
         </Form.Group>
-
         <Form.Group className="col-md-6" controlId="formPrecio">
           <Form.Label className="small text-secondary fw-semibold">Precio (ARS) * (mínimo $50)</Form.Label>
           <Form.Control
@@ -398,7 +362,6 @@ const FormularioProducto = ({
           />
           <Form.Control.Feedback type="invalid">{errores.precio}</Form.Control.Feedback>
         </Form.Group>
-
         <Form.Group className="col-md-6" controlId="formDescuento">
           <div className="d-flex justify-content-between align-items-center mb-1">
             <Form.Label className="small text-secondary fw-semibold mb-0">Descuento (%) (0 a 90)</Form.Label>
@@ -421,7 +384,6 @@ const FormularioProducto = ({
           />
           <Form.Control.Feedback type="invalid">{errores.descuento}</Form.Control.Feedback>
         </Form.Group>
-
         <Form.Group className="col-md-8" controlId="formImagenPortada">
           <Form.Label className="small text-secondary fw-semibold">URL de imagen de portada *</Form.Label>
           <Form.Control
@@ -447,7 +409,6 @@ const FormularioProducto = ({
           />
           <small className="text-secondary opacity-75">Opcional. Se normalizarán automáticamente al guardar.</small>
         </Form.Group>
-
         <Form.Group className="col-md-4">
           <Form.Label className="small text-secondary fw-semibold d-block">Vista previa de portada</Form.Label>
           <div className="epic-box p-1 text-center bg-black bg-opacity-50 border border-secondary border-opacity-25 rounded" style={{ minHeight: 120 }}>
@@ -460,7 +421,6 @@ const FormularioProducto = ({
             />
           </div>
         </Form.Group>
-
         <Form.Group className="col-12" controlId="formResumen">
           <div className="d-flex justify-content-between align-items-center mb-1">
             <Form.Label className="small text-secondary fw-semibold mb-0">Resumen / Descripción corta * (10 a 150 caracteres)</Form.Label>
@@ -481,7 +441,6 @@ const FormularioProducto = ({
           />
           <Form.Control.Feedback type="invalid">{errores.resumen}</Form.Control.Feedback>
         </Form.Group>
-
         <Form.Group className="col-12" controlId="formDescripcionDetallada">
           <div className="d-flex justify-content-between align-items-center mb-1">
             <Form.Label className="small text-secondary fw-semibold mb-0">Descripción detallada del juego * (20 a 1500 caracteres)</Form.Label>
@@ -504,7 +463,6 @@ const FormularioProducto = ({
           />
           <Form.Control.Feedback type="invalid">{errores.descripcion}</Form.Control.Feedback>
         </Form.Group>
-
         <div className="col-12 mt-4">
           <div className="d-flex align-items-center gap-2 mb-2">
             <i className="bi bi-cpu text-warning fs-5" />
@@ -513,7 +471,6 @@ const FormularioProducto = ({
           <p className="text-secondary small mb-3">
             Completa las especificaciones técnicas mínimas y recomendadas para guiar a los jugadores.
           </p>
-
           <div className="row g-3">
             <div className="col-12 col-lg-6">
               <Card className="bg-black bg-opacity-40 border border-secondary border-opacity-25 h-100">
@@ -585,7 +542,6 @@ const FormularioProducto = ({
                 </Card.Body>
               </Card>
             </div>
-
             <div className="col-12 col-lg-6">
               <Card className="bg-black bg-opacity-40 border border-secondary border-opacity-25 h-100">
                 <Card.Header className="bg-transparent border-secondary border-opacity-25 py-2">
@@ -658,7 +614,6 @@ const FormularioProducto = ({
             </div>
           </div>
         </div>
-
         <div className="col-12 d-flex flex-column flex-sm-row gap-2 pt-3 border-top border-secondary border-opacity-25 mt-4">
           <Button
             type="submit"
@@ -688,7 +643,6 @@ const FormularioProducto = ({
           </Button>
         </div>
       </Form>
-
       <Modal
         show={mostrarModalCancelar}
         onHide={() => setMostrarModalCancelar(false)}
@@ -716,5 +670,4 @@ const FormularioProducto = ({
     </section>
   );
 };
-
 export default FormularioProducto;

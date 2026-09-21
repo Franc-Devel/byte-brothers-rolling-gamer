@@ -3,26 +3,22 @@ import { Badge, Button, Col, Form, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useProductos } from "../../context/ProductosContext.jsx";
-
 const formatoMoneda = (n) => `$${Number(n || 0).toLocaleString("es-AR")} ARS`;
 const precioFinal = (p) => p.descuento ? Math.round(p.precio * (1 - p.descuento / 100)) : p.precio;
 const ratioResenas = (p) => p.resenas?.length ? p.resenas.filter((r) => r.voto === "positivo" || r.voto === "positiva").length / p.resenas.length : 0;
 const FALLBACK_IMG = "/images/games/07-counter-strike-2/header.jpg";
 const imagenJuego = (j) => j?.portada || j?.imagen || FALLBACK_IMG;
-
 const Inicio = () => {
   const { productos = [] } = useProductos();
   const { isWishlisted, toggleWishlist } = useAuth();
   const navigate = useNavigate();
   const [q, setQ] = useState(""), [cat, setCat] = useState("Todas"), [orden, setOrden] = useState("destacados");
   const [destacadoId, setDestacadoId] = useState(null);
-
   const destacados5 = useMemo(() => productos.slice(0, 5), [productos]);
   const destacado = useMemo(() => productos.find((p) => String(p.id) === String(destacadoId)) || destacados5[0], [productos, destacadoId, destacados5]);
   const categorias = useMemo(() => ["Todas", ...new Set(productos.map((p) => p.categoria || p.genero).filter(Boolean))], [productos]);
   const hayFiltros = q.trim() !== "" || cat !== "Todas" || orden !== "destacados";
   const limpiarTodo = () => { setQ(""); setCat("Todas"); setOrden("destacados"); };
-
   const lista = useMemo(() => {
     const query = q.trim().toLowerCase();
     const filtrados = productos.filter((p) => {
@@ -30,7 +26,6 @@ const Inicio = () => {
       const texto = `${p.nombre} ${p.titulo || ""} ${p.desarrollador || ""} ${p.categoria || ""} ${p.genero || ""}`.toLowerCase();
       return matchCat && (!query || texto.includes(query));
     });
-
     const ordenados = [...filtrados];
     if (orden === "precio-asc") ordenados.sort((a, b) => precioFinal(a) - precioFinal(b));
     else if (orden === "precio-desc") ordenados.sort((a, b) => precioFinal(b) - precioFinal(a));
@@ -39,14 +34,11 @@ const Inicio = () => {
     else if (orden === "destacados") ordenados.sort((a, b) => (b.destacado ? 1 : 0) - (a.destacado ? 1 : 0));
     return ordenados;
   }, [productos, q, cat, orden]);
-
   const alternarDeseo = (id) => {
     const r = toggleWishlist(id);
     if (r.requireAuth) navigate("/login");
   };
-
   if (!productos.length) return <div className="epic-box p-5 text-center my-4 text-secondary">El catálogo se encuentra vacío temporalmente.</div>;
-
   return (
     <>
       {destacado && (
@@ -91,7 +83,6 @@ const Inicio = () => {
           </Row>
         </section>
       )}
-
       <div className="d-flex flex-column flex-lg-row gap-3 justify-content-between mb-3">
         <div className="position-relative flex-grow-1">
           <Form.Control
@@ -111,7 +102,6 @@ const Inicio = () => {
           {categorias.map((c) => <button key={c} className={`epic-filter-pill ${cat === c ? "active" : ""}`} onClick={() => setCat(c)}>{c}</button>)}
         </div>
       </div>
-
       <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-4">
         <div className="d-flex align-items-center gap-2 flex-wrap">
           <span className="text-secondary small">Ordenar por:</span>
@@ -130,7 +120,6 @@ const Inicio = () => {
         </div>
         <span className="text-secondary small">{lista.length} {lista.length === 1 ? "juego encontrado" : "juegos disponibles"}</span>
       </div>
-
       {lista.length > 0 ? (
         <Row xs={1} sm={2} lg={4} className="g-4">
           {lista.map((j) => (
@@ -174,5 +163,4 @@ const Inicio = () => {
     </>
   );
 };
-
 export default Inicio;

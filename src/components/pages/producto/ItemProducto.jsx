@@ -1,16 +1,12 @@
 import { Badge, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-
 const FALLBACK_IMG = "/images/games/07-counter-strike-2/header.jpg";
-
 const ItemProducto = ({ itemProducto, producto, fila, borrarProducto, onDelete }) => {
   const item = itemProducto || producto || {};
   const { id, nombre, desarrollador, categoria, precio, imagen, portada, resenas = [] } = item;
   const eliminarFn = borrarProducto || onDelete;
-
   const precioFormat = `$${Number(precio || 0).toLocaleString("es-AR")}`;
-
   const calcAprobacion = () => {
     if (!Array.isArray(resenas) || resenas.length === 0) return { texto: "Sin reseñas", variant: "secondary", pct: null };
     const pos = resenas.filter((r) => r.voto === "positivo" || r.positiva === true).length;
@@ -22,9 +18,7 @@ const ItemProducto = ({ itemProducto, producto, fila, borrarProducto, onDelete }
       pct,
     };
   };
-
   const aprob = calcAprobacion();
-
   const handleEliminar = () => {
     Swal.fire({
       title: "¿Eliminar videojuego?",
@@ -55,7 +49,6 @@ const ItemProducto = ({ itemProducto, producto, fila, borrarProducto, onDelete }
       }
     });
   };
-
   return (
     <tr className="align-middle">
       {fila !== undefined && <td className="text-secondary small fw-bold">#{fila}</td>}
@@ -107,5 +100,4 @@ const ItemProducto = ({ itemProducto, producto, fila, borrarProducto, onDelete }
     </tr>
   );
 };
-
 export default ItemProducto;

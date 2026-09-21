@@ -1,5 +1,4 @@
 import { Container, Row, Col, Card, Badge } from "react-bootstrap";
-
 const MIEMBROS = [
   {
     nombre: "Francisco Delgado",
@@ -16,14 +15,12 @@ const MIEMBROS = [
     habilidades: ["Scrum Master", "Trello Ágil", "CSS3 / Bootstrap", "UI/UX Design"]
   }
 ];
-
 const TECNOLOGIAS = [
   { nombre: "React 19", desc: "Hooks modernos y componentes reutilizables" },
   { nombre: "React Router", desc: "Enrutamiento SPA dinámico y rutas protegidas" },
   { nombre: "Bootstrap 5", desc: "Sistema de grillas responsive y utilidades CSS" },
   { nombre: "LocalStorage API", desc: "Persistencia completa de catálogo y usuarios" }
 ];
-
 const About = () => {
   return (
     <Container className="py-4 py-md-5">
@@ -38,7 +35,6 @@ const About = () => {
           Proyecto académico de e-commerce desarrollado por <strong>Francisco Delgado</strong> y <strong>Franco Triviño</strong>, replicando la experiencia y estética de Epic Games Store.
         </p>
       </header>
-
       <section className="mb-5">
         <div className="epic-subheading mb-4 text-center">
           Desarrolladores del Proyecto
@@ -73,7 +69,6 @@ const About = () => {
           ))}
         </Row>
       </section>
-
       <Row className="g-4">
         <Col lg={7}>
           <div className="epic-box p-4 h-100 d-flex flex-column justify-content-between">
@@ -113,7 +108,6 @@ const About = () => {
             </div>
           </div>
         </Col>
-
         <Col lg={5}>
           <div className="epic-box p-4 h-100">
             <span className="epic-subheading d-block mb-2 text-primary">
@@ -137,5 +131,4 @@ const About = () => {
     </Container>
   );
 };
-
 export default About;
