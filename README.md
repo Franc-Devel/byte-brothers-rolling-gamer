@@ -19,7 +19,7 @@ Plataforma web profesional **ROLLING GAMER**, desarrollada con **React 19**, **V
 4. [Instalación y Ejecución Local](#-instalación-y-ejecución-local)
 5. [Estructura del Proyecto](#-estructura-del-proyecto)
 6. [Equipo de Desarrollo](#-equipo-de-desarrollo)
-7. [Despliegue (Netlify / Vercel)](#-despliegue-netlify--vercel)
+7. [Despliegue en Producción (Vercel)](#-despliegue-en-producción-vercel)
 
 ---
 
@@ -107,8 +107,9 @@ Para la evaluación del proyecto, pueden utilizarse las siguientes cuentas prede
 
 ```text
 Rolling-Gamer/
+├── vercel.json                 # Configuración de enrutamiento SPA para Vercel
 ├── public/
-│   └── _redirects              # Configuración de SPA para Netlify/Vercel
+│   └── _redirects              # Redirección complementaria de rutas SPA
 ├── src/
 │   ├── components/
 │   │   ├── common/
@@ -158,11 +159,7 @@ El proyecto fue concebido, diseñado e implementado por:
 El proyecto se encuentra desplegado y accesible públicamente en **Vercel**:
 - 🔗 **Demo Oficial en Vivo:** [https://byte-brothers-rolling-gamer.vercel.app/](https://byte-brothers-rolling-gamer.vercel.app/)
 
-El repositorio incluye la configuración para Single Page Application (SPA):
-- **Vercel:** `vercel.json` con regla de reescritura hacia `/index.html`.
-- **Netlify:** `public/_redirects` con `/* /index.html 200`.
-
-Ambas configuraciones garantizan que el enrutamiento del lado del cliente (`client-side routing` de React Router) funcione correctamente al recargar páginas profundas como `/detalle/:id`, `/administrador` o `/wishlist`.
+El repositorio incluye el archivo de configuración `vercel.json` con reglas de reescritura hacia `/index.html`, garantizando que el enrutamiento del lado del cliente (`client-side routing` de React Router) funcione correctamente al recargar páginas profundas como `/detalle/:id`, `/administrador` o `/wishlist`.
 
 ---
 
