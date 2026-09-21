@@ -146,16 +146,24 @@ const FormularioProducto = ({
       err.nombre = "El título del videojuego es obligatorio.";
     } else if (nombreLimpio.length < 2) {
       err.nombre = "El título debe contener al menos 2 caracteres.";
+    } else if (nombreLimpio.length > 70) {
+      err.nombre = "El título no puede superar los 70 caracteres.";
     }
 
     const desarrolladorLimpio = String(form.desarrollador || "").trim();
     if (!desarrolladorLimpio) {
       err.desarrollador = "El estudio o desarrollador es obligatorio.";
+    } else if (desarrolladorLimpio.length < 2) {
+      err.desarrollador = "El desarrollador debe tener al menos 2 caracteres.";
+    } else if (desarrolladorLimpio.length > 60) {
+      err.desarrollador = "El desarrollador no puede superar los 60 caracteres.";
     }
 
     const numPrecio = Number(form.precio);
     if (isNaN(numPrecio) || form.precio === "" || numPrecio < 50) {
       err.precio = "El precio debe ser un monto numérico mayor o igual a $50 ARS.";
+    } else if (numPrecio > 9999999) {
+      err.precio = "El precio no puede exceder los $9.999.999 ARS.";
     }
 
     const numDescuento = Number(form.descuento);
@@ -168,6 +176,8 @@ const FormularioProducto = ({
       err.imagen = "La URL de la imagen de portada es obligatoria.";
     } else if (!/^https?:\/\/.+/i.test(imgLimpia)) {
       err.imagen = "Ingresa una URL válida que comience con http:// o https://.";
+    } else if (imgLimpia.length > 300) {
+      err.imagen = "La URL no puede superar los 300 caracteres.";
     }
 
     const resumenLimpio = String(form.resumen || "").trim();
@@ -175,6 +185,8 @@ const FormularioProducto = ({
       err.resumen = "El resumen del videojuego es obligatorio.";
     } else if (resumenLimpio.length < 10) {
       err.resumen = "El resumen debe tener como mínimo 10 caracteres.";
+    } else if (resumenLimpio.length > 150) {
+      err.resumen = "El resumen no puede superar los 150 caracteres.";
     }
 
     const descLimpia = String(form.descripcion || "").trim();
@@ -182,6 +194,8 @@ const FormularioProducto = ({
       err.descripcion = "La descripción detallada es obligatoria.";
     } else if (descLimpia.length < 20) {
       err.descripcion = "La descripción debe tener como mínimo 20 caracteres.";
+    } else if (descLimpia.length > 1500) {
+      err.descripcion = "La descripción no puede superar los 1500 caracteres.";
     }
 
     return err;
@@ -312,6 +326,7 @@ const FormularioProducto = ({
             isInvalid={Boolean(errores.nombre)}
             required
             minLength={2}
+            maxLength={70}
           />
           <Form.Control.Feedback type="invalid">{errores.nombre}</Form.Control.Feedback>
         </Form.Group>
@@ -343,6 +358,8 @@ const FormularioProducto = ({
             onChange={set}
             isInvalid={Boolean(errores.desarrollador)}
             required
+            minLength={2}
+            maxLength={60}
           />
           <Form.Control.Feedback type="invalid">{errores.desarrollador}</Form.Control.Feedback>
         </Form.Group>
@@ -355,6 +372,7 @@ const FormularioProducto = ({
             placeholder="Ej. CD Projekt"
             value={form.editor || ""}
             onChange={set}
+            maxLength={60}
           />
         </Form.Group>
 
@@ -376,6 +394,7 @@ const FormularioProducto = ({
             name="precio"
             type="number"
             min="50"
+            max="9999999"
             step="1"
             className="epic-input"
             placeholder="Ej. 15000"
@@ -422,6 +441,7 @@ const FormularioProducto = ({
             onChange={set}
             isInvalid={Boolean(errores.imagen)}
             required
+            maxLength={300}
           />
           <Form.Control.Feedback type="invalid">{errores.imagen}</Form.Control.Feedback>
           <Form.Label className="small text-secondary fw-semibold">Galería de capturas (URLs separadas por comas)</Form.Label>
@@ -431,6 +451,7 @@ const FormularioProducto = ({
             placeholder="https://ejemplo.com/foto1.jpg, https://ejemplo.com/foto2.jpg"
             value={form.galeria || ""}
             onChange={set}
+            maxLength={800}
           />
           <small className="text-secondary opacity-75">Opcional. Se normalizarán automáticamente al guardar.</small>
         </Form.Group>
@@ -451,9 +472,9 @@ const FormularioProducto = ({
         {/* Descripciones con validaciones de longitud */}
         <Form.Group className="col-12" controlId="formResumen">
           <div className="d-flex justify-content-between align-items-center mb-1">
-            <Form.Label className="small text-secondary fw-semibold mb-0">Resumen / Descripción corta * (mínimo 10 caracteres)</Form.Label>
+            <Form.Label className="small text-secondary fw-semibold mb-0">Resumen / Descripción corta * (10 a 150 caracteres)</Form.Label>
             <small className={`small ${String(form.resumen || "").trim().length >= 10 ? "text-secondary" : "text-warning"}`}>
-              {String(form.resumen || "").trim().length} / 10 mín.
+              {String(form.resumen || "").trim().length} / 150 (mín. 10)
             </small>
           </div>
           <Form.Control
@@ -465,15 +486,16 @@ const FormularioProducto = ({
             isInvalid={Boolean(errores.resumen)}
             required
             minLength={10}
+            maxLength={150}
           />
           <Form.Control.Feedback type="invalid">{errores.resumen}</Form.Control.Feedback>
         </Form.Group>
 
         <Form.Group className="col-12" controlId="formDescripcionDetallada">
           <div className="d-flex justify-content-between align-items-center mb-1">
-            <Form.Label className="small text-secondary fw-semibold mb-0">Descripción detallada del juego * (mínimo 20 caracteres)</Form.Label>
+            <Form.Label className="small text-secondary fw-semibold mb-0">Descripción detallada del juego * (20 a 1500 caracteres)</Form.Label>
             <small className={`small ${String(form.descripcion || "").trim().length >= 20 ? "text-secondary" : "text-warning"}`}>
-              {String(form.descripcion || "").trim().length} / 20 mín.
+              {String(form.descripcion || "").trim().length} / 1500 (mín. 20)
             </small>
           </div>
           <Form.Control
@@ -487,6 +509,7 @@ const FormularioProducto = ({
             isInvalid={Boolean(errores.descripcion)}
             required
             minLength={20}
+            maxLength={1500}
           />
           <Form.Control.Feedback type="invalid">{errores.descripcion}</Form.Control.Feedback>
         </Form.Group>
@@ -519,6 +542,7 @@ const FormularioProducto = ({
                       placeholder="Ej. Windows 10 64-bit"
                       value={form.req_min_so || ""}
                       onChange={set}
+                      maxLength={60}
                     />
                   </div>
                   <div>
@@ -530,6 +554,7 @@ const FormularioProducto = ({
                       placeholder="Ej. Intel Core i5-3570K / AMD FX-8310"
                       value={form.req_min_cpu || ""}
                       onChange={set}
+                      maxLength={80}
                     />
                   </div>
                   <div>
@@ -541,6 +566,7 @@ const FormularioProducto = ({
                       placeholder="Ej. 8 GB RAM"
                       value={form.req_min_ram || ""}
                       onChange={set}
+                      maxLength={40}
                     />
                   </div>
                   <div>
@@ -552,6 +578,7 @@ const FormularioProducto = ({
                       placeholder="Ej. NVIDIA GeForce GTX 780 3GB / AMD Radeon RX 470"
                       value={form.req_min_gpu || ""}
                       onChange={set}
+                      maxLength={80}
                     />
                   </div>
                   <div>
@@ -563,6 +590,7 @@ const FormularioProducto = ({
                       placeholder="Ej. 70 GB de espacio disponible"
                       value={form.req_min_disco || ""}
                       onChange={set}
+                      maxLength={40}
                     />
                   </div>
                 </Card.Body>
@@ -586,6 +614,7 @@ const FormularioProducto = ({
                       placeholder="Ej. Windows 10/11 64-bit"
                       value={form.req_rec_so || ""}
                       onChange={set}
+                      maxLength={60}
                     />
                   </div>
                   <div>
@@ -597,6 +626,7 @@ const FormularioProducto = ({
                       placeholder="Ej. Intel Core i7-4790 / AMD Ryzen 3 3200G"
                       value={form.req_rec_cpu || ""}
                       onChange={set}
+                      maxLength={80}
                     />
                   </div>
                   <div>
@@ -608,6 +638,7 @@ const FormularioProducto = ({
                       placeholder="Ej. 16 GB RAM"
                       value={form.req_rec_ram || ""}
                       onChange={set}
+                      maxLength={40}
                     />
                   </div>
                   <div>
@@ -616,9 +647,10 @@ const FormularioProducto = ({
                       id="req_rec_gpu"
                       name="req_rec_gpu"
                       className="epic-input"
-                      placeholder="Ej. NVIDIA GeForce GTX 1060 6GB / AMD Radeon R9 Fury"
+                      placeholder="Ej. NVIDIA GeForce GTX 1060 6GB / AMD Radeon RX 590"
                       value={form.req_rec_gpu || ""}
                       onChange={set}
+                      maxLength={80}
                     />
                   </div>
                   <div>
@@ -630,6 +662,7 @@ const FormularioProducto = ({
                       placeholder="Ej. 70 GB SSD"
                       value={form.req_rec_disco || ""}
                       onChange={set}
+                      maxLength={40}
                     />
                   </div>
                 </Card.Body>

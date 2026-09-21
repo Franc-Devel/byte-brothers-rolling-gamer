@@ -165,6 +165,7 @@ const Administrador = () => {
                   placeholder="Buscar por título o desarrollador..."
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
+                  maxLength={60}
                 />
                 {query && (
                   <Button variant="outline-secondary" onClick={() => setQuery("")}>

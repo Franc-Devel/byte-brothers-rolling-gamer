@@ -406,7 +406,7 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
 
                   <Form.Group className="mb-3">
                     <Form.Label className="small text-secondary fw-semibold">
-                      Tu comentario (mínimo 5 caracteres)
+                      Tu comentario (5 a 500 caracteres)
                     </Form.Label>
                     <Form.Control
                       as="textarea"
@@ -417,10 +417,11 @@ const DetalleDeProducto = ({ buscarProducto, agregarResena }) => {
                       onChange={(e) => setComentario(e.target.value)}
                       required
                       minLength={5}
+                      maxLength={500}
                     />
                     <div className="text-end mt-1">
                       <small className={`small ${comentario.trim().length >= 5 ? "text-secondary" : "text-muted"}`}>
-                        {comentario.trim().length} / 5 mín.
+                        {comentario.length} / 500 (mín. 5)
                       </small>
                     </div>
                   </Form.Group>

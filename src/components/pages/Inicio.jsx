@@ -94,7 +94,13 @@ const Inicio = () => {
 
       <div className="d-flex flex-column flex-lg-row gap-3 justify-content-between mb-3">
         <div className="position-relative flex-grow-1">
-          <Form.Control className="epic-input pe-5" placeholder="Buscar por título, estudio o género..." value={q} onChange={(e) => setQ(e.target.value)} />
+          <Form.Control
+            className="epic-input pe-5"
+            placeholder="Buscar por título, estudio o género..."
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            maxLength={60}
+          />
           {q && (
             <button type="button" className="btn btn-sm btn-link text-secondary position-absolute end-0 top-50 translate-middle-y me-2 text-decoration-none" onClick={() => setQ("")} aria-label="Limpiar búsqueda">
               ✕

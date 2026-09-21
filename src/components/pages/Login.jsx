@@ -85,11 +85,12 @@ const Login = () => {
               <Form.Control
                 name="nombre"
                 className="epic-input mb-3"
-                placeholder="Nombre o alias (mínimo 3 caracteres)"
+                placeholder="Nombre o alias (3 a 40 caracteres)"
                 value={form.nombre}
                 onChange={set}
                 required
                 minLength={3}
+                maxLength={40}
               />
             )}
             <Form.Control
@@ -100,6 +101,7 @@ const Login = () => {
               value={form.email}
               onChange={set}
               required
+              maxLength={60}
             />
             <InputGroup className="mb-3">
               <Form.Control
