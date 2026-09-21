@@ -57,7 +57,7 @@ ROLLING GAMER es una solución e-commerce moderna para gamers que ofrece:
 
 ## 🔑 Credenciales de Acceso para Evaluación
 
-Para facilitar la revisión por parte del equipo docente y evaluadores, en la pantalla de [Iniciar Sesión](/login) se encuentran botones de **Acceso Rápido Demo**, o bien pueden ingresarse manualmente:
+Para la evaluación del proyecto, pueden utilizarse las siguientes cuentas predeterminadas en la pantalla de [Iniciar Sesión](/login), o bien registrar nuevas cuentas desde el formulario:
 
 ### 👑 Perfil Administrador (Acceso completo a `/admin`)
 - **Titular:** Francisco Delgado (Team Leader)

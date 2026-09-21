@@ -2,10 +2,6 @@ import { useState } from "react";
 import { Alert, Button, Card, Form, InputGroup, Nav } from "react-bootstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
-const DEMOS = {
-  admin: { email: "admin@rollinggames.com", password: "Admin123!", label: "Administrador" },
-  usuario: { email: "user@rollinggames.com", password: "User123!", label: "Usuario Gamer" },
-};
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const tieneLongitud = (p = "") => p.length >= 6 && p.length <= 20;
 const tieneMin = (p = "") => /[a-z]/.test(p);
@@ -24,13 +20,6 @@ const Login = () => {
   const set = (e) => setForm({ ...form, [e.target.name]: e.target.value });
   const entrar = (u) => navigate(u?.rol === "admin" && destino === "/" ? "/admin" : destino, { replace: true });
   const cambiarModo = (m) => { setModo(m); setAlerta(null); };
-  const cargarDemo = (tipo) => {
-    const cred = DEMOS[tipo];
-    if (!cred) return;
-    setModo("login");
-    setForm((prev) => ({ ...prev, email: cred.email, password: cred.password }));
-    setAlerta({ variant: "info", texto: `Credenciales de ${cred.label} cargadas. Presiona "Entrar" para continuar.` });
-  };
   const validarRegistro = () => {
     if (form.nombre.trim().length < 3) return "El nombre debe contener al menos 3 caracteres.";
     if (!EMAIL_REGEX.test(form.email.trim())) return "Ingresa un correo electrónico con formato válido.";
@@ -181,16 +170,6 @@ const Login = () => {
               {modo === "login" ? "Entrar" : "Registrarme"}
             </Button>
           </Form>
-          <div className="d-grid gap-2 mt-3 pt-2 border-top border-secondary border-opacity-25">
-            <div className="d-flex gap-2">
-              <Button variant="outline-warning" size="sm" className="w-50" onClick={() => cargarDemo("admin")}>
-                Demo Admin
-              </Button>
-              <Button variant="outline-info" size="sm" className="w-50" onClick={() => cargarDemo("usuario")}>
-                Demo Usuario
-              </Button>
-            </div>
-          </div>
           <Link to="/" className="text-secondary small text-center mt-3 text-decoration-none">
             <i className="bi bi-arrow-left me-1" />Volver al catálogo
           </Link>
