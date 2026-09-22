@@ -66,23 +66,55 @@ export const obtenerUsuarios = () => {
 export const guardarUsuarios = (u) => {
   try { localStorage.setItem(USUARIOS_KEY, JSON.stringify(u)); } catch (e) { console.error(e); }
 };
+export const obtenerStorageSesion = () => {
+  if (typeof window !== "undefined" && window.sessionStorage) {
+    return window.sessionStorage;
+  }
+  if (typeof localStorage !== "undefined") {
+    return localStorage;
+  }
+  if (typeof sessionStorage !== "undefined") {
+    return sessionStorage;
+  }
+  return null;
+};
 export const obtenerSesionActual = () => {
   try {
-    const s = localStorage.getItem(SESION_KEY);
+    const storageSesion = obtenerStorageSesion();
+    let s = storageSesion ? storageSesion.getItem(SESION_KEY) : null;
+    if (!s && typeof localStorage !== "undefined") {
+      const sLocal = localStorage.getItem(SESION_KEY);
+      if (sLocal) {
+        s = sLocal;
+        if (storageSesion) storageSesion.setItem(SESION_KEY, sLocal);
+        try { localStorage.removeItem(SESION_KEY); } catch {}
+      }
+    }
     return s ? sanitizarUsuario(JSON.parse(s)) : null;
   } catch { return null; }
 };
 export const guardarSesionActual = (u) => {
   try {
     const s = sanitizarUsuario(u);
-    if (s) localStorage.setItem(SESION_KEY, JSON.stringify(s));
-    else localStorage.removeItem(SESION_KEY);
+    const storageSesion = obtenerStorageSesion();
+    if (s && storageSesion) {
+      storageSesion.setItem(SESION_KEY, JSON.stringify(s));
+    } else if (storageSesion) {
+      storageSesion.removeItem(SESION_KEY);
+    }
+    if (typeof localStorage !== "undefined" && storageSesion !== localStorage) {
+      try { localStorage.removeItem(SESION_KEY); } catch {}
+    }
     return s;
   } catch { return null; }
 };
 export const eliminarSesionActual = () => {
   try {
-    localStorage.removeItem(SESION_KEY);
+    const storageSesion = obtenerStorageSesion();
+    if (storageSesion) storageSesion.removeItem(SESION_KEY);
+    if (typeof localStorage !== "undefined" && storageSesion !== localStorage) {
+      try { localStorage.removeItem(SESION_KEY); } catch {}
+    }
     return { success: true, exito: true, mensaje: "Sesión finalizada exitosamente." };
   } catch {
     return { success: false, exito: false, mensaje: "Error al cerrar sesión." };
@@ -137,8 +169,7 @@ export const registrarUsuario = (datosOEmail, pass = "", nom = "") => {
     };
     const act = [...list, nuevo];
     guardarUsuarios(act);
-    const ses = sanitizarUsuario(nuevo);
-    localStorage.setItem(SESION_KEY, JSON.stringify(ses));
+    const ses = guardarSesionActual(nuevo);
     return { success: true, exito: true, usuario: ses, usuarios: act, mensaje: "Usuario registrado con éxito." };
   } catch (e) {
     return { success: false, exito: false, mensaje: e.message };
