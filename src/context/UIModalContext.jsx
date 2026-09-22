@@ -73,20 +73,20 @@ const UIModalContext = createContext();
 export const UIModalProvider = ({ children }) => {
   const [modalActivo, setModalActivo] = useState(null);
   const navigate = useNavigate();
-  const { esAdmin, usuario, logout, loginRapido } = useAuth();
+  const { esAdmin, usuario, logout } = useAuth();
   const abrirModal = useCallback((tipo) => setModalActivo(tipo), []);
   const cerrarModal = useCallback(() => setModalActivo(null), []);
   const manejarDistribucion = useCallback(() => {
     cerrarModal();
     if (esAdmin) {
       navigate("/crear");
-    } else if (usuario) {
-      loginRapido("admin");
-      navigate("/crear");
     } else {
+      if (usuario) {
+        logout();
+      }
       navigate("/login", { state: { tab: "login", from: { pathname: "/crear" } } });
     }
-  }, [cerrarModal, navigate, esAdmin, usuario, loginRapido]);
+  }, [cerrarModal, navigate, esAdmin, usuario, logout]);
   useEffect(() => {
     const alPresionarTecla = (e) => { if (e.key === "Escape" && modalActivo) cerrarModal(); };
     window.addEventListener("keydown", alPresionarTecla);
@@ -133,7 +133,7 @@ export const UIModalProvider = ({ children }) => {
             </div>
           </div>
           <p className="text-secondary small mb-0">
-            Para publicar un videojuego durante la evaluación podés ingresar directamente como Administrador con el botón inferior.
+            Para publicar un videojuego en la plataforma se requiere autenticarse con una cuenta de <strong>Administrador</strong>.
           </p>
         </div>
       );
@@ -164,28 +164,14 @@ export const UIModalProvider = ({ children }) => {
     }
     if (usuario) {
       return (
-        <>
-          <Button
-            variant="outline-secondary"
-            className="btn-epic-secondary text-light"
-            onClick={() => {
-              cerrarModal();
-              logout();
-              navigate("/login", { state: { tab: "login", from: { pathname: "/crear" } } });
-            }}
-          >
-            <i className="bi bi-box-arrow-right me-1" />
-            Cambiar Cuenta
-          </Button>
-          <Button
-            variant="warning"
-            className="btn-epic-primary bg-warning text-dark border-0 fw-semibold"
-            onClick={manejarDistribucion}
-          >
-            <i className="bi bi-shield-lock me-1" />
-            Ingresar como Admin y Publicar
-          </Button>
-        </>
+        <Button
+          variant="warning"
+          className="btn-epic-primary bg-warning text-dark border-0 fw-semibold"
+          onClick={manejarDistribucion}
+        >
+          <i className="bi bi-shield-lock me-1" />
+          Iniciar Sesión como Admin
+        </Button>
       );
     }
     return (

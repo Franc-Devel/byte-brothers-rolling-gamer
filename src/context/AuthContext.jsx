@@ -42,11 +42,7 @@ export const AuthProvider = ({ children }) => {
     return res;
   }, [usuarioActual]);
   const getWishlistJuegos = useCallback((cat) => usuarioActual ? obtenerJuegosDeseados(usuarioActual.id, cat || obtenerProductos()) : [], [usuarioActual]);
-  const loginRapido = useCallback((tipo) => {
-    const c = obtenerUsuarios().find(u => u.rol === tipo);
-    if (c) { const s = guardarSesionActual(c); setUsuarioActual(s); setWishlistIds(obtenerWishlistDeCuenta(s.id)); return s; }
-    return null;
-  }, []);
+  const loginRapido = useCallback(() => null, []);
   useEffect(() => {
     const verificarConsistenciaSesion = () => {
       const ses = obtenerSesionActual();
