@@ -3,86 +3,242 @@ import { obtenerProductos } from "./catalogoService.js";
 export const USUARIOS_KEY = "rollingGamer_usuariosRegistrados";
 export const SESION_KEY = "rollingGamer_usuario";
 export const WISHLISTS_KEY = "rollingGamer_wishlists";
+function sha256(ascii) {
+  function rightRotate(value, amount) { return (value >>> amount) | (value << (32 - amount)); }
+  const mathPow = Math.pow;
+  const maxWord = mathPow(2, 32);
+  let i, j, result = "";
+  const words = [];
+  const asciiBitLength = ascii.length * 8;
+  let hash = [], k = [], primeCounter = 0, isComposite = {};
+  for (let candidate = 2; primeCounter < 64; candidate++) {
+    if (!isComposite[candidate]) {
+      for (i = 0; i < 313; i += candidate) isComposite[i] = true;
+      hash[primeCounter] = (mathPow(candidate, 0.5) * maxWord) | 0;
+      k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+    }
+  }
+  hash = hash.slice(0, 8);
+  ascii += "\x80";
+  while ((ascii.length % 64) - 56) ascii += "\x00";
+  for (i = 0; i < ascii.length; i++) {
+    j = ascii.charCodeAt(i);
+    words[i >> 2] |= j << (((3 - i) % 4) * 8);
+  }
+  words[words.length] = (asciiBitLength / maxWord) | 0;
+  words[words.length] = asciiBitLength;
+  for (j = 0; j < words.length;) {
+    const w = words.slice(j, (j += 16));
+    const oldHash = hash;
+    hash = hash.slice(0, 8);
+    for (i = 0; i < 64; i++) {
+      const w15 = w[i - 15], w2 = w[i - 2];
+      const a = hash[0], e = hash[4];
+      const temp1 = hash[7] + (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25)) + ((e & hash[5]) ^ (~e & hash[6])) + k[i] + (w[i] = i < 16 ? w[i] : (w[i - 16] + (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3)) + w[i - 7] + (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10))) | 0);
+      const temp2 = (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22)) + ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
+      hash = [(temp1 + temp2) | 0].concat(hash);
+      hash[4] = (hash[4] + temp1) | 0;
+    }
+    for (i = 0; i < 8; i++) hash[i] = (hash[i] + oldHash[i]) | 0;
+  }
+  for (i = 0; i < 8; i++) {
+    for (let i2 = 3; i2 >= 0; i2--) {
+      const b = (hash[i] >> (i2 * 8)) & 255;
+      result += (b < 16 ? "0" : "") + b.toString(16);
+    }
+  }
+  return result;
+}
+
+export const hashearClave = (clave) => {
+  if (!clave || typeof clave !== "string") return "";
+  return sha256(`rg_gamer_salt_${clave}`);
+};
+
 export const sanitizarUsuario = (u) => {
   if (!u) return null;
   const seguro = { ...u };
   delete seguro.password;
   delete seguro.contrasenia;
+  delete seguro.passwordHash;
   return seguro;
 };
+
+export const sanitizarParaAlmacenamiento = (u) => {
+  if (!u) return null;
+  const seguro = { ...u };
+  if (!seguro.passwordHash && (seguro.password || seguro.contrasenia)) {
+    seguro.passwordHash = hashearClave(seguro.password || seguro.contrasenia);
+  }
+  delete seguro.password;
+  delete seguro.contrasenia;
+  return seguro;
+};
+
+export const esRolAdminValido = (usuario) => {
+  if (!usuario || typeof usuario !== "object") return false;
+  const adminBase = usuariosIniciales.find((u) => u.rol === "admin");
+  const emailAdminOficial = (adminBase?.email || "admin@rollinggames.com").trim().toLowerCase();
+  const emailUsuario = (usuario.email || usuario.correo || "").trim().toLowerCase();
+  const idAdminOficial = adminBase?.id || "u-admin-1";
+
+  return Boolean((usuario.id === idAdminOficial || emailUsuario === emailAdminOficial) && usuario.rol === "admin");
+};
+
 const sincronizarCredencialesIniciales = (usuarios) => {
   let huboCambios = false;
   const adminBase = usuariosIniciales.find((u) => u.rol === "admin");
   const userBase = usuariosIniciales.find((u) => u.rol === "usuario");
   const actualizados = usuarios.map((u) => {
-    if (
-      (u.id === "u-admin-1" || u.email === "admin@rollinggames.com") &&
-      (u.password === "admin123" || u.contrasenia === "admin123")
-    ) {
+    let modificado = { ...u };
+    if (modificado.password || modificado.contrasenia) {
+      if (!modificado.passwordHash) {
+        modificado.passwordHash = hashearClave(modificado.password || modificado.contrasenia);
+      }
+      delete modificado.password;
+      delete modificado.contrasenia;
       huboCambios = true;
-      return {
-        ...u,
-        password: adminBase?.password || "Admin123!",
-        contrasenia: adminBase?.contrasenia || "Admin123!",
-      };
     }
-    if (
-      (u.id === "u-user-2" || u.email === "user@rollinggames.com") &&
-      (u.password === "user123" || u.contrasenia === "user123")
-    ) {
+    // Neutralizar intentos de asignación arbitraria de rol admin
+    if (modificado.rol === "admin" && !esRolAdminValido(modificado)) {
+      modificado.rol = "usuario";
       huboCambios = true;
-      return {
-        ...u,
-        password: userBase?.password || "User123!",
-        contrasenia: userBase?.contrasenia || "User123!",
-      };
     }
-    return u;
+    const norm = (modificado.email || modificado.correo || "").trim().toLowerCase();
+    if (modificado.id === "u-admin-1" || norm === "admin@rollinggames.com") {
+      const hashAdmin = hashearClave(adminBase?.password || "Admin123!");
+      if (modificado.passwordHash !== hashAdmin) {
+        modificado.passwordHash = hashAdmin;
+        huboCambios = true;
+      }
+    }
+    if (modificado.id === "u-user-2" || norm === "user@rollinggames.com") {
+      const hashUser = hashearClave(userBase?.password || "User123!");
+      if (modificado.passwordHash !== hashUser) {
+        modificado.passwordHash = hashUser;
+        huboCambios = true;
+      }
+    }
+    return modificado;
   });
   if (huboCambios) {
-    try {
-      localStorage.setItem(USUARIOS_KEY, JSON.stringify(actualizados));
-    } catch (e) {
-      console.error("Error al sincronizar credenciales:", e);
-    }
+    guardarUsuarios(actualizados);
   }
   return actualizados;
 };
+
 export const obtenerUsuarios = () => {
   try {
     const d = localStorage.getItem(USUARIOS_KEY);
     if (!d) {
-      localStorage.setItem(USUARIOS_KEY, JSON.stringify(usuariosIniciales));
-      return [...usuariosIniciales];
+      const iniciales = usuariosIniciales.map(sanitizarParaAlmacenamiento);
+      guardarUsuarios(iniciales);
+      return [...iniciales];
     }
     const p = JSON.parse(d);
-    const lista = Array.isArray(p) && p.length > 0 ? p : [...usuariosIniciales];
+    const lista = Array.isArray(p) && p.length > 0 ? p : usuariosIniciales.map(sanitizarParaAlmacenamiento);
     return sincronizarCredencialesIniciales(lista);
   } catch {
-    localStorage.setItem(USUARIOS_KEY, JSON.stringify(usuariosIniciales));
-    return [...usuariosIniciales];
+    const iniciales = usuariosIniciales.map(sanitizarParaAlmacenamiento);
+    guardarUsuarios(iniciales);
+    return [...iniciales];
   }
 };
+
 export const guardarUsuarios = (u) => {
-  try { localStorage.setItem(USUARIOS_KEY, JSON.stringify(u)); } catch (e) { console.error(e); }
+  try {
+    const seguros = Array.isArray(u) ? u.map(sanitizarParaAlmacenamiento) : [];
+    localStorage.setItem(USUARIOS_KEY, JSON.stringify(seguros));
+  } catch (e) {
+    console.error("Error al guardar usuarios:", e);
+  }
+};
+export const obtenerStorageSesion = () => {
+  if (typeof window !== "undefined" && window.sessionStorage) {
+    return window.sessionStorage;
+  }
+  if (typeof localStorage !== "undefined") {
+    return localStorage;
+  }
+  if (typeof sessionStorage !== "undefined") {
+    return sessionStorage;
+  }
+  return null;
 };
 export const obtenerSesionActual = () => {
   try {
-    const s = localStorage.getItem(SESION_KEY);
-    return s ? sanitizarUsuario(JSON.parse(s)) : null;
+    const storageSesion = obtenerStorageSesion();
+    let s = storageSesion ? storageSesion.getItem(SESION_KEY) : null;
+    if (!s && typeof localStorage !== "undefined") {
+      const sLocal = localStorage.getItem(SESION_KEY);
+      if (sLocal) {
+        s = sLocal;
+        if (storageSesion) storageSesion.setItem(SESION_KEY, sLocal);
+        try { localStorage.removeItem(SESION_KEY); } catch {}
+      }
+    }
+    if (!s) return null;
+    const parseado = JSON.parse(s);
+    if (!parseado || !parseado.id) return null;
+
+    const listaUsuarios = obtenerUsuarios();
+    const usuarioRegistrado = listaUsuarios.find(u => String(u.id) === String(parseado.id));
+
+    if (!usuarioRegistrado) {
+      if (storageSesion) storageSesion.removeItem(SESION_KEY);
+      return null;
+    }
+
+    const esAdminLegitimo = usuarioRegistrado.rol === "admin" && esRolAdminValido(usuarioRegistrado);
+    const rolEfectivo = esAdminLegitimo ? "admin" : "usuario";
+
+    if (parseado.rol !== rolEfectivo) {
+      parseado.rol = rolEfectivo;
+      if (storageSesion) storageSesion.setItem(SESION_KEY, JSON.stringify(sanitizarUsuario(parseado)));
+    }
+
+    const usuarioSeguro = sanitizarUsuario({
+      ...parseado,
+      rol: rolEfectivo,
+      nombre: usuarioRegistrado.nombre || parseado.nombre,
+      email: usuarioRegistrado.email || parseado.email,
+      correo: usuarioRegistrado.correo || parseado.correo
+    });
+
+    return Object.freeze(usuarioSeguro);
   } catch { return null; }
 };
 export const guardarSesionActual = (u) => {
   try {
-    const s = sanitizarUsuario(u);
-    if (s) localStorage.setItem(SESION_KEY, JSON.stringify(s));
-    else localStorage.removeItem(SESION_KEY);
-    return s;
+    if (!u) {
+      eliminarSesionActual();
+      return null;
+    }
+    const esAdminLegitimo = u.rol === "admin" && esRolAdminValido(u);
+    const uConRolSeguro = {
+      ...u,
+      rol: esAdminLegitimo ? "admin" : "usuario"
+    };
+    const s = sanitizarUsuario(uConRolSeguro);
+    const storageSesion = obtenerStorageSesion();
+    if (s && storageSesion) {
+      storageSesion.setItem(SESION_KEY, JSON.stringify(s));
+    } else if (storageSesion) {
+      storageSesion.removeItem(SESION_KEY);
+    }
+    if (typeof localStorage !== "undefined" && storageSesion !== localStorage) {
+      try { localStorage.removeItem(SESION_KEY); } catch {}
+    }
+    return Object.freeze(s);
   } catch { return null; }
 };
 export const eliminarSesionActual = () => {
   try {
-    localStorage.removeItem(SESION_KEY);
+    const storageSesion = obtenerStorageSesion();
+    if (storageSesion) storageSesion.removeItem(SESION_KEY);
+    if (typeof localStorage !== "undefined" && storageSesion !== localStorage) {
+      try { localStorage.removeItem(SESION_KEY); } catch {}
+    }
     return { success: true, exito: true, mensaje: "Sesión finalizada exitosamente." };
   } catch {
     return { success: false, exito: false, mensaje: "Error al cerrar sesión." };
@@ -92,13 +248,22 @@ export const autenticarUsuario = (email, pass) => {
   try {
     if (!email || !pass) return { success: false, exito: false, mensaje: "Credenciales incompletas." };
     const norm = email.trim().toLowerCase();
-    const u = obtenerUsuarios().find(x => (x.email || x.correo || "").trim().toLowerCase() === norm);
+    const list = obtenerUsuarios();
+    const u = list.find(x => (x.email || x.correo || "").trim().toLowerCase() === norm);
     if (!u) return { success: false, exito: false, mensaje: "Correo electrónico no encontrado." };
+    const hashIngresado = hashearClave(pass);
+    const coincideHash = u.passwordHash === hashIngresado;
     const coincideDirecto = u.password === pass || u.contrasenia === pass;
     const esAdminDemo = norm === "admin@rollinggames.com" && (pass === "Admin123!" || pass === "admin123");
     const esUserDemo = norm === "user@rollinggames.com" && (pass === "User123!" || pass === "user123");
-    if (!coincideDirecto && !esAdminDemo && !esUserDemo) {
+    if (!coincideHash && !coincideDirecto && !esAdminDemo && !esUserDemo) {
       return { success: false, exito: false, mensaje: "Contraseña incorrecta." };
+    }
+    if (u.password || u.contrasenia || !u.passwordHash) {
+      u.passwordHash = hashIngresado;
+      delete u.password;
+      delete u.contrasenia;
+      guardarUsuarios(list);
     }
     const ses = guardarSesionActual(u);
     return { success: true, exito: true, usuario: ses, mensaje: "Autenticación satisfactoria." };
@@ -124,21 +289,20 @@ export const registrarUsuario = (datosOEmail, pass = "", nom = "") => {
     if (list.some(u => (u.email || u.correo || "").trim().toLowerCase() === norm)) {
       return { success: false, exito: false, mensaje: "El correo electrónico ya está registrado." };
     }
+    const hash = hashearClave(contrasena);
     const nuevo = {
       id: `u-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
       nombre: nombre.trim() || "Gamer",
       email: norm,
       correo: norm,
-      password: contrasena,
-      contrasenia: contrasena,
+      passwordHash: hash,
       rol: "usuario",
       fechaRegistro: new Date().toISOString().split("T")[0],
       fecha: new Date().toISOString().split("T")[0]
     };
     const act = [...list, nuevo];
     guardarUsuarios(act);
-    const ses = sanitizarUsuario(nuevo);
-    localStorage.setItem(SESION_KEY, JSON.stringify(ses));
+    const ses = guardarSesionActual(nuevo);
     return { success: true, exito: true, usuario: ses, usuarios: act, mensaje: "Usuario registrado con éxito." };
   } catch (e) {
     return { success: false, exito: false, mensaje: e.message };

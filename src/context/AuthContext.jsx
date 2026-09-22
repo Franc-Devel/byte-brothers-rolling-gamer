@@ -1,8 +1,9 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useState, useCallback, useEffect } from "react";
 import {
   obtenerUsuarios, obtenerSesionActual, guardarSesionActual, eliminarSesionActual,
   registrarUsuario as regServicio, autenticarUsuario, eliminarUsuario as delServicio,
   obtenerWishlistDeCuenta, alternarDeseo, obtenerJuegosDeseados,
+  esRolAdminValido,
   USUARIOS_KEY, SESION_KEY, WISHLISTS_KEY
 } from "../services/usuariosService.js";
 import { obtenerProductos } from "../services/catalogoService.js";
@@ -41,12 +42,29 @@ export const AuthProvider = ({ children }) => {
     return res;
   }, [usuarioActual]);
   const getWishlistJuegos = useCallback((cat) => usuarioActual ? obtenerJuegosDeseados(usuarioActual.id, cat || obtenerProductos()) : [], [usuarioActual]);
-  const loginRapido = useCallback((tipo) => {
-    const c = obtenerUsuarios().find(u => u.rol === tipo);
-    if (c) { const s = guardarSesionActual(c); setUsuarioActual(s); setWishlistIds(obtenerWishlistDeCuenta(s.id)); return s; }
-    return null;
+  const loginRapido = useCallback(() => null, []);
+  useEffect(() => {
+    const verificarConsistenciaSesion = () => {
+      const ses = obtenerSesionActual();
+      setUsuarioActual(ses);
+      if (ses?.id) {
+        setWishlistIds(obtenerWishlistDeCuenta(ses.id));
+      } else {
+        setWishlistIds([]);
+      }
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("storage", verificarConsistenciaSesion);
+      window.addEventListener("focus", verificarConsistenciaSesion);
+      return () => {
+        window.removeEventListener("storage", verificarConsistenciaSesion);
+        window.removeEventListener("focus", verificarConsistenciaSesion);
+      };
+    }
   }, []);
-  const esAdmin = Boolean(usuarioActual?.rol === "admin"), estaAutenticado = Boolean(usuarioActual);
+
+  const esAdmin = Boolean(usuarioActual?.rol === "admin" && esRolAdminValido(usuarioActual));
+  const estaAutenticado = Boolean(usuarioActual);
   return (
     <AuthContext.Provider value={{
       usuarios, usuarioActual, usuario: usuarioActual, cargando: false, esAdmin, estaAutenticado,
