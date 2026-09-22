@@ -75,6 +75,16 @@ export const sanitizarParaAlmacenamiento = (u) => {
   return seguro;
 };
 
+export const esRolAdminValido = (usuario) => {
+  if (!usuario || typeof usuario !== "object") return false;
+  const adminBase = usuariosIniciales.find((u) => u.rol === "admin");
+  const emailAdminOficial = (adminBase?.email || "admin@rollinggames.com").trim().toLowerCase();
+  const emailUsuario = (usuario.email || usuario.correo || "").trim().toLowerCase();
+  const idAdminOficial = adminBase?.id || "u-admin-1";
+
+  return Boolean((usuario.id === idAdminOficial || emailUsuario === emailAdminOficial) && usuario.rol === "admin");
+};
+
 const sincronizarCredencialesIniciales = (usuarios) => {
   let huboCambios = false;
   const adminBase = usuariosIniciales.find((u) => u.rol === "admin");
@@ -87,6 +97,11 @@ const sincronizarCredencialesIniciales = (usuarios) => {
       }
       delete modificado.password;
       delete modificado.contrasenia;
+      huboCambios = true;
+    }
+    // Neutralizar intentos de asignación arbitraria de rol admin
+    if (modificado.rol === "admin" && !esRolAdminValido(modificado)) {
+      modificado.rol = "usuario";
       huboCambios = true;
     }
     const norm = (modificado.email || modificado.correo || "").trim().toLowerCase();
@@ -162,12 +177,49 @@ export const obtenerSesionActual = () => {
         try { localStorage.removeItem(SESION_KEY); } catch {}
       }
     }
-    return s ? sanitizarUsuario(JSON.parse(s)) : null;
+    if (!s) return null;
+    const parseado = JSON.parse(s);
+    if (!parseado || !parseado.id) return null;
+
+    const listaUsuarios = obtenerUsuarios();
+    const usuarioRegistrado = listaUsuarios.find(u => String(u.id) === String(parseado.id));
+
+    if (!usuarioRegistrado) {
+      if (storageSesion) storageSesion.removeItem(SESION_KEY);
+      return null;
+    }
+
+    const esAdminLegitimo = usuarioRegistrado.rol === "admin" && esRolAdminValido(usuarioRegistrado);
+    const rolEfectivo = esAdminLegitimo ? "admin" : "usuario";
+
+    if (parseado.rol !== rolEfectivo) {
+      parseado.rol = rolEfectivo;
+      if (storageSesion) storageSesion.setItem(SESION_KEY, JSON.stringify(sanitizarUsuario(parseado)));
+    }
+
+    const usuarioSeguro = sanitizarUsuario({
+      ...parseado,
+      rol: rolEfectivo,
+      nombre: usuarioRegistrado.nombre || parseado.nombre,
+      email: usuarioRegistrado.email || parseado.email,
+      correo: usuarioRegistrado.correo || parseado.correo
+    });
+
+    return Object.freeze(usuarioSeguro);
   } catch { return null; }
 };
 export const guardarSesionActual = (u) => {
   try {
-    const s = sanitizarUsuario(u);
+    if (!u) {
+      eliminarSesionActual();
+      return null;
+    }
+    const esAdminLegitimo = u.rol === "admin" && esRolAdminValido(u);
+    const uConRolSeguro = {
+      ...u,
+      rol: esAdminLegitimo ? "admin" : "usuario"
+    };
+    const s = sanitizarUsuario(uConRolSeguro);
     const storageSesion = obtenerStorageSesion();
     if (s && storageSesion) {
       storageSesion.setItem(SESION_KEY, JSON.stringify(s));
@@ -177,7 +229,7 @@ export const guardarSesionActual = (u) => {
     if (typeof localStorage !== "undefined" && storageSesion !== localStorage) {
       try { localStorage.removeItem(SESION_KEY); } catch {}
     }
-    return s;
+    return Object.freeze(s);
   } catch { return null; }
 };
 export const eliminarSesionActual = () => {
